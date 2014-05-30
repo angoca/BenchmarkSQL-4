@@ -10,7 +10,7 @@ import java.text.*;
 
 public interface jTPCCConfig
 {
-    public final static String JTPCCVERSION = "3.0";
+    public final static String JTPCCVERSION = "4.0";
 
     public final static int NEW_ORDER = 1, PAYMENT = 2, ORDER_STATUS = 3, DELIVERY = 4, STOCK_LEVEL = 5;
 

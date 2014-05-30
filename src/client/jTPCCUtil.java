@@ -7,7 +7,6 @@
  *
  */
 
-import org.apache.log4j.*;
 
 import java.io.*;
 import java.sql.*;
@@ -16,7 +15,6 @@ import java.text.*;
  
 public class jTPCCUtil implements jTPCCConfig 
 {
-  static Logger log = Logger.getLogger(jTPCCUtil.class);
 
   public static String getSysProp(String inSysProperty, String defaultValue) {
     
@@ -25,7 +23,7 @@ public class jTPCCUtil implements jTPCCConfig
     try {
       outPropertyValue = System.getProperty(inSysProperty, defaultValue);
     } catch (Exception e) {
-      log.error("Error Reading Required System Property '" + inSysProperty + "'");
+      System.err.println("Error Reading Required System Property '" + inSysProperty + "'");
     }
 
     return(outPropertyValue);

@@ -6,8 +6,6 @@
  *
  */
 
-import org.apache.log4j.*;
-
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -15,12 +13,10 @@ import java.util.*;
 
 public class ExecJDBC {
 
-  static Logger log = Logger.getLogger(ExecJDBC.class);
   
   public static void main(String[] args) {
 
-    PropertyConfigurator.configure("log4j.xml");
-    log.info("Starting BenchmarkSQL ExecJDBC");
+    System.out.println("Starting BenchmarkSQL ExecJDBC");
 
     Connection conn = null;
     Statement stmt = null;
@@ -52,11 +48,9 @@ public class ExecJDBC {
 
          String line = rLine.trim();
 
-         if (line.length() == 0) {
-           log.info("");
-         } else {
+         if (line.length() != 0) {
            if (line.startsWith("--")) {
-              log.info(line);  // print comment line
+              System.out.println(line);  // print comment line
            } else {
                sql.append(line);
                if (line.endsWith(";")) {
@@ -74,10 +68,10 @@ public class ExecJDBC {
       in.close();
 
     } catch(IOException ie) {
-        log.info(ie.getMessage());
+        System.out.println(ie.getMessage());
     
     } catch(SQLException se) {
-        log.info(se.getMessage());
+        System.out.println(se.getMessage());
 
     } catch(Exception e) {
         e.printStackTrace();
@@ -93,23 +87,19 @@ public class ExecJDBC {
 
     } // end try
 
-
-    log.info("");
-                  
-
   } // end main
 
 
   static void execJDBC(Statement stmt, StringBuffer sql) {
 
-    log.info(sql);
+    System.out.println(sql);
 
     try {
 
       stmt.execute(sql.toString().replace(';',' '));
     
     }catch(SQLException se) {
-      log.error(se.getMessage());
+      System.out.println(se.getMessage());
     } // end try
 
   } // end execJDBCCommand

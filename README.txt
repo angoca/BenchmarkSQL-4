@@ -1,8 +1,17 @@
 *********************************************************************
 Change Log:
 
+Version 4.0.2  2013-06-06  denis & cady
+   - removed Swing & AWT GUI so that this program is runnable from the command line
+   - remove log4j usage from runSQL & runLoader (only used now for the actual running of the Benchmark)
+   - fix truncation problem with customer.csv file
+   - comment out "BadCredit" business logic that was not working and throwing stack traces
+   - fix log4j messages to always show the terminal name
+   - remove bogus log4j messages
+
 Version 3.0.9 2013-03-21 denisl
    - Fix runLoader.sh to work with new log4j
+
 
 Version 3.0.8 2013-03-20 denisl
    - Config log4j for rotating log files once per minute
@@ -79,7 +88,7 @@ files are provided as follows:
 
       You may truncate the data via:
 
-        $  ./runSQL.h props.pg sqlTableTruncates
+        $  ./runSQL.sh props.pg sqlTableTruncates
 
 4. Run the "runSQL" command file to execute the SQL script 
    "sqlIndexCreates" to create the primary keys & other indexes 
@@ -88,41 +97,11 @@ files are provided as follows:
         $  ./runSQL.sh props.pg sqlIndexCreates
 
 
-5. Run the "runBenchmark" command file to execute the swing GUI 
-   application to test the database.  Don't forget to set the number of 
-   warehouses equal to the number you created in step 3. For each run, a 
-   report will be placed in run/reports.  A sample report is included.
+5. Run the "runBenchmark" command file to test the database. This command 
+   will create terminals and automatically start the transaction based on 
+   the parameters set in "props". 
 
        $  ./runBenchmark.sh props.pg
-
-6. Operational Notes to minimize problems:  
-   (a) executing runBenchmark will start the GUI. 
-
-       Click the Database button to view properties file settings. No 
-         changes are needed if the properties settings are correct.
-
-       Click the Terminals button and specify desired settings. 
-         Specify the same number of warehouses as you created.
-         Select either "Minutes" or "Transactions per terminal" 
-         and blank out the other setting.
-
-       Click the Weights button and specify desired settings
-
-       Click the Controls button, then click Create Terminals. One 
-       DB connection per Terminal is created. 
-
-       Click Start Transactions to start the benchmark.
-
-   (b) If changing the number of terminals between runs, it is best 
-       to close the GUI window and re-execute runBenchmark .
-
-   (c) If the benchmark runs properly, all database connections are 
-       terminated at completion. You may need to manually
-       terminate connections if this is not the case
-
-   (d) When done, close the GUI window 
-
-
 
 
 Instructions for re-building from source

@@ -152,6 +152,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
 
         for(int i = 0; (i < numTransactions || numTransactions == -1) && !stopRunning; i++)
         {
+
             long transactionType = jTPCCUtil.randomNumber(1, 100, gen);
             int skippedDeliveries = 0, newOrder = 0;
             String transactionTypeName;
@@ -238,11 +239,12 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                 }
 
                 // we need to cause 1% of the new orders to be rolled back.
-                if(jTPCCUtil.randomNumber(1, 100, gen) == 1)
-                    itemIDs[numItems-1] = -12345;
+                //if(jTPCCUtil.randomNumber(1, 100, gen) == 1)
+                //    itemIDs[numItems-1] = -12345;
 
                 terminalMessage("");
-                terminalMessage("Starting transaction #" + transactionCount + " (New-Order)...");
+                terminalMessage("Starting txn:" + terminalName + ":" +
+                                transactionCount + " (New-Order)");
                 newOrderTransaction(terminalWarehouseID, districtID, customerID, numItems, allLocal, itemIDs, supplierWarehouseIDs, orderQuantities);
                 break;
 
@@ -636,9 +638,8 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                 c_balance = rs.getFloat("c_balance");
                 rs.close();
                 rs = null;
-            }
-            else
-            {
+            } else {
+            
                 if (ordStatGetCustBal == null) {
                   ordStatGetCustBal = conn.prepareStatement(
                     "SELECT c_balance, c_first, c_middle, c_last" +
@@ -944,7 +945,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                 ol_i_id = itemIDs[ol_number-1];
                 ol_quantity = orderQuantities[ol_number-1];
 
-                if (item.i_id == -12345) {
+                 if (item.i_id == -12345) {
                   // an expected condition generated 1% of the time in the test data...
                   // we throw an illegal access exception and the transaction gets rolled back later on
                   throw new IllegalAccessException("Expected NEW-ORDER error condition excersing rollback functionality");
@@ -1155,17 +1156,16 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                 terminalMessage.append("\n\n Execution Status: Item number is not valid!\n");
                 terminalMessage.append("+-----------------------------------------------------------------+\n\n");
                 terminalMessage(terminalMessage.toString());
-            }
 
-        } finally {
-            try {
-                terminalMessage("Performing ROLLBACK in NEW-ORDER Txn...");
-                transRollback();
-                stmtInsertOrderLine.clearBatch();
-                stmtUpdateStock.clearBatch();
-            } catch(Exception e1){
-                error("NEW-ORDER-ROLLBACK");
-                logException(e1);
+                try {
+                    terminalMessage("Performing ROLLBACK in NEW-ORDER Txn...");
+                    transRollback();
+                    stmtInsertOrderLine.clearBatch();
+                    stmtUpdateStock.clearBatch();
+                } catch(Exception e1){
+                    error("NEW-ORDER-ROLLBACK");
+                    logException(e1);
+                }
             }
         }
     }
@@ -1439,6 +1439,10 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
 
 
             c_balance += h_amount;
+
+            log.info("c_credit = " + c_credit);            
+
+          /*
             if(c_credit.equals("BC")) {  // bad credit
 
                 if (payGetCustCdata == null) {
@@ -1485,6 +1489,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                 }
 
             } else { // GoodCredit
+       */
 
                 if (payUpdateCustBal == null) {
                   payUpdateCustBal = conn.prepareStatement(
@@ -1501,7 +1506,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                   log.error("payUpdateCustBal() not found! C_ID=" + c_id + " C_W_ID=" + c_w_id + " C_D_ID=" + c_d_id);
                 }
 
-            }
+            // }
 
 
             if(w_name.length() > 10) w_name = w_name.substring(0, 10);
@@ -1525,6 +1530,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
             payInsertHist.executeUpdate();
 
             transCommit();
+            log.info ("Succesful INSERT into history table");
 
             StringBuffer terminalMessage = new StringBuffer();
             terminalMessage.append("\n+---------------------------- PAYMENT ----------------------------+");
@@ -1590,6 +1596,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
             terminalMessage.append(c_credit_lim);
             terminalMessage.append("\n New Cust-Balance: ");
             terminalMessage.append(c_balance);
+/*
             if(c_credit.equals("BC"))
             {
                 if(c_data.length() > 50)
@@ -1603,7 +1610,8 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                 {
                     terminalMessage.append("\n\n Cust-Data: " + c_data);
                 }
-            }
+            }A
+ */
             terminalMessage.append("\n+-----------------------------------------------------------------+\n\n");
             terminalMessage(terminalMessage.toString());
         }
@@ -1638,11 +1646,11 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
     }
 
     private void terminalMessage(String message) {
-      log.debug(message);
+      log.info(terminalName + " " + message);
     }
 
     private void printMessage(String message) {
-      log.error(message);
+      log.info(terminalName + " " + message);
     }
 
 

@@ -15,8 +15,6 @@
  ***************************************************************************************
  */
 
-import org.apache.log4j.*;
-
 import java.sql.*;
 import java.util.*;
 import java.io.*;
@@ -24,7 +22,6 @@ import java.lang.Integer;
 
 public class LoadData implements jTPCCConfig {
 
-  private static org.apache.log4j.Logger log = Logger.getLogger(ExecJDBC.class);
 
   // *********** JDBC specific variables ***********************
   private static Connection         conn       = null;
@@ -55,15 +52,14 @@ public class LoadData implements jTPCCConfig {
 
   public static void main(String[] args) {
 
-      PropertyConfigurator.configure("log4j.xml");
-      log.info("Starting BenchmarkSQL LoadData");
+      System.out.println("Starting BenchmarkSQL LoadData");
 
-      log.info("----------------- Initialization -------------------");
+      System.out.println("----------------- Initialization -------------------");
 
       numWarehouses = configWhseCount;
       for (int i = 0; i < args.length; i++)
       {
-	      log.info(args[i]);
+	      System.out.println(args[i]);
 	      String str = args[i];
 	      if (str.toLowerCase().startsWith("numwarehouses"))
 	      {
@@ -89,36 +85,36 @@ public class LoadData implements jTPCCConfig {
 
     //######################### MAINLINE ######################################
       startDate = new java.util.Date();
-      log.info("");
-      log.info("------------- LoadData StartTime = " + startDate +
+      System.out.println("");
+      System.out.println("------------- LoadData StartTime = " + startDate +
                        "-------------");
 
       long startTimeMS = new java.util.Date().getTime();
       lastTimeMS = startTimeMS;
 
-      log.info("");
+      System.out.println("");
       long totalRows = loadWhse(numWarehouses);
-      log.info("");
+      System.out.println("");
       totalRows += loadItem(configItemCount);
-      log.info("");
+      System.out.println("");
       totalRows += loadStock(numWarehouses, configItemCount);
-      log.info("");
+      System.out.println("");
       totalRows += loadDist(numWarehouses, configDistPerWhse);
-      log.info("");
+      System.out.println("");
       totalRows += loadCust(numWarehouses, configDistPerWhse, configCustPerDist);
-      log.info("");
+      System.out.println("");
       totalRows += loadOrder(numWarehouses, configDistPerWhse, configCustPerDist);
 
       long runTimeMS = (new java.util.Date().getTime()) + 1 - startTimeMS;
       endDate = new java.util.Date();
-      log.info("");
-      log.info("------------- LoadJDBC Statistics --------------------");
-      log.info("     Start Time = " + startDate);
-      log.info("       End Time = " + endDate);
-      log.info("       Run Time = " + (int)runTimeMS/1000 + " Seconds");
-      log.info("    Rows Loaded = " + totalRows + " Rows");
-      log.info("Rows Per Second = "  + (totalRows/(runTimeMS/1000)) + " Rows/Sec");
-      log.info("------------------------------------------------------");
+      System.out.println("");
+      System.out.println("------------- LoadJDBC Statistics --------------------");
+      System.out.println("     Start Time = " + startDate);
+      System.out.println("       End Time = " + endDate);
+      System.out.println("       Run Time = " + (int)runTimeMS/1000 + " Seconds");
+      System.out.println("    Rows Loaded = " + totalRows + " Rows");
+      System.out.println("Rows Per Second = "  + (totalRows/(runTimeMS/1000)) + " Rows/Sec");
+      System.out.println("------------------------------------------------------");
 
       //exit Cleanly
       try {
@@ -140,7 +136,7 @@ public class LoadData implements jTPCCConfig {
         try {
           conn.rollback();
         } catch(SQLException se) {
-          log.info(se.getMessage());
+          System.out.println(se.getMessage());
         }
 	  } else {
 		  out.close();
@@ -154,7 +150,7 @@ public class LoadData implements jTPCCConfig {
         try {
           conn.commit();
         } catch(SQLException se) {
-          log.info(se.getMessage());
+          System.out.println(se.getMessage());
           transRollback();
         }
 	  } else {
@@ -172,10 +168,10 @@ static void initJDBC() {
     ini.load( new FileInputStream(System.getProperty("prop")));
 
     // display the values we need
-    log.info("driver=" + ini.getProperty("driver"));
-    log.info("conn=" + ini.getProperty("conn"));
-    log.info("user=" + ini.getProperty("user"));
-    log.info("password=******");
+    System.out.println("driver=" + ini.getProperty("driver"));
+    System.out.println("conn=" + ini.getProperty("conn"));
+    System.out.println("user=" + ini.getProperty("user"));
+    System.out.println("password=******");
 
     // Register jdbcDriver
     Class.forName(ini.getProperty( "driver" ));
@@ -245,7 +241,7 @@ static void initJDBC() {
         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
   } catch(SQLException se) {
-    log.info(se.getMessage());
+    System.out.println(se.getMessage());
     transRollback();
 
   } catch(Exception e) {
@@ -269,12 +265,12 @@ static void initJDBC() {
 
         now = new java.util.Date();
         t = itemKount;
-        log.info("Start Item Load for " + t + " Items @ " + now + " ...");
+        System.out.println("Start Item Load for " + t + " Items @ " + now + " ...");
 
         if (outputFiles == true)
         {
             out = new PrintWriter(new FileOutputStream(fileLocation + "item.csv"));
-            log.info("Writing Item file to: " + fileLocation + "item.csv");
+            System.out.println("Writing Item file to: " + fileLocation + "item.csv");
         }
 
         Item item  = new Item();
@@ -316,7 +312,7 @@ static void initJDBC() {
             if (( k % configCommitCount) == 0) {
               long tmpTime = new java.util.Date().getTime();
               String etStr = "  Elasped Time(ms): " + ((tmpTime - lastTimeMS)/1000.000) + "                    ";
-              log.info(etStr.substring(0, 30) + "  Writing record " + k + " of " + t);
+              System.out.println(etStr.substring(0, 30) + "  Writing record " + k + " of " + t);
               lastTimeMS = tmpTime;
               itemPrepStmt.executeBatch();
               itemPrepStmt.clearBatch();
@@ -334,7 +330,7 @@ static void initJDBC() {
             if (( k % configCommitCount) == 0) {
               long tmpTime = new java.util.Date().getTime();
               String etStr = "  Elasped Time(ms): " + ((tmpTime - lastTimeMS)/1000.000) + "                    ";
-              log.info(etStr.substring(0, 30) + "  Writing record " + k + " of " + t);
+              System.out.println(etStr.substring(0, 30) + "  Writing record " + k + " of " + t);
               lastTimeMS = tmpTime;
 		    }
 		  }
@@ -343,7 +339,7 @@ static void initJDBC() {
 
         long tmpTime = new java.util.Date().getTime();
         String etStr = "  Elasped Time(ms): " + ((tmpTime - lastTimeMS)/1000.000) + "                    ";
-        log.info(etStr.substring(0, 30) + "  Writing record " + k + " of " + t);
+        System.out.println(etStr.substring(0, 30) + "  Writing final records " + k + " of " + t);
         lastTimeMS = tmpTime;
 
         if (outputFiles == false)
@@ -352,10 +348,10 @@ static void initJDBC() {
 	    }
         transCommit();
         now = new java.util.Date();
-        log.info("End Item Load @  " + now);
+        System.out.println("End Item Load @  " + now);
 
       } catch(SQLException se) {
-        log.info(se.getMessage());
+        System.out.println(se.getMessage());
         transRollback();
       } catch(Exception e) {
         e.printStackTrace();
@@ -373,12 +369,12 @@ static void initJDBC() {
       try {
 
         now = new java.util.Date();
-        log.info("Start Whse Load for " + whseKount + " Whses @ " + now + " ...");
+        System.out.println("Start Whse Load for " + whseKount + " Whses @ " + now + " ...");
 
         if (outputFiles == true)
         {
             out = new PrintWriter(new FileOutputStream(fileLocation + "warehouse.csv"));
-            log.info("Writing Warehouse file to: " + fileLocation + "warehouse.csv");
+            System.out.println("Writing Warehouse file to: " + fileLocation + "warehouse.csv");
         }
 
         Warehouse warehouse  = new Warehouse();
@@ -429,12 +425,12 @@ static void initJDBC() {
         now = new java.util.Date();
 
         long tmpTime = new java.util.Date().getTime();
-        log.info("Elasped Time(ms): " + ((tmpTime - lastTimeMS)/1000.000));
+        System.out.println("Elasped Time(ms): " + ((tmpTime - lastTimeMS)/1000.000));
         lastTimeMS = tmpTime;
-        log.info("End Whse Load @  " + now);
+        System.out.println("End Whse Load @  " + now);
 
       } catch(SQLException se) {
-        log.info(se.getMessage());
+        System.out.println(se.getMessage());
         transRollback();
       } catch(Exception e) {
         e.printStackTrace();
@@ -459,12 +455,12 @@ static void initJDBC() {
 
         now = new java.util.Date();
         t = (whseKount * itemKount);
-        log.info("Start Stock Load for " + t + " units @ " + now + " ...");
+        System.out.println("Start Stock Load for " + t + " units @ " + now + " ...");
 
         if (outputFiles == true)
         {
             out = new PrintWriter(new FileOutputStream(fileLocation + "stock.csv"));
-            log.info("Writing Stock file to: " + fileLocation + "stock.csv");
+            System.out.println("Writing Stock file to: " + fileLocation + "stock.csv");
         }
 
         Stock stock  = new Stock();
@@ -530,7 +526,7 @@ static void initJDBC() {
             if (( k % configCommitCount) == 0) {
               long tmpTime = new java.util.Date().getTime();
               String etStr = "  Elasped Time(ms): " + ((tmpTime - lastTimeMS)/1000.000) + "                    ";
-              log.info(etStr.substring(0, 30) + "  Writing record " + k + " of " + t);
+              System.out.println(etStr.substring(0, 30) + "  Writing record " + k + " of " + t);
               lastTimeMS = tmpTime;
               stckPrepStmt.executeBatch();
               stckPrepStmt.clearBatch();
@@ -560,7 +556,7 @@ static void initJDBC() {
             if (( k % configCommitCount) == 0) {
               long tmpTime = new java.util.Date().getTime();
               String etStr = "  Elasped Time(ms): " + ((tmpTime - lastTimeMS)/1000.000) + "                    ";
-              log.info(etStr.substring(0, 30) + "  Writing record " + k + " of " + t);
+              System.out.println(etStr.substring(0, 30) + "  Writing record " + k + " of " + t);
               lastTimeMS = tmpTime;
 		      }
            }
@@ -572,7 +568,7 @@ static void initJDBC() {
 
         long tmpTime = new java.util.Date().getTime();
         String etStr = "  Elasped Time(ms): " + ((tmpTime - lastTimeMS)/1000.000) + "                    ";
-        log.info(etStr.substring(0, 30) + "  Writing final records " + k + " of " + t);
+        System.out.println(etStr.substring(0, 30) + "  Writing final records " + k + " of " + t);
         lastTimeMS = tmpTime;
         if (outputFiles == false)
         {
@@ -581,10 +577,10 @@ static void initJDBC() {
         transCommit();
 
         now = new java.util.Date();
-        log.info("End Stock Load @  " + now);
+        System.out.println("End Stock Load @  " + now);
 
       } catch(SQLException se) {
-        log.info(se.getMessage());
+        System.out.println(se.getMessage());
         transRollback();
 
       } catch(Exception e) {
@@ -610,13 +606,13 @@ static void initJDBC() {
         if (outputFiles == true)
         {
             out = new PrintWriter(new FileOutputStream(fileLocation + "district.csv"));
-            log.info("Writing District file to: " + fileLocation + "district.csv");
+            System.out.println("Writing District file to: " + fileLocation + "district.csv");
         }
 
         District district  = new District();
 
         t = (whseKount * distWhseKount);
-        log.info("Start District Data for " + t + " Dists @ " + now + " ...");
+        System.out.println("Start District Data for " + t + " Dists @ " + now + " ...");
 
         for (int w=1; w <= whseKount; w++) {
 
@@ -674,16 +670,18 @@ static void initJDBC() {
 
         long tmpTime = new java.util.Date().getTime();
         String etStr = "  Elasped Time(ms): " + ((tmpTime - lastTimeMS)/1000.000) + "                    ";
-        log.info(etStr.substring(0, 30) + "  Writing record " + k + " of " + t);
+        System.out.println(etStr.substring(0, 30) + "  Writing record " + k + " of " + t);
         lastTimeMS = tmpTime;
         transCommit();
         now = new java.util.Date();
-        log.info("End District Load @  " + now);
+        System.out.println("End District Load @  " + now);
 
-      } catch(SQLException se) {
-        log.info(se.getMessage());
+      }
+      catch(SQLException se) {
+        System.out.println(se.getMessage());
         transRollback();
-      } catch(Exception e) {
+      }
+      catch(Exception e) {
         e.printStackTrace();
         transRollback();
       }
@@ -710,13 +708,13 @@ static void initJDBC() {
         if (outputFiles == true)
         {
             out = new PrintWriter(new FileOutputStream(fileLocation + "customer.csv"));
-            log.info("Writing Customer file to: " + fileLocation + "customer.csv");
+            System.out.println("Writing Customer file to: " + fileLocation + "customer.csv");
             outHist = new PrintWriter(new FileOutputStream(fileLocation + "cust-hist.csv"));
-            log.info("Writing Customer History file to: " + fileLocation + "cust-hist.csv");
+            System.out.println("Writing Customer History file to: " + fileLocation + "cust-hist.csv");
         }
 
         t = (whseKount * distWhseKount * custDistKount * 2);
-        log.info("Start Cust-Hist Load for " + t + " Cust-Hists @ " + now + " ...");
+        System.out.println("Start Cust-Hist Load for " + t + " Cust-Hists @ " + now + " ...");
 
         for (int w=1; w <= whseKount; w++) {
 
@@ -734,11 +732,12 @@ static void initJDBC() {
               customer.c_discount =
                 (float)(jTPCCUtil.randomNumber(1,5000,gen) / 10000.0);
 
-              if (jTPCCUtil.randomNumber(1,100,gen) <= 10) {
+              /*if (jTPCCUtil.randomNumber(1,100,gen) <= 10) {
                 customer.c_credit =  "BC";   // 10% Bad Credit
               } else {
                 customer.c_credit =  "GC";   // 90% Good Credit
-              }
+              }*/
+              customer.c_credit =  "GC";  
               customer.c_last =  jTPCCUtil.getLastName(gen);
               customer.c_first =  jTPCCUtil.randomStr(jTPCCUtil.randomNumber(8,16,gen));
               customer.c_credit_lim =  50000;
@@ -815,7 +814,7 @@ static void initJDBC() {
               if (( k % configCommitCount) == 0) {
                 long tmpTime = new java.util.Date().getTime();
                 String etStr = "  Elasped Time(ms): " + ((tmpTime - lastTimeMS)/1000.000) + "                    ";
-                log.info(etStr.substring(0, 30) + "  Writing record " + k + " of " + t);
+                System.out.println(etStr.substring(0, 30) + "  Writing record " + k + " of " + t);
                 lastTimeMS = tmpTime;
 
                 custPrepStmt.executeBatch();
@@ -861,7 +860,7 @@ static void initJDBC() {
               if (( k % configCommitCount) == 0) {
                 long tmpTime = new java.util.Date().getTime();
                 String etStr = "  Elasped Time(ms): " + ((tmpTime - lastTimeMS)/1000.000) + "                    ";
-                log.info(etStr.substring(0, 30) + "  Writing record " + k + " of " + t);
+                System.out.println(etStr.substring(0, 30) + "  Writing record " + k + " of " + t);
                 lastTimeMS = tmpTime;
 
 		        }
@@ -875,9 +874,10 @@ static void initJDBC() {
 
         long tmpTime = new java.util.Date().getTime();
         String etStr = "  Elasped Time(ms): " + ((tmpTime - lastTimeMS)/1000.000) + "                    ";
-        log.info(etStr.substring(0, 30) + "  Writing record " + k + " of " + t);
+        System.out.println(etStr.substring(0, 30) + "  Writing record " + k + " of " + t);
         lastTimeMS = tmpTime;
         if (outputFiles == true) {
+          out.close();
           outHist.close();
 	} else {
           custPrepStmt.executeBatch();
@@ -886,18 +886,20 @@ static void initJDBC() {
         }
 
         now = new java.util.Date();
-        log.info("End Cust-Hist Data Load @  " + now);
+        System.out.println("End Cust-Hist Data Load @  " + now);
 
       } catch(SQLException se) {
-        log.info(se.getMessage());
+        System.out.println(se.getMessage());
         transRollback();
         if (outputFiles == true) {
+          out.close();
           outHist.close();
 	}
       } catch(Exception e) {
         e.printStackTrace();
         transRollback();
         if (outputFiles == true) {
+          out.close();
           outHist.close();
 	}
       }
@@ -912,6 +914,7 @@ static void initJDBC() {
 
       int k     = 0;
       int t     = 0;
+      PrintWriter outO = null;
       PrintWriter outLine     = null;
       PrintWriter outNewOrder = null;
 
@@ -919,12 +922,12 @@ static void initJDBC() {
 
         if (outputFiles == true)
         {
-            out = new PrintWriter(new FileOutputStream(fileLocation + "order.csv"));
-            log.info("Writing Order file to: " + fileLocation + "order.csv");
+            outO = new PrintWriter(new FileOutputStream(fileLocation + "order.csv"));
+            System.out.println("Writing Order file to: " + fileLocation + "order.csv");
             outLine = new PrintWriter(new FileOutputStream(fileLocation + "order-line.csv"));
-            log.info("Writing OrderLine file to: " + fileLocation + "order-line.csv");
+            System.out.println("Writing OrderLine file to: " + fileLocation + "order-line.csv");
             outNewOrder = new PrintWriter(new FileOutputStream(fileLocation + "new-order.csv"));
-            log.info("Writing NewOrder file to: " + fileLocation + "new-order.csv");
+            System.out.println("Writing NewOrder file to: " + fileLocation + "new-order.csv");
         }
 
         now = new java.util.Date();
@@ -935,9 +938,9 @@ static void initJDBC() {
 
         t = (whseKount * distWhseKount * custDistKount);
         t = (t * 11) + (t / 3);
-        log.info("whse=" + whseKount +", dist=" + distWhseKount +
+        System.out.println("whse=" + whseKount +", dist=" + distWhseKount +
            ", cust=" + custDistKount);
-        log.info("Start Order-Line-New Load for approx " +
+        System.out.println("Start Order-Line-New Load for approx " +
            t  + " rows @ " + now + " ...");
 
         for (int w=1; w <= whseKount; w++) {
@@ -970,7 +973,7 @@ static void initJDBC() {
                 str = str + oorder.o_all_local + ",";
                 Timestamp entry_d = new java.sql.Timestamp(oorder.o_entry_d);
                 str = str + entry_d;
-                out.println(str);
+                outO.println(str);
               }
 
               // 900 rows in the NEW-ORDER table corresponding to the last
@@ -1042,7 +1045,7 @@ static void initJDBC() {
                 if (( k % configCommitCount) == 0) {
                   long tmpTime = new java.util.Date().getTime();
                   String etStr = "  Elasped Time(ms): " + ((tmpTime - lastTimeMS)/1000.000) + "                    ";
-                  log.info(etStr.substring(0, 30) + "  Writing record " + k + " of " + t);
+                  System.out.println(etStr.substring(0, 30) + "  Writing record " + k + " of " + t);
                   lastTimeMS = tmpTime;
                   if (outputFiles == false)
                   {
@@ -1053,7 +1056,7 @@ static void initJDBC() {
                     nworPrepStmt.clearBatch();
                     orlnPrepStmt.clearBatch();
                     transCommit();
-				  }
+				  } 
                 }
 
               } // end for [l]
@@ -1065,25 +1068,38 @@ static void initJDBC() {
         } // end for [w]
 
 
-        log.info("  Writing final records " + k + " of " + t);
-        if (outputFiles == false)
+        System.out.println("  Writing final records " + k + " of " + t);
+
+        if (outputFiles == true)
         {
-          ordrPrepStmt.executeBatch();
-          nworPrepStmt.executeBatch();
-          orlnPrepStmt.executeBatch();
-	    } else {
+            outO.close();
+            outLine.close();
+            outNewOrder.close();
+        } else {
+                ordrPrepStmt.executeBatch();
+                nworPrepStmt.executeBatch();
+                orlnPrepStmt.executeBatch();
+                transCommit();
+		}
+        now = new java.util.Date();
+        System.out.println("End Orders Load @  " + now);
+
+      }
+      catch(SQLException se) {
+      System.out.println(se.getMessage());
+      transRollback();
+      if (outputFiles == true) {
+          outO.close();
           outLine.close();
           outNewOrder.close();
-		}
-        transCommit();
-        now = new java.util.Date();
-        log.info("End Orders Load @  " + now);
-
-      } catch(Exception e) {
+      }
+      }
+      catch(Exception e) {
         e.printStackTrace();
         transRollback();
         if (outputFiles == true)
         {
+          outO.close();
           outLine.close();
           outNewOrder.close();
 	    }
