@@ -10,7 +10,7 @@ import java.text.*;
 
 public interface jTPCCConfig
 {
-    public final static String JTPCCVERSION = "2.3";
+    public final static String JTPCCVERSION = "2.3.2";
 
     public final static boolean OUTPUT_MESSAGES = true;
     public final static boolean TERMINAL_MESSAGES = true;
