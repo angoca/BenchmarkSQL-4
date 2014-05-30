@@ -1,9 +1,14 @@
 *********************************************************************
 Change Log:
 
+Version 4.0.8 2013-08-01 cadym
+   - Changed default user from postgres to benchmarksql
+   - Added id column as primary key to history table
+   - Renamed schema to benchmarksql
+
 Version 4.0.6 2013-07-19 cadym
    - Changed log4j format to be more readable
-   - Created the "benchmarksql" schema to contain all tables 
+   - Created the "benchmark" schema to contain all tables 
 
 Version 4.0.5 2013-07-11 cadym
    - Incorporate new PostgreSQL JDBC4 version 1003 driver
@@ -79,6 +84,10 @@ files are provided as follows:
   props.pg  : for PostgreSQL/EnterpriseDB
   props.db2 : for DB2 LUW
   props.ora : for Oracle
+
+0. As the user postgres, create the benchmarksql user with correct permissions.
+	postgres=# CREATE USER benchmarksql WITH PASSWORD 'password';
+	postgres=# GRANT ALL PRIVILEGES ON DATABASE postgres TO benchmarksql;
 
 1. Go to the 'run' directory, edit the appropriate "props.???" 
    file to point to the database instance you'd like to test.   
