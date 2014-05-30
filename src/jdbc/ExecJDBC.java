@@ -2,7 +2,7 @@
  * ExecJDBC - Command line program to process SQL DDL statements, from   
  *             a text input file, to any JDBC Data Source
  *
- * Copyright (C) 2004-2006, Denis Lussier
+ * Copyright (C) 2004-2013, Denis Lussier
  *
  */
 
@@ -93,7 +93,6 @@ public class ExecJDBC {
     } finally {
       try {
         if (conn !=null)
-           conn.rollback();
            conn.close();
       } catch(SQLException se) {
         se.printStackTrace();

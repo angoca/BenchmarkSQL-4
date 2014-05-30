@@ -2,7 +2,7 @@
  * jTPCC - Open Source Java implementation of a TPC-C like benchmark
  *
  * Copyright (C) 2003, Raul Barbosa
- * Copyright (C) 2004-2006, Denis Lussier
+ * Copyright (C) 2004-2013, Denis Lussier
  *
  */
  
@@ -250,7 +250,7 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
            "      BenchmarkSQL v" + JTPCCVERSION + " (using JDBC Prepared Statements)\n" +
            "+-------------------------------------------------------------+\n" +
            " (c) 2003, Raul Barbosa (SourceForge.Net 'jTPCC' project)\n" +
-           " (c) 2004-2006, Denis Lussier\n" +
+           " (c) 2004-2013, Denis Lussier\n" +
            "+-------------------------------------------------------------+\n\n");
         jPanelControl.add(jOutputAreaControl, BorderLayout.CENTER);
         jLabelInformation = new JLabel("", JLabel.CENTER);
