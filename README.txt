@@ -1,9 +1,13 @@
 *********************************************************************
 Change Log:
 
+Version 3.0.9 2013-03-21 denisl
+   - Fix runLoader.sh to work with new log4j
+
 Version 3.0.8 2013-03-20 denisl
    - Config log4j for rotating log files once per minute
-   - Default flat file location to '/tmp/csv/'
+   - Default flat file location to '/tmp/csv/' in
+     table copies script
 
 
 Version 3.0.6 2013-02-05 denisl
@@ -56,10 +60,9 @@ files are provided as follows:
 
 
   A.) Approximately half a million rows (per Warehouse) will be loaded 
-      across 9 tables.  The default number of Warehouses is 10.  
-      This totals approx 1 GB of starting data.
+      across 9 tables.  
 
-        $ ./runLoader.sh props.pg numWarehouses 10
+        $ ./runLoader.sh props.pg numWarehouses 1
 
       NOTE: You should run the sqlTableTruncates scripts if your tables
             are not already empty.
@@ -69,7 +72,7 @@ files are provided as follows:
       bulk loaded into the database as many times as required by your 
       testing.
 
-      $ ./runLoader.sh props.pg numWarehouses 10 fileLocation ./csv/   
+      $ ./runLoader.sh props.pg numWarehouses 1 fileLocation /tmp/csv/   
         
       These CSV files can be bulk loaded as follows:
         $  ./runSQL.sh props.pg sqlTableCopies

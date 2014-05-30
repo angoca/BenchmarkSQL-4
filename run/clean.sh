@@ -1,2 +1,1 @@
-rm -v csv/*
-rm -v logs/*
+rm -rf log
