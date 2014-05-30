@@ -1,7 +1,7 @@
 driver=com.ibm.db2.jcc.DB2Driver
-conn=jdbc:db2://localhost:50001/bmarkdb
+conn=jdbc:db2://localhost:50000/bmarkdb
 user=db2inst1
-password=xxxxxxxx
+password=db2admin
 
 
 warehouses=1
