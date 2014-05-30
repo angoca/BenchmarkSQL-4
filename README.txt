@@ -1,25 +1,38 @@
 *********************************************************************
 Change Log:
 
-Version 4.0.2  2013-06-06  denis & cady
-   - removed Swing & AWT GUI so that this program is runnable from the command line
-   - remove log4j usage from runSQL & runLoader (only used now for the actual running of the Benchmark)
+Version 4.0.3 2013-06-17  cadym
+   - Status line report dynamically shown on terminal
+   - fix lookup by name in PaymentStatus and Delivery Transactions 
+     (in order to be more compatible with the TPC-C spec)
+   - rationalized the variable naming in the input parameter files
+     (now that the GUI is gone, variable names still make sense)
+   - Default log4j settings only writes to file (not terminal)
+
+
+Version 4.0.2  2013-06-06   lussman & cadym
+   - removed Swing & AWT GUI so that this program is runnable from
+     the command line
+   - remove log4j usage from runSQL & runLoader (only used now for 
+     the actual running of the Benchmark)
    - fix truncation problem with customer.csv file
-   - comment out "BadCredit" business logic that was not working and throwing stack traces
+   - comment out "BadCredit" business logic that was not working 
+     and throwing stack traces
    - fix log4j messages to always show the terminal name
    - remove bogus log4j messages
 
-Version 3.0.9 2013-03-21 denisl
+
+Version 3.0.9 2013-03-21  lussman
    - Fix runLoader.sh to work with new log4j
 
 
-Version 3.0.8 2013-03-20 denisl
+Version 3.0.8 2013-03-20  lussman
    - Config log4j for rotating log files once per minute
    - Default flat file location to '/tmp/csv/' in
      table copies script
 
 
-Version 3.0.6 2013-02-05 denisl
+Version 3.0.6 2013-02-05  lussman
    - Drop incomplete & untested Windoze '.bat' scripts
    - Standardize logging with log4j
    - Improve Logging with meaningful DEBUG and INFO levels
@@ -28,10 +41,10 @@ Version 3.0.6 2013-02-05 denisl
    - Groudwork laid to eliminate the GUI
    - Default GUI console to PostgreSQL and 10 Warehouses
 
-Version 2.3.5  2013-01-29 denisl
+Version 2.3.5  2013-01-29  lussman
    - Cleanup the formatting & content of README.txt
 
-Version 2.3.4  2013-01-29 denisl
+Version 2.3.4  2013-01-29  lussman
    - Default build is now with JDK 1.6 and JDBC 4 Postgres 9.2 driver
    - Remove outdated JDBC 3 drivers (for JDK 1.5).  You can run as 
      before by a JDBC4 driver from any supported vendor.

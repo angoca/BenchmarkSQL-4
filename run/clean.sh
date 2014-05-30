@@ -1,1 +1,7 @@
-rm -rf log
+rm -rf log/
+
+mkdir log
+
+mkdir log/archive
+
+

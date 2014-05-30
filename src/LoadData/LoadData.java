@@ -732,12 +732,13 @@ static void initJDBC() {
               customer.c_discount =
                 (float)(jTPCCUtil.randomNumber(1,5000,gen) / 10000.0);
 
-              /*if (jTPCCUtil.randomNumber(1,100,gen) <= 10) {
+              if (jTPCCUtil.randomNumber(1,100,gen) <= 90) {
                 customer.c_credit =  "BC";   // 10% Bad Credit
               } else {
                 customer.c_credit =  "GC";   // 90% Good Credit
-              }*/
-              customer.c_credit =  "GC";  
+              }
+              //customer.c_credit =  "GC";
+                
               customer.c_last =  jTPCCUtil.getLastName(gen);
               customer.c_first =  jTPCCUtil.randomStr(jTPCCUtil.randomNumber(8,16,gen));
               customer.c_credit_lim =  50000;

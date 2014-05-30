@@ -33,6 +33,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
     private int result = 0;
     private boolean stopRunningSignal = false;
 
+    private PreparedStatement getNewName = null;
     //NewOrder Txn
       private PreparedStatement stmtGetCustWhse = null;
       private PreparedStatement stmtGetDist = null;
@@ -239,8 +240,8 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                 }
 
                 // we need to cause 1% of the new orders to be rolled back.
-                //if(jTPCCUtil.randomNumber(1, 100, gen) == 1)
-                //    itemIDs[numItems-1] = -12345;
+                if(jTPCCUtil.randomNumber(1, 100, gen) == 1)
+                    itemIDs[numItems-1] = -12345;
 
                 terminalMessage("");
                 terminalMessage("Starting txn:" + terminalName + ":" +
@@ -270,21 +271,29 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                     while(customerWarehouseID == terminalWarehouseID && numWarehouses > 1);
                 }
 
-                long y = jTPCCUtil.randomNumber(1, 100, gen);
-                boolean customerByName;
+                int y = jTPCCUtil.randomNumber(1, 100, gen);
+                boolean customerByName=false;
                 String customerLastName = null;
                 customerID = -1;
-//                if(y <= 60)  {
+               if(y <= 60)
+                {
                     // 60% lookups by last name
-//                    customerByName = true;
-//                    customerLastName = jTPCCUtil.getLastName(gen);
-//                    printMessage("Last name lookup = " + customerLastName);
-//                } else {
-//                    // 40% lookups by customer ID
+                    customerByName = true;
+                    customerLastName = jTPCCUtil.getLastName(gen);
+                    printMessage("Last name lookup = " + customerLastName);
+                }
+                else
+                {
+                    // 40% lookups by customer ID
                     customerByName = false;
                     customerID = jTPCCUtil.getCustomerID(gen);
-//                }
+                }
+                
+                customerByName = false;
+                customerID = jTPCCUtil.getCustomerID(gen);
 
+                
+                            
                 float paymentAmount = (float)(jTPCCUtil.randomNumber(100, 500000, gen)/100.0);
 
                 terminalMessage("");
@@ -306,18 +315,15 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                 districtID = jTPCCUtil.randomNumber(1, 10, gen);
 
                 y = jTPCCUtil.randomNumber(1, 100, gen);
+                customerByName=false;
                 customerLastName = null;
                 customerID = -1;
-                if(y <= 60)
-                {
-                    customerByName = true;
-                    customerLastName = jTPCCUtil.getLastName(gen);
-                }
-                else
-                {
-                    customerByName = false;
-                    customerID = jTPCCUtil.getCustomerID(gen);
-                }
+
+                
+                customerID = jTPCCUtil.getCustomerID(gen);
+                customerByName = false;
+                
+                
 
                 terminalMessage("");
                 terminalMessage("Starting transaction #" + transactionCount + " (Order-Status)...");
@@ -592,9 +598,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                 if (ordStatCountCust == null) {
                   ordStatCountCust = conn.prepareStatement(
                     "SELECT count(*) AS namecnt FROM customer" +
-                    " WHERE c_last = ?" +
-                    " AND c_d_id = ?" +
-                    " AND c_w_id = ?");
+                    " WHERE c_last = ? AND c_d_id = ? AND c_w_id = ?");
                 }
 
                 ordStatCountCust.setString(1, c_last);
@@ -624,10 +628,14 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                 ordStatGetCust.setString(1, c_last);
                 ordStatGetCust.setInt(2, d_id);
                 ordStatGetCust.setInt(3, w_id);
+                String customerLastName;
 
                 rs = ordStatGetCust.executeQuery();
                 if (!rs.next()) {
-                  log.error("ordStatGetCust() not found! C_LAST=" + c_last + " C_D_ID=" + d_id + " C_W_ID=" + w_id);
+                    error("Customer with these conditions does not exist");
+                    customerLastName = jTPCCUtil.getLastName(gen);
+                    printMessage("New last name lookup = " + customerLastName);
+                    orderStatusTransaction(w_id, d_id, c_id, c_last, c_by_name);
                 }
 
                 if(namecnt%2 == 1) namecnt++;
@@ -636,6 +644,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                 c_first = rs.getString("c_first");
                 c_middle = rs.getString("c_middle");
                 c_balance = rs.getFloat("c_balance");
+                ordStatCountCust = null;//////
                 rs.close();
                 rs = null;
             } else {
@@ -663,6 +672,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                 c_middle = rs.getString("c_middle");
                 c_balance = rs.getFloat("c_balance");
                 rs.close();
+                ordStatGetCustBal = null;
                 rs = null;
             }
 
@@ -945,7 +955,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                 ol_i_id = itemIDs[ol_number-1];
                 ol_quantity = orderQuantities[ol_number-1];
 
-                 if (item.i_id == -12345) {
+                 if ( ol_i_id == -12345) {
                   // an expected condition generated 1% of the time in the test data...
                   // we throw an illegal access exception and the transaction gets rolled back later on
                   throw new IllegalAccessException("Expected NEW-ORDER error condition excersing rollback functionality");
@@ -1348,8 +1358,9 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
             if(c_by_name) {
                 // payment is by customer name
                   if (payCountCust == null) {
+                      //"SELECT count(c_id)) AS namecnt FROM customer " +
                     payCountCust = conn.prepareStatement(
-                      "SELECT count(c_id) AS namecnt FROM customer " +
+                      "SELECT count(*) AS namecnt FROM customer " +
                       " WHERE c_last = ?  AND c_d_id = ? AND c_w_id = ?");
                   }
 
@@ -1359,7 +1370,10 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
 
                   rs = payCountCust.executeQuery();
                   if (!rs.next()) {
-                    log.error("payCountCust() not found! C_LAST=" + c_last + " C_D_ID=" + c_d_id + " C_W_ID=" + c_w_id);
+                      error("Customer with these conditions does not exist");
+                      String customernewLastName = jTPCCUtil.getLastName(gen);
+                      printMessage("New last name lookup = " + customernewLastName);
+                      paymentTransaction(w_id, c_w_id, h_amount, d_id, c_d_id, c_id, customernewLastName, c_by_name);
                   }
 
                   namecnt = rs.getInt("namecnt");
@@ -1400,6 +1414,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                 c_balance = rs.getFloat("c_balance");
                 c_since = rs.getDate("c_since");
                 rs.close();
+                payCursorCustByName = null;
                 rs = null;
             } else {
               // payment is by customer ID
@@ -1440,11 +1455,8 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
 
             c_balance += h_amount;
 
-            log.info("c_credit = " + c_credit);            
-
-          /*
             if(c_credit.equals("BC")) {  // bad credit
-
+                
                 if (payGetCustCdata == null) {
                   payGetCustCdata = conn.prepareStatement(
                     "SELECT c_data FROM customer WHERE c_w_id = ? AND c_d_id = ? AND c_id = ?");
@@ -1489,7 +1501,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                 }
 
             } else { // GoodCredit
-       */
+    
 
                 if (payUpdateCustBal == null) {
                   payUpdateCustBal = conn.prepareStatement(
@@ -1506,7 +1518,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                   log.error("payUpdateCustBal() not found! C_ID=" + c_id + " C_W_ID=" + c_w_id + " C_D_ID=" + c_d_id);
                 }
 
-            // }
+             }
 
 
             if(w_name.length() > 10) w_name = w_name.substring(0, 10);
@@ -1530,7 +1542,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
             payInsertHist.executeUpdate();
 
             transCommit();
-            log.info ("Succesful INSERT into history table");
+            printMessage("Succesful INSERT into history table");
 
             StringBuffer terminalMessage = new StringBuffer();
             terminalMessage.append("\n+---------------------------- PAYMENT ----------------------------+");
@@ -1596,7 +1608,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
             terminalMessage.append(c_credit_lim);
             terminalMessage.append("\n New Cust-Balance: ");
             terminalMessage.append(c_balance);
-/*
+
             if(c_credit.equals("BC"))
             {
                 if(c_data.length() > 50)
@@ -1610,8 +1622,8 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                 {
                     terminalMessage.append("\n\n Cust-Data: " + c_data);
                 }
-            }A
- */
+            }
+            
             terminalMessage.append("\n+-----------------------------------------------------------------+\n\n");
             terminalMessage(terminalMessage.toString());
         }
@@ -1634,6 +1646,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
 
     private void error(String type) {
       log.error("TERMINAL=" + terminalName + "  TYPE=" + type + "  COUNT=" + transactionCount);
+        System.out.println("TERMINAL=" + terminalName + "  TYPE=" + type + "  COUNT=" + transactionCount);
     }
 
     private void logException(Exception e)
@@ -1646,11 +1659,12 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
     }
 
     private void terminalMessage(String message) {
-      log.info(terminalName + " " + message);
+      log.trace(terminalName + " " + message);
     }
 
     private void printMessage(String message) {
-      log.info(terminalName + " " + message);
+      log.trace(terminalName + " " + message);
+      
     }
 
 
