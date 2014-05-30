@@ -1,28 +1,32 @@
 *********************************************************************
 Change Log:
 
+Version 4.0.5 2013-07-11 cadym
+   - Incorporate new PostgreSQL JDBC4 version 1003 driver
+
 Version 4.0.4 2013-07-02 cadym
    - Transaction rate pacing mechanism 
+   - Correct error with loading customer table from csv file 
 
 Version 4.0.3 2013-06-17  cadym
    - Status line report dynamically shown on terminal
-   - fix lookup by name in PaymentStatus and Delivery Transactions 
+   - Fix lookup by name in PaymentStatus and Delivery Transactions 
      (in order to be more compatible with the TPC-C spec)
-   - rationalized the variable naming in the input parameter files
+   - Rationalized the variable naming in the input parameter files
      (now that the GUI is gone, variable names still make sense)
    - Default log4j settings only writes to file (not terminal)
 
 
 Version 4.0.2  2013-06-06   lussman & cadym
-   - removed Swing & AWT GUI so that this program is runnable from
+   - Removed Swing & AWT GUI so that this program is runnable from
      the command line
-   - remove log4j usage from runSQL & runLoader (only used now for 
+   - Remove log4j usage from runSQL & runLoader (only used now for 
      the actual running of the Benchmark)
-   - fix truncation problem with customer.csv file
-   - comment out "BadCredit" business logic that was not working 
+   - Fix truncation problem with customer.csv file
+   - Comment out "BadCredit" business logic that was not working 
      and throwing stack traces
-   - fix log4j messages to always show the terminal name
-   - remove bogus log4j messages
+   - Fix log4j messages to always show the terminal name
+   - Remove bogus log4j messages
 
 
 Version 3.0.9 2013-03-21  lussman

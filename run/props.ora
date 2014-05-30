@@ -11,8 +11,7 @@ runTxnsPerTerminal=10
 //To run for specified minutes- runTxnsPerTerminal must equal zero
 runMins=0
 //Number of total transactions per minute
-limitTxnsPerMin=1000
-
+limitTxnsPerMin=300
 
 //The following five values must add up to 100
 newOrderWeight=45

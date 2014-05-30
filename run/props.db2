@@ -13,7 +13,6 @@ runMins=0
 //Number of total transactions per minute
 limitTxnsPerMin=300
 
-
 //The following five values must add up to 100
 newOrderWeight=45
 paymentWeight=43

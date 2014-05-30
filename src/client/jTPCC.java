@@ -494,7 +494,7 @@ public class jTPCC implements jTPCCConfig
 
             System.out.print(informativeText);
             for (int count = 0; count < 1+informativeText.length(); count++) {
-              System.out.print("\b");
+                System.out.print("\b");        
         }
         informativeText.delete(0,informativeText.length());
 
