@@ -2,8 +2,7 @@
  * jTPCC - Open Source Java implementation of a TPC-C like benchmark
  *
  * Copyright (C) 2003, Raul Barbosa
- * Copyright (C) 2004-2013, Denis Lussier
- * Copyright (C) 2013, Cady Motyka
+ * Copyright (C) 2004-2014, Denis Lussier
  *
  */
 
@@ -68,8 +67,7 @@ public class jTPCC implements jTPCCConfig
         log.info("Term-00,      BenchmarkSQL v" + JTPCCVERSION);
         log.info("Term-00, +-------------------------------------------------------------+");
         log.info("Term-00,  (c) 2003, Raul Barbosa");
-        log.info("Term-00,  (c) 2004-2013, Denis Lussier");
-        log.info("Term-00,  (c) 2013, Cady Motyka");
+        log.info("Term-00,  (c) 2004-2014, Denis Lussier");
         log.info("Term-00, +-------------------------------------------------------------+");
         log.info("Term-00, ");
         String  iDriver             = getProp(ini,"driver");

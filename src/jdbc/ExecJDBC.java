@@ -2,7 +2,7 @@
  * ExecJDBC - Command line program to process SQL DDL statements, from   
  *             a text input file, to any JDBC Data Source
  *
- * Copyright (C) 2004-2013, Denis Lussier
+ * Copyright (C) 2004-2014, Denis Lussier
  *
  */
 
@@ -15,8 +15,6 @@ public class ExecJDBC {
 
   
   public static void main(String[] args) {
-
-    System.out.println("Starting BenchmarkSQL ExecJDBC");
 
     Connection conn = null;
     Statement stmt = null;
