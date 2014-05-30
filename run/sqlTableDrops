@@ -1,18 +1,18 @@
 
-drop table warehouse;
+drop table benchmark.warehouse;
 
-drop table item;
+drop table benchmark.item;
 
-drop table stock;
+drop table benchmark.stock;
 
-drop table district;
+drop table benchmark.district;
 
-drop table customer;
+drop table benchmark.customer;
 
-drop table oorder;
+drop table benchmark.oorder;
 
-drop table order_line;
+drop table benchmark.order_line;
 
-drop table history;
+drop table benchmark.history;
 
-drop table new_order;
+drop table benchmark.new_order;

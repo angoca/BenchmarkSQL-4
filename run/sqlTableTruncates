@@ -1,18 +1,18 @@
 
-truncate table warehouse;
+truncate table benchmark.warehouse;
 
-truncate table item;
+truncate table benchmark.item;
 
-truncate table stock;
+truncate table benchmark.stock;
 
-truncate table district;
+truncate table benchmark.district;
 
-truncate table customer;
+truncate table benchmark.customer;
 
-truncate table history;
+truncate table benchmark.history;
 
-truncate table oorder;
+truncate table benchmark.oorder;
 
-truncate table order_line;
+truncate table benchmark.order_line;
 
-truncate table new_order;
+truncate table benchmark.new_order;

@@ -395,7 +395,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
 
                     if (delivGetOrderId == null) {
                       delivGetOrderId = conn.prepareStatement(
-                        "SELECT no_o_id FROM new_order WHERE no_d_id = ?" +
+                        "SELECT no_o_id FROM benchmark.new_order WHERE no_d_id = ?" +
                         " AND no_w_id = ?" +
                         " ORDER BY no_o_id ASC");
                     }
@@ -419,7 +419,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
 
                       if (delivDeleteNewOrder == null) {
                         delivDeleteNewOrder = conn.prepareStatement(
-                          "DELETE FROM new_order" +
+                          "DELETE FROM benchmark.new_order" +
                           " WHERE no_d_id = ?" +
                           " AND no_w_id = ?" +
                           " AND no_o_id = ?");
@@ -444,7 +444,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                       if (delivGetCustId == null) {
                         delivGetCustId = conn.prepareStatement(
                           "SELECT o_c_id" +
-                          " FROM oorder" +
+                          " FROM benchmark.oorder" +
                           " WHERE o_id = ?" +
                           " AND o_d_id = ?" +
                           " AND o_w_id = ?");
@@ -466,7 +466,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
 
                       if (delivUpdateCarrierId == null) {
                         delivUpdateCarrierId = conn.prepareStatement(
-                          "UPDATE oorder SET o_carrier_id = ?" +
+                          "UPDATE benchmark.oorder SET o_carrier_id = ?" +
                           " WHERE o_id = ?" +
                           " AND o_d_id = ?" +
                           " AND o_w_id = ?");
@@ -485,7 +485,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
 
                       if (delivUpdateDeliveryDate == null) {
                         delivUpdateDeliveryDate = conn.prepareStatement(
-                          "UPDATE order_line SET ol_delivery_d = ?" +
+                          "UPDATE benchmark.order_line SET ol_delivery_d = ?" +
                           " WHERE ol_o_id = ?" +
                           " AND ol_d_id = ?" +
                           " AND ol_w_id = ?");
@@ -505,7 +505,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                       if (delivSumOrderAmount == null) {
                         delivSumOrderAmount = conn.prepareStatement(
                           "SELECT SUM(ol_amount) AS ol_total" +
-                          " FROM order_line" +
+                          " FROM benchmark.order_line" +
                           " WHERE ol_o_id = ?" +
                           " AND ol_d_id = ?" +
                           " AND ol_w_id = ?");
@@ -527,7 +527,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
 
                     if (delivUpdateCustBalDelivCnt == null) {
                       delivUpdateCustBalDelivCnt = conn.prepareStatement(
-                        "UPDATE customer SET c_balance = c_balance + ?" +
+                        "UPDATE benchmark.customer SET c_balance = c_balance + ?" +
                         ", c_delivery_cnt = c_delivery_cnt + 1" +
                         " WHERE c_id = ?" +
                         " AND c_d_id = ?" +
@@ -550,36 +550,29 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
             conn.commit();
 
             StringBuffer terminalMessage = new StringBuffer();
-            terminalMessage.append("\n+---------------------------- DELIVERY ---------------------------+\n");
-            terminalMessage.append(" Date: ");
-            terminalMessage.append(jTPCCUtil.getCurrentTime());
-            terminalMessage.append("\n\n Warehouse: ");
-            terminalMessage.append(w_id);
-            terminalMessage.append("\n Carrier:   ");
-            terminalMessage.append(o_carrier_id);
-            terminalMessage.append("\n\n Delivered Orders\n");
+            terminalMessage("+---------------------------- DELIVERY ---------------------------+");
+            terminalMessage(" Date: " + jTPCCUtil.getCurrentTime());
+            terminalMessage(" ");
+            terminalMessage(" Warehouse: " + w_id);
+            terminalMessage(" Carrier:   " + o_carrier_id);
+            terminalMessage(" ");
+            terminalMessage(" Delivered Orders");
+            terminalMessage(" ");
             for(int i = 1; i <= 10; i++)
             {
                 if(orderIDs[i-1] >= 0)
                 {
-                    terminalMessage.append("  District ");
-                    terminalMessage.append(i < 10 ? " " : "");
-                    terminalMessage.append(i);
-                    terminalMessage.append(": Order number ");
-                    terminalMessage.append(orderIDs[i-1]);
-                    terminalMessage.append(" was delivered.\n");
+                    terminalMessage("  District " + (i < 10 ? " " : "")  + i + ": Order number " + orderIDs[i-1] + " was delivered.");
                 }
                 else
                 {
-                    terminalMessage.append("  District ");
-                    terminalMessage.append(i < 10 ? " " : "");
-                    terminalMessage.append(i);
-                    terminalMessage.append(": No orders to be delivered.\n");
+                    terminalMessage("  District " + (i < 10 ? " " : "") + i + ": No orders to be delivered.");
+
                     skippedDeliveries++;
                 }
             }
-            terminalMessage.append("+-----------------------------------------------------------------+\n\n");
-            terminalMessage(terminalMessage.toString());
+            terminalMessage("+-----------------------------------------------------------------+");
+             
             transactionEnd = System.currentTimeMillis();
         }
         catch(Exception e)
@@ -617,7 +610,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
             {
                 if (ordStatCountCust == null) {
                   ordStatCountCust = conn.prepareStatement(
-                    "SELECT count(*) AS namecnt FROM customer" +
+                    "SELECT count(*) AS namecnt FROM benchmark.customer" +
                     " WHERE c_last = ? AND c_d_id = ? AND c_w_id = ?");
                 }
 
@@ -638,7 +631,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
 
                 if (ordStatGetCust == null) {
                   ordStatGetCust = conn.prepareStatement(
-                    "SELECT c_balance, c_first, c_middle, c_id FROM customer" +
+                    "SELECT c_balance, c_first, c_middle, c_id FROM benchmark.customer" +
                     " WHERE c_last = ?" +
                     " AND c_d_id = ?" +
                     " AND c_w_id = ?" +
@@ -672,7 +665,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                 if (ordStatGetCustBal == null) {
                   ordStatGetCustBal = conn.prepareStatement(
                     "SELECT c_balance, c_first, c_middle, c_last" +
-                    " FROM customer" +
+                    " FROM benchmark.customer" +
                     " WHERE c_id = ?" +
                     " AND c_d_id = ?" +
                     " AND c_w_id = ?");
@@ -700,7 +693,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
 
             if (ordStatGetNewestOrd == null) {
               ordStatGetNewestOrd = conn.prepareStatement(
-                "SELECT MAX(o_id) AS maxorderid FROM oorder" +
+                "SELECT MAX(o_id) AS maxorderid FROM benchmark.oorder" +
                 " WHERE o_w_id = ?" +
                 " AND o_d_id = ?" +
                 " AND o_c_id = ?");
@@ -721,7 +714,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
               if (ordStatGetOrder == null) {
                 ordStatGetOrder = conn.prepareStatement(
                   "SELECT o_carrier_id, o_entry_d" +
-                  " FROM oorder" +
+                  " FROM benchmark.oorder" +
                   " WHERE o_w_id = ?" +
                   " AND o_d_id = ?" +
                   " AND o_c_id = ?" +
@@ -748,7 +741,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
               ordStatGetOrderLines = conn.prepareStatement(
                 "SELECT ol_i_id, ol_supply_w_id, ol_quantity," +
                 " ol_amount, ol_delivery_d" +
-                " FROM order_line" +
+                " FROM benchmark.order_line" +
                 " WHERE ol_o_id = ?" +
                 " AND ol_d_id =?" +
                 " AND ol_w_id = ?");
@@ -782,56 +775,43 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
 
 
             StringBuffer terminalMessage = new StringBuffer();
-            terminalMessage.append("\n");
-            terminalMessage.append("+-------------------------- ORDER-STATUS -------------------------+\n");
-            terminalMessage.append(" Date: ");
-            terminalMessage.append(jTPCCUtil.getCurrentTime());
-            terminalMessage.append("\n\n Warehouse: ");
-            terminalMessage.append(w_id);
-            terminalMessage.append("\n District:  ");
-            terminalMessage.append(d_id);
-            terminalMessage.append("\n\n Customer:  ");
-            terminalMessage.append(c_id);
-            terminalMessage.append("\n   Name:    ");
-            terminalMessage.append(c_first);
-            terminalMessage.append(" ");
-            terminalMessage.append(c_middle);
-            terminalMessage.append(" ");
-            terminalMessage.append(c_last);
-            terminalMessage.append("\n   Balance: ");
-            terminalMessage.append(c_balance);
-            terminalMessage.append("\n\n");
+            terminalMessage("");
+            terminalMessage("+-------------------------- ORDER-STATUS -------------------------+");
+            terminalMessage(" Date: " + jTPCCUtil.getCurrentTime());
+            terminalMessage(" ");
+            terminalMessage(" Warehouse: " + w_id);
+            terminalMessage(" District:  " + d_id);
+            terminalMessage(" ");
+            terminalMessage(" Customer:  " + c_id);
+            terminalMessage("   Name:    " + c_first + " " + c_middle + " " + c_last);
+            terminalMessage("   Balance: " + c_balance);
+            terminalMessage("");
             if(o_id == -1)
             {
-                terminalMessage.append(" Customer has no orders placed.\n");
+                terminalMessage(" Customer has no orders placed.");
             }
             else
             {
-                terminalMessage.append(" Order-Number: ");
-                terminalMessage.append(o_id);
-                terminalMessage.append("\n    Entry-Date: ");
-                terminalMessage.append(entdate);
-                terminalMessage.append("\n    Carrier-Number: ");
-                terminalMessage.append(o_carrier_id);
-                terminalMessage.append("\n\n");
+                terminalMessage(" Order-Number: " + o_id);
+                terminalMessage("    Entry-Date: " + entdate);
+                terminalMessage("    Carrier-Number: " + o_carrier_id);
+                terminalMessage("");
                 if(orderLines.size() != 0)
                 {
-                    terminalMessage.append(" [Supply_W - Item_ID - Qty - Amount - Delivery-Date]\n");
+                    terminalMessage(" [Supply_W - Item_ID - Qty - Amount - Delivery-Date]");
                     Enumeration orderLinesEnum = orderLines.elements();
                     while(orderLinesEnum.hasMoreElements())
                     {
-                        terminalMessage.append(" ");
-                        terminalMessage.append((String)orderLinesEnum.nextElement());
-                        terminalMessage.append("\n");
+                        terminalMessage((String)orderLinesEnum.nextElement());
                     }
                 }
                 else
                 {
-                    terminalMessage(" This Order has no Order-Lines.\n");
+                    terminalMessage(" This Order has no Order-Lines.");
                 }
             }
-            terminalMessage.append("+-----------------------------------------------------------------+\n\n");
-            terminalMessage(terminalMessage.toString());
+            terminalMessage("+-----------------------------------------------------------------+");
+             
             transactionEnd = System.currentTimeMillis();
         }
         catch(Exception e)
@@ -874,7 +854,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
             if (stmtGetCustWhse == null) {
               stmtGetCustWhse = conn.prepareStatement(
                 "SELECT c_discount, c_last, c_credit, w_tax" +
-                "  FROM customer, warehouse" +
+                "  FROM benchmark.customer, benchmark.warehouse" +
                 " WHERE w_id = ? AND w_id = c_w_id" +
                   " AND c_d_id = ? AND c_id = ?");
             }
@@ -901,7 +881,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
 
                 if (stmtGetDist == null) {
                   stmtGetDist = conn.prepareStatement(
-                    "SELECT d_next_o_id, d_tax FROM district" +
+                    "SELECT d_next_o_id, d_tax FROM benchmark.district" +
                     " WHERE d_id = ? AND d_w_id = ? FOR UPDATE");
                 }
 
@@ -923,7 +903,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                 {
                     if (stmtInsertNewOrder == null) {
                       stmtInsertNewOrder = conn.prepareStatement(
-                        "INSERT INTO NEW_ORDER (no_o_id, no_d_id, no_w_id) " +
+                        "INSERT INTO benchmark.NEW_ORDER (no_o_id, no_d_id, no_w_id) " +
                         "VALUES ( ?, ?, ?)");
                     }
 
@@ -942,7 +922,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
 
             if (stmtUpdateDist == null) {
               stmtUpdateDist = conn.prepareStatement(
-                "UPDATE district SET d_next_o_id = d_next_o_id + 1 " +
+                "UPDATE benchmark.district SET d_next_o_id = d_next_o_id + 1 " +
                 " WHERE d_id = ? AND d_w_id = ?");
             }
 
@@ -956,7 +936,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
 
               if (stmtInsertOOrder == null) {
                 stmtInsertOOrder = conn.prepareStatement(
-                  "INSERT INTO OORDER " +
+                  "INSERT INTO benchmark.OORDER " +
                   " (o_id, o_d_id, o_w_id, o_c_id, o_entry_d, o_ol_cnt, o_all_local)" +
                   " VALUES (?, ?, ?, ?, ?, ?, ?)");
               }
@@ -984,7 +964,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
 
                   if (stmtGetItem == null) {
                     stmtGetItem = conn.prepareStatement(
-                      "SELECT i_price, i_name , i_data FROM item WHERE i_id = ?");
+                      "SELECT i_price, i_name , i_data FROM benchmark.item WHERE i_id = ?");
                   }
                   stmtGetItem.setInt(1, ol_i_id);
 
@@ -1006,7 +986,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                   stmtGetStock = conn.prepareStatement(
                       "SELECT s_quantity, s_data, s_dist_01, s_dist_02, s_dist_03, s_dist_04, s_dist_05, " +
                       "       s_dist_06, s_dist_07, s_dist_08, s_dist_09, s_dist_10" +
-                      " FROM stock WHERE s_i_id = ? AND s_w_id = ? FOR UPDATE");
+                      " FROM benchmark.stock WHERE s_i_id = ? AND s_w_id = ? FOR UPDATE");
                 }
 
                 stmtGetStock.setInt(1, ol_i_id);
@@ -1049,7 +1029,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
 
                 if (stmtUpdateStock == null) {
                   stmtUpdateStock = conn.prepareStatement(
-                    "UPDATE stock SET s_quantity = ? , s_ytd = s_ytd + ?, s_remote_cnt = s_remote_cnt + ? " +
+                    "UPDATE benchmark.stock SET s_quantity = ? , s_ytd = s_ytd + ?, s_remote_cnt = s_remote_cnt + ? " +
                     " WHERE s_i_id = ? AND s_w_id = ?");
                 }
                 stmtUpdateStock.setInt(1,s_quantity);
@@ -1084,7 +1064,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
 
                   if (stmtInsertOrderLine == null) {
                     stmtInsertOrderLine = conn.prepareStatement(
-                      "INSERT INTO order_line (ol_o_id, ol_d_id, ol_w_id, ol_number, ol_i_id, ol_supply_w_id," +
+                      "INSERT INTO benchmark.order_line (ol_o_id, ol_d_id, ol_w_id, ol_number, ol_i_id, ol_supply_w_id," +
                       "  ol_quantity, ol_amount, ol_dist_info) VALUES (?,?,?,?,?,?,?,?,?)");
                   }
                   stmtInsertOrderLine.setInt(1, o_id);
@@ -1109,55 +1089,31 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
             total_amount *= (1+w_tax+d_tax)*(1-c_discount);
 
             StringBuffer terminalMessage = new StringBuffer();
-            terminalMessage.append("\n+--------------------------- NEW-ORDER ---------------------------+\n");
-            terminalMessage.append(" Date: ");
-            terminalMessage.append(jTPCCUtil.getCurrentTime());
-            terminalMessage.append("\n\n Warehouse: ");
-            terminalMessage.append(w_id);
-            terminalMessage.append("\n   Tax:     ");
-            terminalMessage.append(w_tax);
-            terminalMessage.append("\n District:  ");
-            terminalMessage.append(d_id);
-            terminalMessage.append("\n   Tax:     ");
-            terminalMessage.append(d_tax);
-            terminalMessage.append("\n Order:     ");
-            terminalMessage.append(o_id);
-            terminalMessage.append("\n   Lines:   ");
-            terminalMessage.append(o_ol_cnt);
-            terminalMessage.append("\n\n Customer:  ");
-            terminalMessage.append(c_id);
-            terminalMessage.append("\n   Name:    ");
-            terminalMessage.append(c_last);
-            terminalMessage.append("\n   Credit:  ");
-            terminalMessage.append(c_credit);
-            terminalMessage.append("\n   %Disc:   ");
-            terminalMessage.append(c_discount);
-            terminalMessage.append("\n\n Order-Line List [Supp_W - Item_ID - Item Name - Qty - Stock - B/G - Price - Amount]\n");
+            terminalMessage("+--------------------------- NEW-ORDER ---------------------------+");
+            terminalMessage(" Date: "+ jTPCCUtil.getCurrentTime());
+            terminalMessage(" ");
+            terminalMessage(" Warehouse: " + w_id);
+            terminalMessage("   Tax:     " + w_tax);
+            terminalMessage(" District:  " + d_id);
+            terminalMessage("   Tax:     " + d_tax);
+            terminalMessage(" Order:     " + o_id);
+            terminalMessage("   Lines:   " + o_ol_cnt);
+            terminalMessage(" ");
+            terminalMessage(" Customer:  " + c_id);
+            terminalMessage("   Name:    " + c_last);
+            terminalMessage("   Credit:  " + c_credit);
+            terminalMessage("   %Disc:   " + c_discount);
+            terminalMessage(" ");
+            terminalMessage(" Order-Line List [Supp_W - Item_ID - Item Name - Qty - Stock - B/G - Price - Amount]");
             for(int i = 0; i < o_ol_cnt; i++)
             {
-                terminalMessage.append("                 [");
-                terminalMessage.append(supplierWarehouseIDs[i]);
-                terminalMessage.append(" - ");
-                terminalMessage.append(itemIDs[i]);
-                terminalMessage.append(" - ");
-                terminalMessage.append(itemNames[i]);
-                terminalMessage.append(" - ");
-                terminalMessage.append(orderQuantities[i]);
-                terminalMessage.append(" - ");
-                terminalMessage.append(stockQuantities[i]);
-                terminalMessage.append(" - ");
-                terminalMessage.append(brandGeneric[i]);
-                terminalMessage.append(" - ");
-                terminalMessage.append(jTPCCUtil.formattedDouble(itemPrices[i]));
-                terminalMessage.append(" - ");
-                terminalMessage.append(jTPCCUtil.formattedDouble(orderLineAmounts[i]));
-                terminalMessage.append("]\n");
+                terminalMessage("                 [" + supplierWarehouseIDs[i] + " - " + itemIDs[i] + " - " + itemNames[i] + " - " + orderQuantities[i] + " - " + stockQuantities[i] + " - " +  brandGeneric[i] + " - " + jTPCCUtil.formattedDouble(itemPrices[i]) + " - " + jTPCCUtil.formattedDouble(orderLineAmounts[i]) + "]");
             }
-            terminalMessage.append("\n\n Total Amount: ");
-            terminalMessage.append(total_amount);
-            terminalMessage.append("\n\n Execution Status: New order placed!\n");
-            terminalMessage.append("+-----------------------------------------------------------------+\n\n");
-            terminalMessage(terminalMessage.toString());
+            terminalMessage(" Total Amount: " + total_amount);
+            terminalMessage(" ");
+            terminalMessage(" Execution Status: New order placed!");
+            terminalMessage("+-----------------------------------------------------------------+");
+             
             transactionEnd = System.currentTimeMillis();
 
         } //// ugh :-), this is the end of the try block at the begining of this method /////////
@@ -1172,22 +1128,16 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
         } catch (Exception e) {
             if (e instanceof IllegalAccessException) {
                 StringBuffer terminalMessage = new StringBuffer();
-                terminalMessage.append("\n+---- NEW-ORDER Rollback Txn expected to happen for 1% of Txn's -----+");
-                terminalMessage.append("\n Warehouse: ");
-                terminalMessage.append(w_id);
-                terminalMessage.append("\n District:  ");
-                terminalMessage.append(d_id);
-                terminalMessage.append("\n Order:     ");
-                terminalMessage.append(o_id);
-                terminalMessage.append("\n\n Customer:  ");
-                terminalMessage.append(c_id);
-                terminalMessage.append("\n   Name:    ");
-                terminalMessage.append(c_last);
-                terminalMessage.append("\n   Credit:  ");
-                terminalMessage.append(c_credit);
-                terminalMessage.append("\n\n Execution Status: Item number is not valid!\n");
-                terminalMessage.append("+-----------------------------------------------------------------+\n\n");
-                terminalMessage(terminalMessage.toString());
+                terminalMessage("+---- NEW-ORDER Rollback Txn expected to happen for 1% of Txn's -----+");
+                terminalMessage(" Warehouse: " + w_id);
+                terminalMessage(" District:  " + d_id);
+                terminalMessage(" Order:     " + o_id);
+                terminalMessage(" Customer:  " + c_id);
+                terminalMessage("   Name:    " + c_last);
+                terminalMessage("   Credit:  " + c_credit);
+                terminalMessage(" Execution Status: Item number is not valid!");
+                terminalMessage("+-----------------------------------------------------------------+");
+                 
 
                 try {
                     terminalMessage("Performing ROLLBACK in NEW-ORDER Txn...");
@@ -1220,7 +1170,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
               if (stockGetDistOrderId == null) {
                 stockGetDistOrderId = conn.prepareStatement(
                   "SELECT d_next_o_id" +
-                  " FROM district" +
+                  " FROM benchmark.district" +
                   " WHERE d_w_id = ?" +
                   " AND d_id = ?");
               }
@@ -1242,7 +1192,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
               if (stockGetCountStock == null) {
                 stockGetCountStock = conn.prepareStatement(
                   "SELECT COUNT(DISTINCT (s_i_id)) AS stock_count" +
-                  " FROM order_line, stock" +
+                  " FROM benchmark.order_line, benchmark.stock" +
                   " WHERE ol_w_id = ?" +
                   " AND ol_d_id = ?" +
                   " AND ol_o_id < ?" +
@@ -1269,17 +1219,14 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
               rs = null;
 
             StringBuffer terminalMessage = new StringBuffer();
-            terminalMessage.append("\n+-------------------------- STOCK-LEVEL --------------------------+");
-            terminalMessage.append("\n Warehouse: ");
-            terminalMessage.append(w_id);
-            terminalMessage.append("\n District:  ");
-            terminalMessage.append(d_id);
-            terminalMessage.append("\n\n Stock Level Threshold: ");
-            terminalMessage.append(threshold);
-            terminalMessage.append("\n Low Stock Count:       ");
-            terminalMessage.append(stock_count);
-            terminalMessage.append("\n+-----------------------------------------------------------------+\n\n");
-            terminalMessage(terminalMessage.toString());
+            terminalMessage("+-------------------------- STOCK-LEVEL --------------------------+");
+            terminalMessage(" Warehouse: " + w_id);
+            terminalMessage(" District:  " + d_id);
+            terminalMessage(" ");
+            terminalMessage(" Stock Level Threshold: " + threshold);
+            terminalMessage(" Low Stock Count:       " + stock_count);
+            terminalMessage("+-----------------------------------------------------------------+");
+             
             transactionEnd = System.currentTimeMillis();
         }
         catch(Exception e)
@@ -1310,7 +1257,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
 
               if (payUpdateWhse == null) {
                 payUpdateWhse = conn.prepareStatement(
-                  "UPDATE warehouse SET w_ytd = w_ytd + ?  WHERE w_id = ? ");
+                  "UPDATE benchmark.warehouse SET w_ytd = w_ytd + ?  WHERE w_id = ? ");
               }
 
               payUpdateWhse.setFloat(1,h_amount);
@@ -1324,7 +1271,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
               if (payGetWhse == null) {
                 payGetWhse = conn.prepareStatement(
                   "SELECT w_street_1, w_street_2, w_city, w_state, w_zip, w_name" +
-                  " FROM warehouse WHERE w_id = ?");
+                  " FROM benchmark.warehouse WHERE w_id = ?");
               }
 
               payGetWhse.setInt(1, w_id);
@@ -1345,7 +1292,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
 
               if (payUpdateDist == null) {
                 payUpdateDist = conn.prepareStatement(
-                  "UPDATE district SET d_ytd = d_ytd + ? WHERE d_w_id = ? AND d_id = ?");
+                  "UPDATE benchmark.district SET d_ytd = d_ytd + ? WHERE d_w_id = ? AND d_id = ?");
               }
               payUpdateDist.setFloat(1, h_amount);
               payUpdateDist.setInt(2, w_id);
@@ -1358,7 +1305,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
               if (payGetDist == null) {
                 payGetDist = conn.prepareStatement(
                   "SELECT d_street_1, d_street_2, d_city, d_state, d_zip, d_name" +
-                  " FROM district WHERE d_w_id = ? AND d_id = ?");
+                  " FROM benchmark.district WHERE d_w_id = ? AND d_id = ?");
               }
 
               payGetDist.setInt(1, w_id);
@@ -1383,7 +1330,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                   if (payCountCust == null) {
                       //"SELECT count(c_id)) AS namecnt FROM customer " +
                     payCountCust = conn.prepareStatement(
-                      "SELECT count(*) AS namecnt FROM customer " +
+                      "SELECT count(*) AS namecnt FROM benchmark.customer " +
                       " WHERE c_last = ?  AND c_d_id = ? AND c_w_id = ?");
                   }
 
@@ -1407,7 +1354,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                   payCursorCustByName = conn.prepareStatement(
                     "SELECT c_first, c_middle, c_id, c_street_1, c_street_2, c_city, c_state, c_zip," +
                     "       c_phone, c_credit, c_credit_lim, c_discount, c_balance, c_since " +
-                    "  FROM customer WHERE c_w_id = ? AND c_d_id = ? AND c_last = ? " +
+                    "  FROM benchmark.customer WHERE c_w_id = ? AND c_d_id = ? AND c_last = ? " +
                     "ORDER BY c_w_id, c_d_id, c_last, c_first ");
                 }
 
@@ -1445,7 +1392,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                   payGetCust = conn.prepareStatement(
                     "SELECT c_first, c_middle, c_last, c_street_1, c_street_2, c_city, c_state, c_zip," +
                     "       c_phone, c_credit, c_credit_lim, c_discount, c_balance, c_since " +
-                    "  FROM customer WHERE c_w_id = ? AND c_d_id = ? AND c_id = ?");
+                    "  FROM benchmark.customer WHERE c_w_id = ? AND c_d_id = ? AND c_id = ?");
                 }
 
                 payGetCust.setInt(1, c_w_id);
@@ -1482,7 +1429,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                 
                 if (payGetCustCdata == null) {
                   payGetCustCdata = conn.prepareStatement(
-                    "SELECT c_data FROM customer WHERE c_w_id = ? AND c_d_id = ? AND c_id = ?");
+                    "SELECT c_data FROM benchmark.customer WHERE c_w_id = ? AND c_d_id = ? AND c_id = ?");
                 }
 
                 payGetCustCdata.setInt(1, c_w_id);
@@ -1508,7 +1455,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
 
                 if (payUpdateCustBalCdata == null) {
                   payUpdateCustBalCdata = conn.prepareStatement(
-                    "UPDATE customer SET c_balance = ?, c_data = ? " +
+                    "UPDATE benchmark.customer SET c_balance = ?, c_data = ? " +
                     " WHERE c_w_id = ? AND c_d_id = ? AND c_id = ?");
                 }
                 payUpdateCustBalCdata.setFloat(1, c_balance);
@@ -1528,7 +1475,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
 
                 if (payUpdateCustBal == null) {
                   payUpdateCustBal = conn.prepareStatement(
-                    "UPDATE customer SET c_balance = ? WHERE c_w_id = ? AND c_d_id = ? AND c_id = ?");
+                    "UPDATE benchmark.customer SET c_balance = ? WHERE c_w_id = ? AND c_d_id = ? AND c_id = ?");
                 }
 
                 payUpdateCustBal.setFloat(1, c_balance);
@@ -1551,7 +1498,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
 
             if (payInsertHist == null) {
               payInsertHist = conn.prepareStatement(
-                "INSERT INTO history (h_c_d_id, h_c_w_id, h_c_id, h_d_id, h_w_id, h_date, h_amount, h_data) " +
+                "INSERT INTO benchmark.history (h_c_d_id, h_c_w_id, h_c_id, h_d_id, h_w_id, h_date, h_amount, h_data) " +
                 " VALUES (?,?,?,?,?,?,?,?)");
             }
             payInsertHist.setInt(1, c_d_id);
@@ -1568,87 +1515,58 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
             printMessage("Succesful INSERT into history table");
 
             StringBuffer terminalMessage = new StringBuffer();
-            terminalMessage.append("\n+---------------------------- PAYMENT ----------------------------+");
-            terminalMessage.append("\n Date: " + jTPCCUtil.getCurrentTime());
-            terminalMessage.append("\n\n Warehouse: ");
-            terminalMessage.append(w_id);
-            terminalMessage.append("\n   Street:  ");
-            terminalMessage.append(w_street_1);
-            terminalMessage.append("\n   Street:  ");
-            terminalMessage.append(w_street_2);
-            terminalMessage.append("\n   City:    ");
-            terminalMessage.append(w_city);
-            terminalMessage.append("   State: ");
-            terminalMessage.append(w_state);
-            terminalMessage.append("  Zip: ");
-            terminalMessage.append(w_zip);
-            terminalMessage.append("\n\n District:  ");
-            terminalMessage.append(d_id);
-            terminalMessage.append("\n   Street:  ");
-            terminalMessage.append(d_street_1);
-            terminalMessage.append("\n   Street:  ");
-            terminalMessage.append(d_street_2);
-            terminalMessage.append("\n   City:    ");
-            terminalMessage.append(d_city);
-            terminalMessage.append("   State: ");
-            terminalMessage.append(d_state);
-            terminalMessage.append("  Zip: ");
-            terminalMessage.append(d_zip);
-            terminalMessage.append("\n\n Customer:  ");
-            terminalMessage.append(c_id);
-            terminalMessage.append("\n   Name:    ");
-            terminalMessage.append(c_first);
-            terminalMessage.append(" ");
-            terminalMessage.append(c_middle);
-            terminalMessage.append(" ");
-            terminalMessage.append(c_last);
-            terminalMessage.append("\n   Street:  ");
-            terminalMessage.append(c_street_1);
-            terminalMessage.append("\n   Street:  ");
-            terminalMessage.append(c_street_2);
-            terminalMessage.append("\n   City:    ");
-            terminalMessage.append(c_city);
-            terminalMessage.append("   State: ");
-            terminalMessage.append(c_state);
-            terminalMessage.append("  Zip: ");
-            terminalMessage.append(c_zip);
-            terminalMessage.append("\n   Since:   ");
+            terminalMessage("+---------------------------- PAYMENT ----------------------------+");
+            terminalMessage(" Date: " + jTPCCUtil.getCurrentTime());
+            terminalMessage(" ");
+            terminalMessage(" Warehouse: " + w_id);
+            terminalMessage("   Street:  " + w_street_1);
+            terminalMessage("   Street:  " + w_street_2);
+            terminalMessage("   City:    " + w_city + "   State: " + w_state + "  Zip: " + w_zip);
+            terminalMessage(" ");
+            terminalMessage(" District:  " + d_id);
+            terminalMessage("   Street:  " + d_street_1);
+            terminalMessage("   Street:  " + d_street_2);
+            terminalMessage("   City:    " + d_city + "   State: " + d_state + "  Zip: " + d_zip);
+            terminalMessage(" ");
+            terminalMessage(" Customer:  " + c_id);
+            terminalMessage("   Name:    " + c_first + " " + c_middle + " " + c_last);
+            terminalMessage("   Street:  " + c_street_1);
+            terminalMessage("   Street:  " + c_street_2);
+            terminalMessage("   City:    " + c_city + "   State: " + c_state + "  Zip: " + c_zip);
+
+            terminalMessage("");
             if (c_since != null)
             {
-              terminalMessage.append(c_since.toString());
+              terminalMessage("   Since:   " + c_since);
 		    } else {
-              terminalMessage.append("");
+              terminalMessage("   Since:   ");
 			}
-            terminalMessage.append("\n   Credit:  ");
-            terminalMessage.append(c_credit);
-            terminalMessage.append("\n   %Disc:   ");
-            terminalMessage.append(c_discount);
-            terminalMessage.append("\n   Phone:   ");
-            terminalMessage.append(c_phone);
-            terminalMessage.append("\n\n Amount Paid:      ");
-            terminalMessage.append(h_amount);
-            terminalMessage.append("\n Credit Limit:     ");
-            terminalMessage.append(c_credit_lim);
-            terminalMessage.append("\n New Cust-Balance: ");
-            terminalMessage.append(c_balance);
+            terminalMessage("   Credit:  " + c_credit);
+            terminalMessage("   %Disc:   " + c_discount);
+            terminalMessage("   Phone:   " + c_phone);
+            terminalMessage(" ");
+            terminalMessage(" Amount Paid:      " + h_amount);
+            terminalMessage(" Credit Limit:     " + c_credit_lim);
+            terminalMessage(" New Cust-Balance: " + c_balance);
 
             if(c_credit.equals("BC"))
             {
                 if(c_data.length() > 50)
                 {
-                    terminalMessage.append("\n\n Cust-Data: " + c_data.substring(0, 50));
+                    terminalMessage.append(" Cust-Data: " + c_data.substring(0, 50));
                     int data_chunks = c_data.length() > 200 ? 4 : c_data.length()/50;
                     for(int n = 1; n < data_chunks; n++)
-                        terminalMessage.append("\n            " + c_data.substring(n*50, (n+1)*50));
+                        terminalMessage.append("            " + c_data.substring(n*50, (n+1)*50));
+                        terminalMessage(terminalMessage.toString());
                 }
                 else
                 {
-                    terminalMessage.append("\n\n Cust-Data: " + c_data);
+                    terminalMessage(" Cust-Data: " + c_data);
                 }
             }
             
-            terminalMessage.append("\n+-----------------------------------------------------------------+\n\n");
-            terminalMessage(terminalMessage.toString());
+            terminalMessage("+-----------------------------------------------------------------+");
+             
         }
         catch(Exception e)
         {
@@ -1683,11 +1601,11 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
     }
 
     private void terminalMessage(String message) {
-      log.trace(terminalName + " " + message);
+      log.trace(terminalName + ", " + message);
     }
 
     private void printMessage(String message) {
-      log.trace(terminalName + " " + message);
+      log.trace(terminalName + ", " + message);
       
     }
 

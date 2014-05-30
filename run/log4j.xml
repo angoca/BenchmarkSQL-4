@@ -22,7 +22,7 @@
 </triggeringPolicy>
 
 <layout class="org.apache.log4j.PatternLayout">
-<param name="ConversionPattern" value="%5p\t[%d] [%t] \t%m%n"/>
+<param name="ConversionPattern" value="%5p\t[%d] \t%m%n"/>
 </layout>
 </appender>
 

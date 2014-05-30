@@ -47,7 +47,7 @@ public class jTPCC implements jTPCCConfig
     private String getProp (Properties p, String pName)
     {
         String prop =  p.getProperty(pName);
-        log.info(pName + "=" + prop);
+        log.info("Term-00, " + pName + "=" + prop);
         return(prop);
     }
 
@@ -59,47 +59,47 @@ public class jTPCC implements jTPCCConfig
         try {
           ini.load( new FileInputStream(System.getProperty("prop")));
         } catch (IOException e) {
-          errorMessage("could not load properties file");
+          errorMessage("Term-00, could not load properties file");
         }
         
                                                                                
-        log.info("");
-        log.info("+-------------------------------------------------------------+");
-        log.info("              BenchmarkSQL v" + JTPCCVERSION);
-        log.info("+-------------------------------------------------------------+");
-        log.info(" (c) 2003, Raul Barbosa");
-        log.info(" (c) 2004-2013, Denis Lussier");
-        log.info(" (c) 2013, Cady Motyka");
-        log.info("+-------------------------------------------------------------+");
-        log.info("");
+        log.info("Term-00, ");
+        log.info("Term-00, +-------------------------------------------------------------+");
+        log.info("Term-00,      BenchmarkSQL v" + JTPCCVERSION);
+        log.info("Term-00, +-------------------------------------------------------------+");
+        log.info("Term-00,  (c) 2003, Raul Barbosa");
+        log.info("Term-00,  (c) 2004-2013, Denis Lussier");
+        log.info("Term-00,  (c) 2013, Cady Motyka");
+        log.info("Term-00, +-------------------------------------------------------------+");
+        log.info("Term-00, ");
         String  iDriver             = getProp(ini,"driver");
         String  iConn               = getProp(ini,"conn");
         String  iUser               = getProp(ini,"user");
         String  iPassword           = ini.getProperty("password");
 
 
-        log.info("");
+        log.info("Term-00, ");
         String  iWarehouses         = getProp(ini,"warehouses");
         String  iTerminals          = getProp(ini,"terminals");
         
         String  iRunTxnsPerTerminal =  ini.getProperty("runTxnsPerTerminal");
         String iRunMins  =  ini.getProperty("runMins");
         if (Integer.parseInt(iRunTxnsPerTerminal) ==0 && Integer.parseInt(iRunMins)!=0){
-            log.info("runMins" + "=" + iRunMins);
+            log.info("Term-00, runMins" + "=" + iRunMins);
         }else if(Integer.parseInt(iRunTxnsPerTerminal) !=0 && Integer.parseInt(iRunMins)==0){
-            log.info("runTxnsPerTerminal" + "=" + iRunTxnsPerTerminal);
+            log.info("Term-00, runTxnsPerTerminal" + "=" + iRunTxnsPerTerminal);
         }else{
-            errorMessage("Must indicate either transactions per terminal or number of run minutes!");
+            errorMessage("Term-00, Must indicate either transactions per terminal or number of run minutes!");
         };
         String  limPerMin           = getProp(ini,"limitTxnsPerMin");
-        log.info("");
+        log.info("Term-00, ");
         String  iNewOrderWeight     = getProp(ini,"newOrderWeight");
         String  iPaymentWeight      = getProp(ini,"paymentWeight");
         String  iOrderStatusWeight  = getProp(ini,"orderStatusWeight");
         String  iDeliveryWeight     = getProp(ini,"deliveryWeight");
         String  iStockLevelWeight   = getProp(ini,"stockLevelWeight");
 
-        log.info("");
+        log.info("Term-00, ");
         
         if(Integer.parseInt(limPerMin) !=0){
             limPerMin_Terminal = Integer.parseInt(limPerMin)/Integer.parseInt(iTerminals);
@@ -297,12 +297,14 @@ public class jTPCC implements jTPCCConfig
                     signalTerminalsRequestEndSent = false;
                     
                     
-                    printMessage
-                    ("\nTransaction\tWeight\n% New-Order\t" + newOrderWeightValue +
-                     "\n% Payment\t" + paymentWeightValue + "\n% Order-Status\t" + orderStatusWeightValue +
-                     "\n% Delivery\t" + deliveryWeightValue + "\n% Stock-Level\t" + stockLevelWeightValue);
+                    printMessage("Transaction\tWeight");
+                    printMessage("% New-Order\t" + newOrderWeightValue);
+                    printMessage("% Payment\t" + paymentWeightValue);
+                    printMessage("% Order-Status\t" + orderStatusWeightValue);
+                    printMessage("% Delivery\t" + deliveryWeightValue);
+                    printMessage("% Stock-Level\t" + stockLevelWeightValue);
                     
-                    printMessage("\n\nTransaction Number\tTerminal\tType\tExecution Time (ms)\t\tComment");
+                    printMessage("Transaction Number\tTerminal\tType\tExecution Time (ms)\t\tComment");
                     
                     printMessage("Created " + numTerminals + " terminal(s) successfully!");
                     boolean dummvar = true;
@@ -333,7 +335,7 @@ public class jTPCC implements jTPCCConfig
                 
                 catch(Exception e1)
                 {
-                    errorMessage("\nThis session ended with errors!");
+                    errorMessage("This session ended with errors!");
                     printStreamReport.close();
                     fileOutputStream.close();
                     
@@ -421,23 +423,24 @@ public class jTPCC implements jTPCCConfig
         double tpmTotal = (6000000*transactionCount/(currTimeMillis - sessionStartTimestamp))/100.0;
         
         
-        log.info("");
-        log.info("");
-        log.info("Measured tpmC (NewOrders) = " + tpmC);
-        log.info("        Measured tpmTOTAL = " + tpmTotal);
-        log.info("        Session Start     = " + sessionStart );
-        log.info("        Session End       = " + sessionEnd);
-        log.info("        Transaction Count = " + (transactionCount-1));
+        log.info("Term-00, ");
+        log.info("Term-00, ");
+        log.info("Term-00, Measured tpmC (NewOrders) = " + tpmC);
+        log.info("Term-00, Measured tpmTOTAL = " + tpmTotal);
+        log.info("Term-00, Session Start     = " + sessionStart );
+        log.info("Term-00, Session End       = " + sessionEnd);
+        log.info("Term-00, Transaction Count = " + (transactionCount-1));
+        
     }
 
     private void printMessage(String message)
     {
-        log.trace("Term-00 " + message);
+        log.trace("Term-00, " + message);
     }
 
     private void errorMessage(String message)
     {
-        log.error("Term-00 "+ message);
+        log.error("Term-00, "+ message);
     }
 
     private void exit()
@@ -470,7 +473,7 @@ public class jTPCC implements jTPCCConfig
         {
             double tpmC = (6000000*fastNewOrderCounter/(currTimeMillis - sessionStartTimestamp))/100.0;
             double tpmTotal = (6000000*transactionCount/(currTimeMillis - sessionStartTimestamp))/100.0;
-            informativeText.append("Running Average tpmTOTAL: " + tpmTotal + "    ");
+            informativeText.append("Term-00, Running Average tpmTOTAL: " + tpmTotal + "    ");
         }
         
         if(currTimeMillis > sessionNextTimestamp)
