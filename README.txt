@@ -1,6 +1,11 @@
 *********************************************************************
 Change Log:
 
+Version 3.0.8 2013-03-20 denisl
+   - Config log4j for rotating log files once per minute
+   - Default flat file location to '/tmp/csv/'
+
+
 Version 3.0.6 2013-02-05 denisl
    - Drop incomplete & untested Windoze '.bat' scripts
    - Standardize logging with log4j

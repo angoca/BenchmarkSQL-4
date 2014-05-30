@@ -56,7 +56,7 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
     private double tpmC;
 
     public static void main(String args[]) {
-        PropertyConfigurator.configure("log4j.properties");
+        PropertyConfigurator.configure("log4j.xml");
         log.info("Starting BenchmarkSQL jTPCC");
         new jTPCC();
     }

@@ -19,7 +19,7 @@ public class ExecJDBC {
   
   public static void main(String[] args) {
 
-    PropertyConfigurator.configure("log4j.properties");
+    PropertyConfigurator.configure("log4j.xml");
     log.info("Starting BenchmarkSQL ExecJDBC");
 
     Connection conn = null;

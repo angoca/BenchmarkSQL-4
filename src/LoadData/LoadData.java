@@ -8,7 +8,7 @@
  *
  *                 numWarehouses=9999
  *
- *                 fileLocation=c:/temp/csv/
+ *                 fileLocation=/temp/csv/
  *
  *    "numWarehouses" defaults to "1" and when "fileLocation" is omitted the generated
  *    data is loaded into the database tables directly.
@@ -55,7 +55,7 @@ public class LoadData implements jTPCCConfig {
 
   public static void main(String[] args) {
 
-      PropertyConfigurator.configure("log4j.properties");
+      PropertyConfigurator.configure("log4j.xml");
       log.info("Starting BenchmarkSQL LoadData");
 
       log.info("----------------- Initialization -------------------");
