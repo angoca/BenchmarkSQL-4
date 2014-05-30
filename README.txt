@@ -1,6 +1,10 @@
 *********************************************************************
 Change Log:
 
+Version 4.0.0 2013-11-04 cadym
+   - Incorporate new PostgreSQL JDBC4 version 1100 driver
+   - benchmarksql 
+
 Version 4.0.8 2013-08-01 cadym
    - Changed default user from postgres to benchmarksql
    - Added id column as primary key to history table
@@ -37,16 +41,13 @@ Version 4.0.2  2013-06-06   lussman & cadym
    - Fix log4j messages to always show the terminal name
    - Remove bogus log4j messages
 
-
 Version 3.0.9 2013-03-21  lussman
    - Fix runLoader.sh to work with new log4j
-
 
 Version 3.0.8 2013-03-20  lussman
    - Config log4j for rotating log files once per minute
    - Default flat file location to '/tmp/csv/' in
      table copies script
-
 
 Version 3.0.6 2013-02-05  lussman
    - Drop incomplete & untested Windoze '.bat' scripts
@@ -76,7 +77,6 @@ Version 2.3.3  2010-11-19 sjm
 
 *********************************************************************
 
-
 Instructions for running
 ------------------------
 Use of JDK6 or JDK7 is required.   Sample JDBC Connection Property 
@@ -86,7 +86,7 @@ files are provided as follows:
   props.ora : for Oracle
 
 0. As the user postgres, create the benchmarksql user with correct permissions.
-	postgres=# CREATE USER benchmarksql WITH PASSWORD 'password';
+	postgres=# CREATE USER benchmarksql WITH SUPERUSER PASSWORD 'password';
 	postgres=# GRANT ALL PRIVILEGES ON DATABASE postgres TO benchmarksql;
 
 1. Go to the 'run' directory, edit the appropriate "props.???" 

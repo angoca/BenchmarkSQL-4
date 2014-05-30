@@ -1,7 +1,5 @@
 rm -rf log/
 
-mkdir log
-
-mkdir log/archive
+mkdir -p log/archive
 
 
