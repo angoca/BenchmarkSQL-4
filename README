@@ -1,0 +1,39 @@
+
+Instructions for building
+-------------------------
+
+Use of JDK 1.5 is recommended, build with ANT 1.6+ from the command 
+line or use the SUN Netbeans 4.1 Platform
+
+
+Instructions for running
+------------------------
+The below scripts all use relative paths, but, they depend on JAVA_HOME
+environment varibale being set so that the correct runtime can be found.
+
+You are definetly best to use JDK 1.5, but, JDK 1.4 will also work.
+
+1. Run the 'run/scripts' directory, edit the ?????.properties file to point to 
+   your database instance
+
+
+2. Run the 'sqlTableCreates' to create the base tables.
+
+      $ ./runSQL.bat ????.properties sqlTableCreates
+
+
+3. Run the command file to load all of the default data for a single warehouse instance of a tpc-c test:
+
+     $ ./loadData.bat ?????.properties
+
+    NOTE:  This will load a total of about half a million rows across the 9 tables
+
+
+4. run the 'sqlIndexCreates' to create the primary keys & other indexes on the tables.
+
+      $ ./runSQL.bat ?????.properties sqlIndexCreates
+
+
+5. run the swing GUI application to test the database
+
+     $  ./runBenchmark.bat ??????.properties
