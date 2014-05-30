@@ -1,14 +1,13 @@
+drop table warehouse;
+commit;
 
 drop table item;
 commit;
 
-drop table warehouse;
+drop table stock;
 commit;
 
 drop table district;
-commit;
-
-drop table stock;
 commit;
 
 drop table customer;

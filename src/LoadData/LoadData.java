@@ -12,7 +12,10 @@
  *
  *    "numWarehouses" defaults to "1" and when "fileLocation" is omitted the generated
  *    data is loaded into the database tables directly.
- *
+ ***************************************************************************************
+ *  Version 2.3.3 Scott Martin/IBM -  DB2 support for TRUNCATE TABLE IMMEDIATE added.
+ *    Previously provided by patch 2983892 (Troels Arvin)
+ *    IMMEDIATE keyword not needed if DB2_COMPATIBILITY_VECTOR regvar set appropriately (V9.7) , but can't assume this 
  */
 
 
@@ -168,9 +171,20 @@ public class LoadData implements jTPCCConfig {
 
   static void truncateTable(String strTable) {
 
+    String DBMS = "";
+    try {
+      DatabaseMetaData metaData  = conn.getMetaData();
+      DBMS = metaData.getDatabaseProductName().toLowerCase();
+    } catch (SQLException e) {
+      System.out.println("Problem determining database product name: " + e);
+    }  	 
     System.out.println("Truncating '" + strTable + "' ...");
     try {
-      stmt.execute("TRUNCATE TABLE " + strTable);
+      if (DBMS.startsWith("db2")) {
+	 stmt.execute("TRUNCATE TABLE " + strTable + " IMMEDIATE");
+      } else {
+        stmt.execute("TRUNCATE TABLE " + strTable);
+      }
       transCommit();
     } catch(SQLException se) {
       System.out.println(se.getMessage());
