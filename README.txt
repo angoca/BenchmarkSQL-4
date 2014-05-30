@@ -1,9 +1,9 @@
 *********************************************************************
 Change Log:
 
-Version 4.0.6 2013-07-17 cadym
+Version 4.0.6 2013-07-19 cadym
    - Changed log4j format to be more readable
-   - Created the "benchmark" schema to contain all tables 
+   - Created the "benchmarksql" schema to contain all tables 
 
 Version 4.0.5 2013-07-11 cadym
    - Incorporate new PostgreSQL JDBC4 version 1003 driver

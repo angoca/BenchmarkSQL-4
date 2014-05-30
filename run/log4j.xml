@@ -21,9 +21,29 @@
 <param name="MaxFileSize" value="1"/>
 </triggeringPolicy>
 
+
 <layout class="org.apache.log4j.PatternLayout">
-<param name="ConversionPattern" value="%5p\t[%d] \t%m%n"/>
+<param name="ConversionPattern" value="%5p\t[%d{yyyy-MM-dd HH:mm:ss.SSS}]\t%t \t%m%n"/>
 </layout>
+
+<filter class="org.apache.log4j.filter.StringMatchFilter">
+<param name="StringToMatch" value ="\n" />
+<param name="AcceptOnMatch" value="false" />
+</filter>
+</appender>
+
+
+<appender name="E" class="org.apache.log4j.rolling.RollingFileAppender">
+<param name="Append" value="True" />
+<param name="Threshold" value="warn"/>
+<rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
+<param name="FileNamePattern" value="log/BenchmarkSQLError.%d.log"/>
+<param name="ActiveFileName" value="log/BenchmarkSQLError.log"/>
+</rollingPolicy>
+<layout class="org.apache.log4j.PatternLayout">
+<param name="ConversionPattern" value="%5p\t[%d{yyyy-MM-dd HH:mm:ss.SSS}]\t%t \t%m%n"/>
+</layout>
+
 </appender>
 
 
@@ -32,6 +52,7 @@
 <priority value="trace"/>
 <appender-ref ref="console"/>
 <appender-ref ref="R"/>
+<appender-ref ref="E"/>
 </root>
 
 </log4j:configuration>

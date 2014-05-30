@@ -50,6 +50,7 @@ public class LoadData implements jTPCCConfig {
   private static PrintWriter        out           = null;
   private static long               lastTimeMS    = 0;
 
+
   public static void main(String[] args) {
 
       System.out.println("Starting BenchmarkSQL LoadData");
@@ -185,17 +186,17 @@ static void initJDBC() {
     stmt = conn.createStatement();
 
     distPrepStmt = conn.prepareStatement
-      ("INSERT INTO benchmark.district " +
+      ("INSERT INTO benchmarksql.district " +
        " (d_id, d_w_id, d_ytd, d_tax, d_next_o_id, d_name, d_street_1, d_street_2, d_city, d_state, d_zip) " +
        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
     itemPrepStmt = conn.prepareStatement
-      ("INSERT INTO benchmark.item " +
+      ("INSERT INTO benchmarksql.item " +
        " (i_id, i_name, i_price, i_data, i_im_id) " +
        "VALUES (?, ?, ?, ?, ?)");
 
     custPrepStmt = conn.prepareStatement
-      ("INSERT INTO benchmark.customer " +
+      ("INSERT INTO benchmarksql.customer " +
        " (c_id, c_d_id, c_w_id, " +
          "c_discount, c_credit, c_last, c_first, c_credit_lim, " +
          "c_balance, c_ytd_payment, c_payment_cnt, c_delivery_cnt, " +
@@ -204,39 +205,39 @@ static void initJDBC() {
        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
     histPrepStmt = conn.prepareStatement
-      ("INSERT INTO benchmark.history " +
-       " (h_c_id, h_c_d_id, h_c_w_id, " +
+      ("INSERT INTO benchmarksql.history " +
+       " (hist_id, h_c_id, h_c_d_id, h_c_w_id, " +
          "h_d_id, h_w_id, " +
          "h_date, h_amount, h_data) " +
-       "VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+       "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
     ordrPrepStmt = conn.prepareStatement
-      ("INSERT INTO benchmark.oorder " +
+      ("INSERT INTO benchmarksql.oorder " +
        " (o_id, o_w_id,  o_d_id, o_c_id, " +
          "o_carrier_id, o_ol_cnt, o_all_local, o_entry_d) " +
        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 
     orlnPrepStmt = conn.prepareStatement
-      ("INSERT INTO benchmark.order_line " +
+      ("INSERT INTO benchmarksql.order_line " +
        " (ol_w_id, ol_d_id, ol_o_id, " +
          "ol_number, ol_i_id, ol_delivery_d, " +
          "ol_amount, ol_supply_w_id, ol_quantity, ol_dist_info) " +
        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
     nworPrepStmt = conn.prepareStatement
-      ("INSERT INTO benchmark.new_order " +
+      ("INSERT INTO benchmarksql.new_order " +
        " (no_w_id, no_d_id, no_o_id) " +
        "VALUES (?, ?, ?)");
 
     stckPrepStmt = conn.prepareStatement
-      ("INSERT INTO benchmark.stock " +
+      ("INSERT INTO benchmarksql.stock " +
        " (s_i_id, s_w_id, s_quantity, s_ytd, s_order_cnt, s_remote_cnt, s_data, " +
          "s_dist_01, s_dist_02, s_dist_03, s_dist_04, s_dist_05, " +
          "s_dist_06, s_dist_07, s_dist_08, s_dist_09, s_dist_10) " +
        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
     whsePrepStmt = conn.prepareStatement
-       ("INSERT INTO benchmark.warehouse " +
+       ("INSERT INTO benchmarksql.warehouse " +
         " (w_id, w_ytd, w_tax, w_name, w_street_1, w_street_2, w_city, w_state, w_zip) " +
         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
@@ -696,6 +697,7 @@ static void initJDBC() {
 
       int k = 0;
       int t = 0;
+      int i = 1;
       double cCreditLim = 0;
       Customer customer  = new Customer();
       History history = new History();
@@ -760,6 +762,8 @@ static void initJDBC() {
               customer.c_middle =  "OE";
               customer.c_data = jTPCCUtil.randomStr(jTPCCUtil.randomNumber(300,500,gen));
 
+              history.hist_id = i;
+                i++;
               history.h_c_id = c;
               history.h_c_d_id = d;
               history.h_c_w_id = w;
@@ -798,16 +802,17 @@ static void initJDBC() {
 
                 custPrepStmt.addBatch();
 
-                histPrepStmt.setInt(1, history.h_c_id);
-                histPrepStmt.setInt(2, history.h_c_d_id);
-                histPrepStmt.setInt(3, history.h_c_w_id);
+                histPrepStmt.setInt(1, history.hist_id);
+                histPrepStmt.setInt(2, history.h_c_id);
+                histPrepStmt.setInt(3, history.h_c_d_id);
+                histPrepStmt.setInt(4, history.h_c_w_id);
 
-                histPrepStmt.setInt(4, history.h_d_id);
-                histPrepStmt.setInt(5, history.h_w_id);
+                histPrepStmt.setInt(5, history.h_d_id);
+                histPrepStmt.setInt(6, history.h_w_id);
                 Timestamp hdate = new Timestamp(history.h_date);
-                histPrepStmt.setTimestamp(6, hdate);
-                histPrepStmt.setDouble(7, history.h_amount);
-                histPrepStmt.setString(8, history.h_data);
+                histPrepStmt.setTimestamp(7, hdate);
+                histPrepStmt.setDouble(8, history.h_amount);
+                histPrepStmt.setString(9, history.h_data);
 
                 histPrepStmt.addBatch();
 
@@ -851,6 +856,7 @@ static void initJDBC() {
               out.println(str);
 
               str = "";
+              str = str + history.hist_id + ",";
               str = str + history.h_c_id + ",";
               str = str + history.h_c_d_id + ",";
               str = str + history.h_c_w_id + ",";
@@ -876,6 +882,8 @@ static void initJDBC() {
           } // end for [d]
 
         } // end for [w]
+          
+          
 
         long tmpTime = new java.util.Date().getTime();
         String etStr = "  Elasped Time(ms): " + ((tmpTime - lastTimeMS)/1000.000) + "                    ";

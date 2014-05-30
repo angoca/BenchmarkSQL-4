@@ -1,6 +1,6 @@
 driver=org.postgresql.Driver
 conn=jdbc:postgresql://localhost:5432/postgres
-user=postgres
+user=benchmarksql
 password=password
 
 warehouses=1

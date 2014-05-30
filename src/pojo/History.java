@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public class History implements Serializable {
   
+  public int    hist_id;
   public int    h_c_id;
   public int    h_c_d_id;
   public int    h_c_w_id;
@@ -17,6 +18,7 @@ public class History implements Serializable {
   {
     return (
       "\n***************** History ********************" +
+      "\n*   h_c_id = " + hist_id +
       "\n*   h_c_id = " + h_c_id +
       "\n* h_c_d_id = " + h_c_d_id +
       "\n* h_c_w_id = " + h_c_w_id +

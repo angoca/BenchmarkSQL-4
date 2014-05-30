@@ -1,9 +1,8 @@
-drop schema if exists benchmark cascade;
+DROP SCHEMA IF EXISTS benchmarksql CASCADE;
 
-create schema benchmark;
+CREATE SCHEMA benchmarksql;
 
-
-create table benchmark.warehouse (
+create table benchmarksql.warehouse (
   w_id        integer   not null,
   w_ytd       decimal(12,2),
   w_tax       decimal(4,4),
@@ -15,7 +14,7 @@ create table benchmark.warehouse (
   w_zip       char(9)
 );
 
-create table benchmark.district (
+create table benchmarksql.district (
   d_w_id       integer       not null,
   d_id         integer       not null,
   d_ytd        decimal(12,2),
@@ -29,8 +28,7 @@ create table benchmark.district (
   d_zip        char(9)
 );
 
-
-create table benchmark.customer (
+create table benchmarksql.customer (
   c_w_id         integer        not null,
   c_d_id         integer        not null,
   c_id           integer        not null,
@@ -54,8 +52,10 @@ create table benchmark.customer (
   c_data         varchar(500)
 );
 
+create sequence hist_id_seq;
 
-create table benchmark.history (
+create table benchmarksql.history (
+  hist_id  integer not null default nextval('hist_id_seq') primary key,
   h_c_id   integer,
   h_c_d_id integer,
   h_c_w_id integer,
@@ -63,12 +63,11 @@ create table benchmark.history (
   h_w_id   integer,
   h_date   timestamp,
   h_amount decimal(6,2),
-  h_data   varchar(24),
-  id       serial8 primary key
+  h_data   varchar(24)
 );
 
 
-create table benchmark.oorder (
+create table benchmarksql.oorder (
   o_w_id       integer      not null,
   o_d_id       integer      not null,
   o_id         integer      not null,
@@ -80,14 +79,14 @@ create table benchmark.oorder (
 );
 
 
-create table benchmark.new_order (
+create table benchmarksql.new_order (
   no_w_id  integer   not null,
   no_d_id  integer   not null,
   no_o_id  integer   not null
 );
 
 
-create table benchmark.order_line (
+create table benchmarksql.order_line (
   ol_w_id         integer   not null,
   ol_d_id         integer   not null,
   ol_o_id         integer   not null,
@@ -101,7 +100,7 @@ create table benchmark.order_line (
 );
 
 
-create table benchmark.stock (
+create table benchmarksql.stock (
   s_w_id       integer       not null,
   s_i_id       integer       not null,
   s_quantity   decimal(4,0),
@@ -122,7 +121,7 @@ create table benchmark.stock (
 );
 
 
-create table benchmark.item (
+create table benchmarksql.item (
   i_id     integer      not null,
   i_name   varchar(24),
   i_price  decimal(5,2),
