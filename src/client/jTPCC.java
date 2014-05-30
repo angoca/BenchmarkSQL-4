@@ -2,7 +2,7 @@
  * jTPCC - Open Source Java implementation of a TPC-C like benchmark
  *
  * Copyright (C) 2003, Raul Barbosa
- * Copyright (C) 2004-2005, Denis Lussier
+ * Copyright (C) 2004-2006, Denis Lussier
  *
  */
  
@@ -42,7 +42,8 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
     private Random random;
     private long terminalsStarted = 0, sessionCount = 0, transactionCount;
 
-    private long newOrderCounter, sessionStartTimestamp, sessionEndTimestamp, sessionEndTargetTime = -1, fastNewOrderCounter;
+    private long newOrderCounter, sessionStartTimestamp, sessionEndTimestamp, sessionNextTimestamp=0, sessionNextKounter=0;
+    private long sessionEndTargetTime = -1, fastNewOrderCounter, recentTpmC=0;
     private boolean signalTerminalsRequestEndSent = false, databaseDriverLoaded = false;
 
     private FileOutputStream fileOutputStream;
@@ -248,8 +249,8 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
           ("+-------------------------------------------------------------+\n" +
            "      BenchmarkSQL v" + JTPCCVERSION + " (using JDBC Prepared Statements)\n" +
            "+-------------------------------------------------------------+\n" +
-           " (c) 2003-2005, Raul Barbosa (SourceForge.Net 'jTPCC' project)\n" +
-           " (c) 2004-2005, Denis Lussier\n" +
+           " (c) 2003, Raul Barbosa (SourceForge.Net 'jTPCC' project)\n" +
+           " (c) 2004-2006, Denis Lussier\n" +
            "+-------------------------------------------------------------+\n\n");
         jPanelControl.add(jOutputAreaControl, BorderLayout.CENTER);
         jLabelInformation = new JLabel("", JLabel.CENTER);
@@ -492,6 +493,7 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
 
             sessionStart = getCurrentTime();
             sessionStartTimestamp = System.currentTimeMillis();
+            sessionNextTimestamp = sessionStartTimestamp;
             if(sessionEndTargetTime != -1)
                 sessionEndTargetTime += sessionStartTimestamp;
 
@@ -758,11 +760,24 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
     private void updateInformationLabel()
     {
         String informativeText = "";
+        long currTimeMillis = System.currentTimeMillis();
 
         if(fastNewOrderCounter != 0)
         {
-            double tpmC = (6000000*fastNewOrderCounter/(System.currentTimeMillis() - sessionStartTimestamp))/100.0;
-            informativeText = "Measured tpmC: " + tpmC + "           ";
+            double tpmC = (6000000*fastNewOrderCounter/(currTimeMillis - sessionStartTimestamp))/100.0;
+            informativeText = "Running Average tpmC: " + tpmC + "      ";
+        }
+
+        if(currTimeMillis > sessionNextTimestamp) 
+        {
+            sessionNextTimestamp += 5000;  /* check this every 5 seconds */
+            recentTpmC = (fastNewOrderCounter - sessionNextKounter) * 12; 
+            sessionNextKounter = fastNewOrderCounter;
+        }
+
+        if(fastNewOrderCounter != 0)
+        {
+            informativeText += "Current tpmC: " + recentTpmC + "     ";
         }
 
         long freeMem = Runtime.getRuntime().freeMemory() / (1024*1024);

@@ -2,7 +2,7 @@
  * jTPCCTerminal - Terminal emulator code for jTPCC (transactions)
  *
  * Copyright (C) 2003, Raul Barbosa
- * Copyright (C) 2004-2005, Denis Lussier
+ * Copyright (C) 2004-2006, Denis Lussier
  *
  */
 

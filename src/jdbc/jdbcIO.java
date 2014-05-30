@@ -1,7 +1,7 @@
 /*
  * jdbcIO - execute JDBC statements
  *
- * Copyright (C) 2004, Denis L. Lussier
+ * Copyright (C) 2004-2006, Denis Lussier
  *
  */
 

@@ -2,7 +2,7 @@
  * JOutputArea - Simple output area for jTPCC
  *
  * Copyright (C) 2003, Raul Barbosa 
- * Copyright (C) 2004, Denis Lussier
+ * Copyright (C) 2004-2006, Denis Lussier
  *
  */
 

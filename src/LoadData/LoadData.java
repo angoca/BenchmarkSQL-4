@@ -1,7 +1,17 @@
 /*
- * LoadData - Load TPC-C Sample Data
+ * Copyright (C) 2004-2006, Denis Lussier
  *
- * Copyright (C) 2004, Denis L. Lussier
+ * LoadData - Load Sample Data directly into database tables or create CSV files for
+ *            each table that can then be bulk loaded (again & again & again ...)  :-)
+ *
+ *    Two optional parameter sets for the command line:
+ *
+ *                 numWarehouses=9999
+ *
+ *                 fileLocation=c:/temp/csv/
+ *
+ *    "numWarehouses" defaults to "1" and when "fileLocation" is omitted the generated
+ *    data is loaded into the database tables directly.
  *
  */
 
@@ -31,12 +41,14 @@ public class LoadData implements jTPCCConfig {
   private static java.util.Date     now        = null;
   private static java.util.Date     startDate  = null;
   private static java.util.Date     endDate    = null;
+
   private static Random             gen;
   private static String             dbType;
   private static int                numWarehouses = 0;
   private static String             fileLocation  = "";
   private static boolean            outputFiles   = false;
   private static PrintWriter        out           = null;
+  private static long               lastTimeMS    = 0;
 
   public static void main(String[] args) {
 
@@ -49,21 +61,19 @@ public class LoadData implements jTPCCConfig {
       {
 	      System.out.println(args[i]);
 	      String str = args[i];
-	      if (str.startsWith("numWarehouses"))
+	      if (str.toLowerCase().startsWith("numwarehouses"))
 	      {
-			  String val = str.substring((str.indexOf("=") + 1));
-    	      System.out.println("Setting the number of warehouses to: " + val);
-    	      numWarehouses = Integer.parseInt(val);
-		  }
+	         String val = args[i + 1];
+                 System.out.println("Setting the number of warehouses to: " + val);
+    	         numWarehouses = Integer.parseInt(val);
+              }
 
-	      if (str.startsWith("fileLocation"))
+	      if (str.toLowerCase().startsWith("filelocation"))
 	      {
-			  String val = str.substring((str.indexOf("=") + 1));
-    	      fileLocation = val + File.separatorChar;
-    	      System.out.println("Setting the output file location to: " + fileLocation);
-    	      outputFiles = true;
-		  }
-
+                 fileLocation = args[i + 1];
+                 System.out.println("Setting the output file location to: " + fileLocation);
+                 outputFiles = true;
+              }
       }
 
 
@@ -93,6 +103,8 @@ public class LoadData implements jTPCCConfig {
                        "-------------");
 
       long startTimeMS = new java.util.Date().getTime();
+      lastTimeMS = startTimeMS;
+
       long totalRows = loadWhse(numWarehouses);
       totalRows += loadItem(configItemCount);
       totalRows += loadStock(numWarehouses, configItemCount);
@@ -320,7 +332,10 @@ static void initJDBC() {
             itemPrepStmt.addBatch();
 
             if (( k % configCommitCount) == 0) {
-              System.out.println("  Writing record " + k + " of " + t);
+              long tmpTime = new java.util.Date().getTime();
+              String etStr = "  Elasped Time(ms): " + ((tmpTime - lastTimeMS)/1000.000) + "                    ";
+              System.out.println(etStr.substring(0, 30) + "  Writing record " + k + " of " + t);
+              lastTimeMS = tmpTime;
               itemPrepStmt.executeBatch();
               itemPrepStmt.clearBatch();
               transCommit();
@@ -335,13 +350,20 @@ static void initJDBC() {
     		out.println(str);
 
             if (( k % configCommitCount) == 0) {
-              System.out.println("  Writing record " + k + " of " + t);
+              long tmpTime = new java.util.Date().getTime();
+              String etStr = "  Elasped Time(ms): " + ((tmpTime - lastTimeMS)/1000.000) + "                    ";
+              System.out.println(etStr.substring(0, 30) + "  Writing record " + k + " of " + t);
+              lastTimeMS = tmpTime;
 		    }
 		  }
 
         } // end for
 
-        System.out.println("  Writing record " + k + " of " + t);
+        long tmpTime = new java.util.Date().getTime();
+        String etStr = "  Elasped Time(ms): " + ((tmpTime - lastTimeMS)/1000.000) + "                    ";
+        System.out.println(etStr.substring(0, 30) + "  Writing record " + k + " of " + t);
+        lastTimeMS = tmpTime;
+
         if (outputFiles == false)
         {
           itemPrepStmt.executeBatch();
@@ -423,6 +445,10 @@ static void initJDBC() {
 
         transCommit();
         now = new java.util.Date();
+
+        long tmpTime = new java.util.Date().getTime();
+        System.out.println("Elasped Time(ms): " + ((tmpTime - lastTimeMS)/1000.000));
+        lastTimeMS = tmpTime;
         System.out.println("End Whse Load @  " + now);
 
       } catch(SQLException se) {
@@ -520,7 +546,10 @@ static void initJDBC() {
               stckPrepStmt.setString(17, stock.s_dist_10);
               stckPrepStmt.addBatch();
             if (( k % configCommitCount) == 0) {
-              System.out.println("  Writing record " + k + " of " + t);
+              long tmpTime = new java.util.Date().getTime();
+              String etStr = "  Elasped Time(ms): " + ((tmpTime - lastTimeMS)/1000.000) + "                    ";
+              System.out.println(etStr.substring(0, 30) + "  Writing record " + k + " of " + t);
+              lastTimeMS = tmpTime;
               stckPrepStmt.executeBatch();
               stckPrepStmt.clearBatch();
               transCommit();
@@ -547,7 +576,10 @@ static void initJDBC() {
               out.println(str);
 
             if (( k % configCommitCount) == 0) {
-              System.out.println("  Writing record " + k + " of " + t);
+              long tmpTime = new java.util.Date().getTime();
+              String etStr = "  Elasped Time(ms): " + ((tmpTime - lastTimeMS)/1000.000) + "                    ";
+              System.out.println(etStr.substring(0, 30) + "  Writing record " + k + " of " + t);
+              lastTimeMS = tmpTime;
 		      }
            }
 
@@ -556,7 +588,10 @@ static void initJDBC() {
         } // end for [i]
 
 
-        System.out.println("  Writing final records " + k + " of " + t);
+        long tmpTime = new java.util.Date().getTime();
+        String etStr = "  Elasped Time(ms): " + ((tmpTime - lastTimeMS)/1000.000) + "                    ";
+        System.out.println(etStr.substring(0, 30) + "  Writing final records " + k + " of " + t);
+        lastTimeMS = tmpTime;
         if (outputFiles == false)
         {
           stckPrepStmt.executeBatch();
@@ -655,7 +690,10 @@ static void initJDBC() {
 
         } // end for [w]
 
-        System.out.println("  Writing record " + k + " of " + t);
+        long tmpTime = new java.util.Date().getTime();
+        String etStr = "  Elasped Time(ms): " + ((tmpTime - lastTimeMS)/1000.000) + "                    ";
+        System.out.println(etStr.substring(0, 30) + "  Writing record " + k + " of " + t);
+        lastTimeMS = tmpTime;
         transCommit();
         now = new java.util.Date();
         System.out.println("End District Load @  " + now);
@@ -796,7 +834,11 @@ static void initJDBC() {
 
 
               if (( k % configCommitCount) == 0) {
-                System.out.println("  Writing record " + k + " of " + t);
+                long tmpTime = new java.util.Date().getTime();
+                String etStr = "  Elasped Time(ms): " + ((tmpTime - lastTimeMS)/1000.000) + "                    ";
+                System.out.println(etStr.substring(0, 30) + "  Writing record " + k + " of " + t);
+                lastTimeMS = tmpTime;
+
                 custPrepStmt.executeBatch();
                 histPrepStmt.executeBatch();
                 custPrepStmt.clearBatch();
@@ -822,7 +864,7 @@ static void initJDBC() {
               str = str + customer.c_city + ",";
               str = str + customer.c_state + ",";
               str = str + customer.c_zip + ",";
-              str = str + customer.c_phone + ",,,"; /* Tack on the last nullable columns */
+              str = str + customer.c_phone;
               out.println(str);
 
               str = "";
@@ -838,7 +880,11 @@ static void initJDBC() {
               outHist.println(str);
 
               if (( k % configCommitCount) == 0) {
-                System.out.println("  Writing record " + k + " of " + t);
+                long tmpTime = new java.util.Date().getTime();
+                String etStr = "  Elasped Time(ms): " + ((tmpTime - lastTimeMS)/1000.000) + "                    ";
+                System.out.println(etStr.substring(0, 30) + "  Writing record " + k + " of " + t);
+                lastTimeMS = tmpTime;
+
 		        }
            }
 
@@ -849,7 +895,10 @@ static void initJDBC() {
         } // end for [w]
 
 
-        System.out.println("  Writing record " + k + " of " + t);
+        long tmpTime = new java.util.Date().getTime();
+        String etStr = "  Elasped Time(ms): " + ((tmpTime - lastTimeMS)/1000.000) + "                    ";
+        System.out.println(etStr.substring(0, 30) + "  Writing record " + k + " of " + t);
+        lastTimeMS = tmpTime;
         custPrepStmt.executeBatch();
         histPrepStmt.executeBatch();
         transCommit();
@@ -1014,7 +1063,10 @@ static void initJDBC() {
                 }
 
                 if (( k % configCommitCount) == 0) {
-                  System.out.println("  Writing record " + k + " of " + t);
+                  long tmpTime = new java.util.Date().getTime();
+                  String etStr = "  Elasped Time(ms): " + ((tmpTime - lastTimeMS)/1000.000) + "                    ";
+                  System.out.println(etStr.substring(0, 30) + "  Writing record " + k + " of " + t);
+                  lastTimeMS = tmpTime;
                   if (outputFiles == false)
                   {
                     ordrPrepStmt.executeBatch();

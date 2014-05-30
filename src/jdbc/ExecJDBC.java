@@ -2,7 +2,7 @@
  * ExecJDBC - Command line program to process SQL DDL statements, from   
  *             a text input file, to any JDBC Data Source
  *
- * Copyright (C) 2004, Denis L. Lussier
+ * Copyright (C) 2004-2006, Denis Lussier
  *
  */
 
@@ -18,7 +18,7 @@ public class ExecJDBC {
   
     Connection conn = null;
     Statement stmt = null;
-    String line = null;
+    String rLine = null;
     StringBuffer sql = new StringBuffer();
     java.util.Date now = null;
 
@@ -54,7 +54,9 @@ public class ExecJDBC {
       System.out.println("-------------------------------------------------\n");
   
       // loop thru input file and concatenate SQL statement fragments
-      while((line = in.readLine()) != null) {
+      while((rLine = in.readLine()) != null) {
+
+         String line = rLine.trim();
 
          if (line.length() == 0) {
            System.out.println("");  // print empty line & skip over it  

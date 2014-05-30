@@ -2,7 +2,8 @@
  * jTPCCUtil - utility functions for the Open Source Java implementation of 
  *    the TPC-C benchmark
  *
- * Copyright (C) 2004-2005, Denis Lussier
+ * Copyright (C) 2003, Raul Barbosa
+ * Copyright (C) 2004-2006, Denis Lussier
  *
  */
 

@@ -1,11 +1,11 @@
 
 alter table warehouse add constraint pk_warehouse 
-  primary key (w_id);
-commit;
+  primary key (w_id);  
+commit;  
 
 alter table district add constraint pk_district 
   primary key (d_w_id, d_id);
-commit;
+commit; 
 
 
 alter table customer add constraint pk_customer 
@@ -27,7 +27,7 @@ create unique index ndx_oorder_carrier
   on oorder (o_w_id, o_d_id, o_carrier_id, o_id);
 commit;
 
-
+ 
 alter table new_order add constraint pk_new_order 
   primary key (no_w_id, no_d_id, no_o_id);
 commit;
@@ -43,9 +43,12 @@ alter table stock add constraint pk_stock
 commit;
 
 
-alter table item add constraint pk_item 
+alter table item add constraint pk_item
   primary key (i_id);
 commit;
 
-vacuum full analyze;
+vacuum analyze; 
 
+  
+
+ 
