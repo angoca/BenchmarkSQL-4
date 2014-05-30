@@ -1,6 +1,9 @@
 *********************************************************************
 Change Log:
 
+Version 4.0.4 2013-07-02 cadym
+   - Transaction rate pacing mechanism 
+
 Version 4.0.3 2013-06-17  cadym
    - Status line report dynamically shown on terminal
    - fix lookup by name in PaymentStatus and Delivery Transactions 

@@ -34,6 +34,7 @@ public class jTPCC implements jTPCCConfig
     private FileOutputStream fileOutputStream;
     private PrintStream printStreamReport;
     private String sessionStart, sessionEnd;
+    private int limPerMin_Terminal;
 
     private double tpmC;
 
@@ -90,7 +91,7 @@ public class jTPCC implements jTPCCConfig
         }else{
             errorMessage("Must indicate either transactions per terminal or number of run minutes!");
         };
-        
+        String  limPerMin           = getProp(ini,"limitTxnsPerMin");
         log.info("");
         String  iNewOrderWeight     = getProp(ini,"newOrderWeight");
         String  iPaymentWeight      = getProp(ini,"paymentWeight");
@@ -99,7 +100,15 @@ public class jTPCC implements jTPCCConfig
         String  iStockLevelWeight   = getProp(ini,"stockLevelWeight");
 
         log.info("");
-
+        
+        if(Integer.parseInt(limPerMin) !=0){
+            limPerMin_Terminal = Integer.parseInt(limPerMin)/Integer.parseInt(iTerminals);
+        }
+        else{
+            limPerMin_Terminal = -1;
+        }
+    
+        
         boolean iRunMinsBool=false;
 
     
@@ -277,7 +286,7 @@ public class jTPCC implements jTPCCConfig
                         jTPCCTerminal terminal = new jTPCCTerminal
                         (terminalName, terminalWarehouseID, terminalDistrictID, conn,
                          transactionsPerTerminal, paymentWeightValue, orderStatusWeightValue,
-                         deliveryWeightValue, stockLevelWeightValue, numWarehouses, this);
+                         deliveryWeightValue, stockLevelWeightValue, numWarehouses, limPerMin_Terminal, this);
                         
                         terminals[i] = terminal;
                         terminalNames[i] = terminalName;
@@ -485,7 +494,7 @@ public class jTPCC implements jTPCCConfig
 
             System.out.print(informativeText);
             for (int count = 0; count < 1+informativeText.length(); count++) {
-                System.out.print("\b");        
+              System.out.print("\b");
         }
         informativeText.delete(0,informativeText.length());
 
