@@ -6,6 +6,7 @@
  *
  */
 
+import org.apache.log4j.*;
 
 import java.io.*;
 import java.sql.*;
@@ -13,29 +14,23 @@ import java.util.*;
 
 
 public class ExecJDBC {
+
+  static Logger log = Logger.getLogger(ExecJDBC.class);
   
   public static void main(String[] args) {
-  
+
+    PropertyConfigurator.configure("log4j.properties");
+    log.info("Starting BenchmarkSQL ExecJDBC");
+
     Connection conn = null;
     Statement stmt = null;
     String rLine = null;
     StringBuffer sql = new StringBuffer();
-    java.util.Date now = null;
-
-    now = new java.util.Date();
-    System.out.println("------------- ExecJDBC Start Date = " + now + 
-                       "-------------");
 
     try {
 
     Properties ini = new Properties();
     ini.load( new FileInputStream(System.getProperty("prop")));
-                                                                                
-    // display the values we need
-    System.out.println("driver=" + ini.getProperty("driver"));
-    System.out.println("conn=" + ini.getProperty("conn"));
-    System.out.println("user=" + ini.getProperty("user"));
-    System.out.println("password=******");
                                                                                 
     // Register jdbcDriver
     Class.forName(ini.getProperty( "driver" ));
@@ -51,7 +46,6 @@ public class ExecJDBC {
       // Open inputFile
       BufferedReader in = new BufferedReader
         (new FileReader(jTPCCUtil.getSysProp("commandFile",null)));
-      System.out.println("-------------------------------------------------\n");
   
       // loop thru input file and concatenate SQL statement fragments
       while((rLine = in.readLine()) != null) {
@@ -59,11 +53,10 @@ public class ExecJDBC {
          String line = rLine.trim();
 
          if (line.length() == 0) {
-           System.out.println("");  // print empty line & skip over it  
+           log.info("");
          } else {
-    
            if (line.startsWith("--")) {
-              System.out.println(line);  // print comment line
+              log.info(line);  // print comment line
            } else {
                sql.append(line);
                if (line.endsWith(";")) {
@@ -81,10 +74,10 @@ public class ExecJDBC {
       in.close();
 
     } catch(IOException ie) {
-        System.out.println(ie.getMessage());
+        log.info(ie.getMessage());
     
     } catch(SQLException se) {
-        System.out.println(se.getMessage());
+        log.info(se.getMessage());
 
     } catch(Exception e) {
         e.printStackTrace();
@@ -101,10 +94,7 @@ public class ExecJDBC {
     } // end try
 
 
-    now = new java.util.Date();
-    System.out.println("");
-    System.out.println("------------- ExecJDBC End Date = " + now + 
-                        "-------------");
+    log.info("");
                   
 
   } // end main
@@ -112,27 +102,14 @@ public class ExecJDBC {
 
   static void execJDBC(Statement stmt, StringBuffer sql) {
 
-    System.out.println("\n" + sql);
+    log.info(sql);
 
     try {
 
-      long startTimeMS = new java.util.Date().getTime();
       stmt.execute(sql.toString().replace(';',' '));
-      long runTimeMS = (new java.util.Date().getTime()) + 1 - startTimeMS;
-      System.out.println("-- SQL Success: Runtime = " + runTimeMS + " ms --");
     
     }catch(SQLException se) {
-
-      String msg = null;
-      msg = se.getMessage();
-
-      System.out.println
-         ("-- SQL Runtime Exception -----------------------------------------");
-      System.out.println
-         ("DBMS SqlCode=" + se.getErrorCode() + "  DBMS Msg="); 
-      System.out.println("  "+ msg + "\n" +
-        "------------------------------------------------------------------\n");
-
+      log.error(se.getMessage());
     } // end try
 
   } // end execJDBCCommand

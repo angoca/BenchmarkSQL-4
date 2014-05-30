@@ -1,1 +1,1 @@
-$JAVA_HOME/bin/java -cp ../lib/postgresql-9.2-1002.jdbc4.jar:../dist/BenchmarkSQL-2.3.jar -Dprop=$1 jTPCC
+java -cp ../lib/postgresql-9.2-1002.jdbc4.jar:../lib/log4j-1.2.17.jar:../dist/BenchmarkSQL-3.0.jar -Dprop=$1 jTPCC

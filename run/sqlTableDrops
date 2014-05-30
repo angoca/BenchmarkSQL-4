@@ -1,3 +1,4 @@
+
 drop table warehouse;
 
 drop table item;

@@ -5,6 +5,8 @@
  * Copyright (C) 2004-2013, Denis Lussier
  *
  */
+
+import org.apache.log4j.*;
  
 import java.io.*;
 import java.sql.*;
@@ -17,11 +19,13 @@ import java.awt.event.*;
   
 public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, WindowListener
 {
+    private static org.apache.log4j.Logger log = Logger.getLogger(jTPCC.class);
+
     private JTabbedPane jTabbedPane;
-    private JPanel jPanelControl, jPanelConfigSwitch, jPanelTerminalOutputs, jPanelOutputSwitch;
+    private JPanel jPanelControl, jPanelConfigSwitch, jPanelOutputSwitch;
     private JButton jButtonNextTerminal, jButtonPreviousTerminal;
-    private JOutputArea jOutputAreaControl, jOutputAreaErrors;
-    private JLabel jLabelInformation, jPanelTerminalOutputsLabel;
+    private JOutputArea jOutputAreaControl;
+    private JLabel jLabelInformation;
     private ImageIcon imageIconDot;
     private int currentlyDisplayedTerminal;
 
@@ -33,7 +37,6 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
     private JButton jButtonCreateTerminals, jButtonStartTransactions, jButtonStopTransactions;
     private JTextField paymentWeight, orderStatusWeight, deliveryWeight, stockLevelWeight;
     private JRadioButton jRadioButtonTime, jRadioButtonNum;
-    private JCheckBox jCheckBoxDebugMessages;
 
     private jTPCCTerminal[] terminals;
     private JOutputArea[] terminalOutputAreas;
@@ -50,28 +53,58 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
     private PrintStream printStreamReport;
     private String sessionStart, sessionEnd;
 
-    public static void main(String args[])
-    {
+    private double tpmC;
+
+    public static void main(String args[]) {
+        PropertyConfigurator.configure("log4j.properties");
+        log.info("Starting BenchmarkSQL jTPCC");
         new jTPCC();
     }
 
+    private String getProp (Properties p, String pName) {
+        String prop =  p.getProperty(pName);
+        log.info(pName + "=" + prop);
+        return(prop);
+    }
+
+
     public jTPCC()
     {
-    super("BenchmarkSQL v" + JTPCCVERSION);
+        super("BenchmarkSQL v" + JTPCCVERSION);
 
-    // load the ini file
-    Properties ini = new Properties();
-    try {
-      ini.load( new FileInputStream(System.getProperty("prop")));
-    } catch (IOException e) {
-      System.out.println("could not load properties file");
-    }
+        // load the ini file
+        Properties ini = new Properties();
+        try {
+          ini.load( new FileInputStream(System.getProperty("prop")));
+        } catch (IOException e) {
+          log.error("could not load properties file");
+        }
                                                                                
-    // display the values we need
-    System.out.println("driver=" + ini.getProperty("driver"));
-    System.out.println("conn=" + ini.getProperty("conn"));
-    System.out.println("user=" + ini.getProperty("user"));
-    System.out.println("password=******");
+        log.info("");
+        log.info("+-------------------------------------------------------------+");
+        log.info("              BenchmarkSQL v" + JTPCCVERSION);
+        log.info("+-------------------------------------------------------------+");
+        log.info(" (c) 2003, Raul Barbosa");
+        log.info(" (c) 2004-2013, Denis Lussier");
+        log.info("+-------------------------------------------------------------+");
+        log.info("");
+        String  iDriver             = getProp(ini,"driver");
+        String  iConn               = getProp(ini,"conn");
+        String  iUser               = getProp(ini,"user");
+        String  iPassword           = getProp(ini,"password");
+        String  iWarehouses         = getProp(ini,"warehouses");
+        String  iTerminals          = getProp(ini,"terminals");
+        String  iPaymentWeight      = getProp(ini,"paymentWeight");
+        String  iOrderStatusWeight  = getProp(ini,"orderStatusWeight");
+        String  iDeliveryWeight     = getProp(ini,"deliveryWeight");
+        String  iStockLevelWeight   = getProp(ini,"stockLevelWeight");
+        String  iRunTxnsPerTerminal = getProp(ini,"runTxnsPerTerminal");
+        String  iRunMins            = getProp(ini,"runMins");
+        String  sRunMinsBool        = getProp(ini,"runMinsBool");
+        log.info("");
+
+        boolean iRunMinsBool = false;
+        if (sRunMinsBool.equals("true")) iRunMinsBool = true;
                                                                                
         this.random = new Random(System.currentTimeMillis());
         this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -80,9 +113,7 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
         this.setIconImage((new ImageIcon("images/icon.gif")).getImage());
         this.addWindowListener((WindowListener)this);
 
-
         imageIconDot = new ImageIcon("images/dot.gif");
-
 
         jPanelControl = new JPanel();
         jPanelControl.setLayout(new BorderLayout());
@@ -92,7 +123,8 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
 
 
         JPanel jPanelConfigSelect = new JPanel();
-        jPanelConfigSelect.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), " Options ", TitledBorder.CENTER, TitledBorder.TOP));
+        jPanelConfigSelect.setBorder(BorderFactory.createTitledBorder
+          (BorderFactory.createEtchedBorder(), " Options ", TitledBorder.CENTER, TitledBorder.TOP));
         GridLayout jPanelConfigSelectLayout = new GridLayout(4, 1);
         jPanelConfigSelectLayout.setVgap(10);
         jPanelConfigSelect.setLayout(jPanelConfigSelectLayout);
@@ -122,23 +154,26 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
         JPanel jPanelConfigDatabase3 = new JPanel();
         jPanelConfigDatabase.add(jPanelConfigDatabase3);
         jPanelConfigDatabase3.add(new JLabel("URL"));
-        jTextFieldDatabase = new JTextField(ini.getProperty("conn", defaultDatabase));
-        jTextFieldDatabase.setPreferredSize(new Dimension(275, (int)jTextFieldDatabase.getPreferredSize().getHeight()));
+
+        jTextFieldDatabase = new JTextField(iConn);
+        jTextFieldDatabase.setPreferredSize(new Dimension(325, (int)jTextFieldDatabase.getPreferredSize().getHeight()));
         jPanelConfigDatabase3.add(jTextFieldDatabase);
+
         jPanelConfigDatabase3.add(new JLabel("      Driver"));
-        jTextFieldDriver = new JTextField(ini.getProperty("driver", defaultDriver));
-        jTextFieldDriver.setPreferredSize(new Dimension(200, (int)jTextFieldDriver.getPreferredSize().getHeight()));
+        jTextFieldDriver = new JTextField(iDriver);
+        jTextFieldDriver.setPreferredSize(new Dimension(175, (int)jTextFieldDriver.getPreferredSize().getHeight()));
         jPanelConfigDatabase3.add(jTextFieldDriver);
+
         jPanelConfigDatabase.add(new JPanel());
         JPanel jPanelConfigDatabase2 = new JPanel();
         jPanelConfigDatabase.add(jPanelConfigDatabase2);
         jPanelConfigDatabase2.add(new JLabel("Username"));
-        jTextFieldUsername = new JTextField(ini.getProperty("user", defaultUsername));
-        jTextFieldUsername.setPreferredSize(new Dimension(80, (int)jTextFieldUsername.getPreferredSize().getHeight()));
+        jTextFieldUsername = new JTextField(iUser);
+        jTextFieldUsername.setPreferredSize(new Dimension(100, (int)jTextFieldUsername.getPreferredSize().getHeight()));
         jPanelConfigDatabase2.add(jTextFieldUsername);
         jPanelConfigDatabase2.add(new JLabel("      Password"));
-        jTextFieldPassword = new JPasswordField(ini.getProperty("password", defaultPassword));
-        jTextFieldPassword.setPreferredSize(new Dimension(80, (int)jTextFieldPassword.getPreferredSize().getHeight()));
+        jTextFieldPassword = new JPasswordField(iPassword);
+        jTextFieldPassword.setPreferredSize(new Dimension(100, (int)jTextFieldPassword.getPreferredSize().getHeight()));
         jPanelConfigDatabase2.add(jTextFieldPassword);
 
 
@@ -147,36 +182,33 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
         JPanel jPanelConfigTerminals1 = new JPanel();
         jPanelConfigTerminals.add(jPanelConfigTerminals1);
         jPanelConfigTerminals1.add(new JLabel("Number of Terminals"));
-        jTextFieldNumTerminals = new JTextField(defaultNumTerminals);
-        jTextFieldNumTerminals.setPreferredSize(new Dimension(28, (int)jTextFieldNumTerminals.getPreferredSize().getHeight()));
+        jTextFieldNumTerminals = new JTextField(iTerminals);
+        jTextFieldNumTerminals.setPreferredSize(new Dimension(40, (int)jTextFieldNumTerminals.getPreferredSize().getHeight()));
         jPanelConfigTerminals1.add(jTextFieldNumTerminals);
         jPanelConfigTerminals1.add(new JLabel("       Warehouses"));
-        jTextFieldNumWarehouses = new JTextField(defaultNumWarehouses);
-        jTextFieldNumWarehouses.setPreferredSize(new Dimension(28, (int)jTextFieldNumWarehouses.getPreferredSize().getHeight()));
+        jTextFieldNumWarehouses = new JTextField(iWarehouses);
+        jTextFieldNumWarehouses.setPreferredSize(new Dimension(40, (int)jTextFieldNumWarehouses.getPreferredSize().getHeight()));
         jPanelConfigTerminals1.add(jTextFieldNumWarehouses);
-        jPanelConfigTerminals1.add(new JLabel("       Debug Messages"));
-        jCheckBoxDebugMessages = new JCheckBox("", defaultDebugMessages);
-        jPanelConfigTerminals1.add(jCheckBoxDebugMessages);
         JPanel jPanelConfigTerminals2 = new JPanel();
         jPanelConfigTerminals.add(jPanelConfigTerminals2);
         jPanelConfigTerminals2.add(new JLabel("Execute"));
         JPanel jPanelConfigTerminals21 = new JPanel();
         jPanelConfigTerminals21.setLayout(new GridLayout(2, 1));
         jPanelConfigTerminals2.add(jPanelConfigTerminals21);
-        jTextFieldMinutes = new JTextField(defaultMinutes);
-        jTextFieldMinutes.setPreferredSize(new Dimension(35, (int)jTextFieldMinutes.getPreferredSize().getHeight()));
+        jTextFieldMinutes = new JTextField(iRunMins);
+        jTextFieldMinutes.setPreferredSize(new Dimension(40, (int)jTextFieldMinutes.getPreferredSize().getHeight()));
         jPanelConfigTerminals21.add(jTextFieldMinutes);
-        jTextFieldTransactionsPerTerminal = new JTextField(defaultTransactionsPerTerminal);
-        jTextFieldTransactionsPerTerminal.setPreferredSize(new Dimension(35, (int)jTextFieldTransactionsPerTerminal.getPreferredSize().getHeight()));
+        jTextFieldTransactionsPerTerminal = new JTextField(iRunTxnsPerTerminal);
+        jTextFieldTransactionsPerTerminal.setPreferredSize(new Dimension(40, (int)jTextFieldTransactionsPerTerminal.getPreferredSize().getHeight()));
         jPanelConfigTerminals21.add(jTextFieldTransactionsPerTerminal);
         JPanel jPanelConfigTerminals22 = new JPanel();
         jPanelConfigTerminals22.setLayout(new GridLayout(2, 1));
         jPanelConfigTerminals2.add(jPanelConfigTerminals22);
         ButtonGroup buttonGroupTimeNum = new ButtonGroup();
-        jRadioButtonTime = new JRadioButton("Minutes", defaultRadioTime);
+        jRadioButtonTime = new JRadioButton("Minutes", iRunMinsBool);
         buttonGroupTimeNum.add(jRadioButtonTime);
         jPanelConfigTerminals22.add(jRadioButtonTime);
-        jRadioButtonNum = new JRadioButton("Transactions per terminal", !defaultRadioTime);
+        jRadioButtonNum = new JRadioButton("Transactions per terminal", !iRunMinsBool);
         buttonGroupTimeNum.add(jRadioButtonNum);
         jPanelConfigTerminals22.add(jRadioButtonNum);
 
@@ -187,20 +219,20 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
         JPanel jPanelConfigWeights1 = new JPanel();
         jPanelConfigWeights.add(jPanelConfigWeights1);
         jPanelConfigWeights1.add(new JLabel("Payment %"));
-        paymentWeight = new JTextField(defaultPaymentWeight);
-        paymentWeight.setPreferredSize(new Dimension(28, (int)paymentWeight.getPreferredSize().getHeight()));
+        paymentWeight = new JTextField(iPaymentWeight);
+        paymentWeight.setPreferredSize(new Dimension(40, (int)paymentWeight.getPreferredSize().getHeight()));
         jPanelConfigWeights1.add(paymentWeight);
         jPanelConfigWeights1.add(new JLabel("       Order-Status %"));
-        orderStatusWeight = new JTextField(defaultOrderStatusWeight);
-        orderStatusWeight.setPreferredSize(new Dimension(28, (int)orderStatusWeight.getPreferredSize().getHeight()));
+        orderStatusWeight = new JTextField(iOrderStatusWeight);
+        orderStatusWeight.setPreferredSize(new Dimension(40, (int)orderStatusWeight.getPreferredSize().getHeight()));
         jPanelConfigWeights1.add(orderStatusWeight);
         jPanelConfigWeights1.add(new JLabel("       Delivery %"));
-        deliveryWeight = new JTextField(defaultDeliveryWeight);
-        deliveryWeight.setPreferredSize(new Dimension(28, (int)deliveryWeight.getPreferredSize().getHeight()));
+        deliveryWeight = new JTextField(iDeliveryWeight);
+        deliveryWeight.setPreferredSize(new Dimension(40, (int)deliveryWeight.getPreferredSize().getHeight()));
         jPanelConfigWeights1.add(deliveryWeight);
         jPanelConfigWeights1.add(new JLabel("       Stock-Level %"));
-        stockLevelWeight = new JTextField(defaultStockLevelWeight);
-        stockLevelWeight.setPreferredSize(new Dimension(28, (int)stockLevelWeight.getPreferredSize().getHeight()));
+        stockLevelWeight = new JTextField(iStockLevelWeight);
+        stockLevelWeight.setPreferredSize(new Dimension(40, (int)stockLevelWeight.getPreferredSize().getHeight()));
         jPanelConfigWeights1.add(stockLevelWeight);
 
 
@@ -226,32 +258,8 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
         setActiveConfigPanel(jPanelConfigDatabase, "Database");
 
 
-        jPanelTerminalOutputs = new JPanel();
-        jButtonPreviousTerminal = new JButton("< Previous");
-        jButtonPreviousTerminal.addActionListener(this);
-        jButtonNextTerminal = new JButton("Next >");
-        jButtonNextTerminal.addActionListener(this);
-        jPanelTerminalOutputs.setLayout(new BorderLayout());
-        JPanel jPanelTerminalOutputs1 = new JPanel();
-        jPanelTerminalOutputsLabel = new JLabel("    ");
-        jPanelTerminalOutputs1.add(jButtonPreviousTerminal);
-        jPanelTerminalOutputs1.add(jPanelTerminalOutputsLabel);
-        jPanelTerminalOutputs1.add(jButtonNextTerminal);
-        jPanelTerminalOutputs.add(jPanelTerminalOutputs1, BorderLayout.NORTH);
-        jPanelOutputSwitch = new JPanel();
-        jPanelOutputSwitch.setLayout(new BorderLayout());
-        jPanelOutputSwitch.add(new JOutputArea());
-        jPanelTerminalOutputs.add(jPanelOutputSwitch, BorderLayout.CENTER);
+        jOutputAreaControl = new JOutputArea();
 
-
-        jOutputAreaErrors = new JOutputArea();
-        jOutputAreaControl = new JOutputArea
-          ("+-------------------------------------------------------------+\n" +
-           "      BenchmarkSQL v" + JTPCCVERSION + " (using JDBC Prepared Statements)\n" +
-           "+-------------------------------------------------------------+\n" +
-           " (c) 2003, Raul Barbosa (SourceForge.Net 'jTPCC' project)\n" +
-           " (c) 2004-2013, Denis Lussier\n" +
-           "+-------------------------------------------------------------+\n\n");
         jPanelControl.add(jOutputAreaControl, BorderLayout.CENTER);
         jLabelInformation = new JLabel("", JLabel.CENTER);
         updateInformationLabel();
@@ -274,7 +282,6 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
 
         if(e.getSource() == jButtonCreateTerminals)
         {
-            removeAllTerminals();
             stopInputAreas();
             fastNewOrderCounter = 0;
 
@@ -282,7 +289,6 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
             try
             {
                 String driver = jTextFieldDriver.getText();
-                jOutputAreaControl.println("");
                 printMessage("Loading database driver: \'" + driver + "\'...");
                 Class.forName(driver);
                 databaseDriverLoaded = true;
@@ -303,8 +309,6 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
                     int numTerminals = -1, transactionsPerTerminal = -1, numWarehouses = -1;
                     int paymentWeightValue = -1, orderStatusWeightValue = -1, deliveryWeightValue = -1, stockLevelWeightValue = -1;
                     long executionTimeMillis = -1;
-
-                    jOutputAreaControl.println("");
 
                     try
                     {
@@ -329,8 +333,6 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
                         errorMessage("Invalid number of terminals!");
                         throw new Exception();
                     }
-
-                    boolean debugMessages = (jCheckBoxDebugMessages.getSelectedObjects() != null);
 
                     if(limitIsTime)
                     {
@@ -391,12 +393,8 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
                         printMessage("Creating " + numTerminals + " terminal(s) with " + (executionTimeMillis/60000) + " minute(s) of execution...");
                     printMessage("Transaction Weights: " + (100 - (paymentWeightValue + orderStatusWeightValue + deliveryWeightValue + stockLevelWeightValue)) + "% New-Order, " + paymentWeightValue + "% Payment, " + orderStatusWeightValue + "% Order-Status, " + deliveryWeightValue + "% Delivery, " + stockLevelWeightValue + "% Stock-Level");
 
-                    String reportFileName = reportFilePrefix + getFileNameSuffix() + ".txt";
-                    fileOutputStream = new FileOutputStream(reportFileName);
-                    printStreamReport = new PrintStream(fileOutputStream);
-                    printStreamReport.println("Number of Terminals\t" + numTerminals);
-                    printStreamReport.println("\nTerminal\tHome Warehouse");
-                    printMessage("A complete report of the transactions will be saved to the file \'" + reportFileName + "\'");
+                    log.info("Number of Terminals\t" + numTerminals);
+                    log.info("\nTerminal\tHome Warehouse");
 
                     terminals = new jTPCCTerminal[numTerminals];
                     terminalOutputAreas = new JOutputArea[numTerminals];
@@ -413,8 +411,6 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
                             for(int j = 0; j < 10; j++)
                                 usedTerminals[i][j] = 0;
 
-                        jOutputAreaErrors.clear();
-                        jTabbedPane.addTab("Errors", imageIconDot, jOutputAreaErrors);
                         for(int i = 0; i < numTerminals; i++)
                         {
                             int terminalWarehouseID;
@@ -427,53 +423,48 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
                             while(usedTerminals[terminalWarehouseID-1][terminalDistrictID-1] == 1);
                             usedTerminals[terminalWarehouseID-1][terminalDistrictID-1] = 1;
 
-                            String terminalName = terminalPrefix + (i>=9 ? ""+(i+1) : "0"+(i+1));
+                            String terminalName = "Term-" + (i>=9 ? ""+(i+1) : "0"+(i+1));
                             Connection conn = null;
                             printMessage("Creating database connection for " + terminalName + "...");
                             conn = DriverManager.getConnection(database, username, password);
                             conn.setAutoCommit(false);
+
                             JOutputArea terminalOutputArea = new JOutputArea();
                             long maxChars = 150000/numTerminals;
                             if(maxChars > JOutputArea.DEFAULT_MAX_CHARS) maxChars = JOutputArea.DEFAULT_MAX_CHARS;
                             if(maxChars < 2000) maxChars = 2000;
                             terminalOutputArea.setMaxChars(maxChars);
-                            jTPCCTerminal terminal = new jTPCCTerminal(terminalName, terminalWarehouseID, terminalDistrictID, conn, transactionsPerTerminal, terminalOutputArea, jOutputAreaErrors, debugMessages, paymentWeightValue, orderStatusWeightValue, deliveryWeightValue, stockLevelWeightValue, numWarehouses, this);
+
+                            jTPCCTerminal terminal = new jTPCCTerminal
+                              (terminalName, terminalWarehouseID, terminalDistrictID, conn, 
+                               transactionsPerTerminal, paymentWeightValue, orderStatusWeightValue, 
+                               deliveryWeightValue, stockLevelWeightValue, numWarehouses, this);
+
                             terminals[i] = terminal;
                             terminalOutputAreas[i] = terminalOutputArea;
                             terminalNames[i] = terminalName;
-                            printStreamReport.println(terminalName + "\t" + terminalWarehouseID);
+                            log.info(terminalName + "\t" + terminalWarehouseID);
                         }
-
-                        setActiveTerminalOutput(0);
-                        jTabbedPane.addTab("Terminals", imageIconDot, jPanelTerminalOutputs);
 
                         sessionEndTargetTime = executionTimeMillis;
                         signalTerminalsRequestEndSent = false;
 
-                        printStreamReport.println("\nTransaction\tWeight\n% New-Order\t" + (100 - (paymentWeightValue + orderStatusWeightValue + deliveryWeightValue + stockLevelWeightValue)) + "\n% Payment\t" + paymentWeightValue + "\n% Order-Status\t" + orderStatusWeightValue + "\n% Delivery\t" + deliveryWeightValue + "\n% Stock-Level\t" + stockLevelWeightValue);
-                        printStreamReport.println("\n\nTransaction Number\tTerminal\tType\tExecution Time (ms)\t\tComment");
+                        log.info
+                          ("\nTransaction\tWeight\n% New-Order\t" + 
+                           (100 - (paymentWeightValue + orderStatusWeightValue + deliveryWeightValue + stockLevelWeightValue)) + 
+                           "\n% Payment\t" + paymentWeightValue + "\n% Order-Status\t" + orderStatusWeightValue + 
+                           "\n% Delivery\t" + deliveryWeightValue + "\n% Stock-Level\t" + stockLevelWeightValue);
+
+                        log.info("\n\nTransaction Number\tTerminal\tType\tExecution Time (ms)\t\tComment");
 
                         printMessage("Created " + numTerminals + " terminal(s) successfully!");
                     }
                     catch(Exception e1)
                     {
-                        try
-                        {
-                            printStreamReport.println("\nThis session ended with errors!");
+                        log.info("\nThis session ended with errors!");
                             printStreamReport.close();
                             fileOutputStream.close();
-                        }
-                        catch(IOException e2)
-                        {
-                            errorMessage("An error occurred writing the report!");
-                        }
 
-                        errorMessage("An error occurred!");
-                        StringWriter stringWriter = new StringWriter();
-                        PrintWriter printWriter = new PrintWriter(stringWriter);
-                        e1.printStackTrace(printWriter);
-                        printWriter.close();
-                        jOutputAreaControl.println(stringWriter.toString());
                         throw new Exception();
                     }
 
@@ -521,11 +512,6 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
         if(e.getSource() == jButtonSelectControls) setActiveConfigPanel(jPanelConfigControls, "Controls");
         if(e.getSource() == jButtonSelectWeights) setActiveConfigPanel(jPanelConfigWeights, "Transaction Weights");
 
-
-        if(e.getSource() == jButtonNextTerminal) setNextActiveTerminal();
-        if(e.getSource() == jButtonPreviousTerminal) setPreviousActiveTerminal();
-
-
         updateInformationLabel();
     }
 
@@ -562,11 +548,6 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
                 {
                     terminals[i] = null;
                     terminalNames[i] = "(" + terminalNames[i] + ")";
-                    if(i == currentlyDisplayedTerminal)
-                    {
-                        jPanelTerminalOutputsLabel.setText("   " + terminalNames[i] + "   ");
-                        jPanelTerminalOutputsLabel.repaint();
-                    }
                     newOrderCounter += countNewOrdersExecuted;
                     found = true;
                 }
@@ -582,11 +563,6 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
             printMessage("All terminals finished executing " + sessionEnd);
             endReport();
             terminalsBlockingExit = false;
-            if(jOutputAreaErrors.getText().length() != 0)
-            {
-                jTabbedPane.setTitleAt(1, "** ERRORS **");
-                printMessage("There were errors on this session!");
-            }
             printMessage("Session #" + sessionCount + " finished!");
             restartInputAreas();
         }
@@ -596,19 +572,9 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
     {
         if(comment == null) comment = "None";
 
-        try
-        {
-            synchronized(printStreamReport)
-            {
-                printStreamReport.println("" + transactionCount + "\t" + terminalName + "\t" + transactionType + "\t" + executionTime + "\t\t" + comment);
-                transactionCount++;
-                fastNewOrderCounter += newOrder;
-            }
-        }
-        catch(Exception e)
-        {
-            errorMessage("An error occurred writing the report!");
-        }
+        log.info("" + transactionCount + "\t" + terminalName + "\t" + transactionType + "\t" + executionTime + "\t\t" + comment);
+        transactionCount++;
+        fastNewOrderCounter += newOrder;
 
         if(sessionEndTargetTime != -1 && System.currentTimeMillis() > sessionEndTargetTime)
         {
@@ -618,20 +584,12 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
         updateInformationLabel();
     }
 
-    private void endReport()
-    {
-        try
-        {
-            printStreamReport.println("\n\nMeasured tpmC\t=60000*" + newOrderCounter + "/" + (sessionEndTimestamp - sessionStartTimestamp));
-            printStreamReport.println("\nSession Start\t" + sessionStart + "\nSession End\t" + sessionEnd);
-            printStreamReport.println("Transaction Count\t" + (transactionCount-1));
-            printStreamReport.close();
-            fileOutputStream.close();
-        }
-        catch(IOException e)
-        {
-            errorMessage("An error occurred writing the report!");
-        }
+    private void endReport() {
+        log.info("");
+        log.info("Measured tpmC     = " + tpmC);
+        log.info("Session Start     = " + sessionStart );
+        log.info("Session End       = " + sessionEnd);
+        log.info("Transaction Count = " + (transactionCount-1));
     }
 
     private void setActiveConfigPanel(JPanel panel, String title)
@@ -647,70 +605,20 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
         jPanelConfigSwitch.repaint();
     }
 
-    private void setActiveTerminalOutput(int terminalNumber)
-    {
-        if(terminals != null)
-        {
-            synchronized(terminals)
-            {
-                jPanelTerminalOutputs.invalidate();
-                jPanelOutputSwitch.invalidate();
-                jPanelOutputSwitch.removeAll();
-                jPanelTerminalOutputsLabel.setText("   " + terminalNames[terminalNumber] + "   ");
-                jPanelTerminalOutputsLabel.repaint();
-                currentlyDisplayedTerminal = terminalNumber;
-                jPanelOutputSwitch.add(terminalOutputAreas[terminalNumber], BorderLayout.CENTER);
-                jPanelTerminalOutputs.validate();
-                jPanelOutputSwitch.validate();
-                jPanelTerminalOutputs.repaint();
-                jPanelOutputSwitch.repaint();
-            }
-        }
-    }
-
-    private void setNextActiveTerminal()
-    {
-        int next = currentlyDisplayedTerminal + 1;
-        if(next >= terminals.length) next = 0;
-        setActiveTerminalOutput(next);
-    }
-
-    private void setPreviousActiveTerminal()
-    {
-        int previous = currentlyDisplayedTerminal - 1;
-        if(previous < 0) previous = terminals.length -1;
-        setActiveTerminalOutput(previous);
-    }
-
     private void printMessage(String message)
     {
-        if(OUTPUT_MESSAGES) jOutputAreaControl.println("[BenchmarkSQL] " + message);
+        log.info(message);
     }
 
     private void errorMessage(String message)
     {
-        jOutputAreaControl.println("[ERROR] " + message);
+        log.error(message);
     }
 
-    private void exit()
-    {
-        if(!terminalsBlockingExit)
-        {
-            System.exit(0);
-        }
-        else
-        {
-            printMessage("Disable all terminals before quitting!");
-        }
+    private void exit() {
+        System.exit(0);
     }
 
-    private void removeAllTerminals()
-    {
-        jTabbedPane.removeAll();
-        jTabbedPane.addTab("Control", imageIconDot, jPanelControl);
-        terminals = null;
-        System.gc();
-    }
 
     private void stopInputAreas()
     {
@@ -722,7 +630,6 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
         jRadioButtonNum.setEnabled(false);
         jTextFieldNumTerminals.setEnabled(false);
         jTextFieldNumWarehouses.setEnabled(false);
-        jCheckBoxDebugMessages.setEnabled(false);
         jTextFieldDatabase.setEnabled(false);
         jTextFieldUsername.setEnabled(false);
         jTextFieldPassword.setEnabled(false);
@@ -744,7 +651,6 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
         jRadioButtonNum.setEnabled(true);
         jTextFieldNumTerminals.setEnabled(true);
         jTextFieldNumWarehouses.setEnabled(true);
-        jCheckBoxDebugMessages.setEnabled(true);
         jTextFieldDatabase.setEnabled(true);
         jTextFieldUsername.setEnabled(true);
         jTextFieldPassword.setEnabled(true);
@@ -764,7 +670,7 @@ public class jTPCC extends JFrame implements jTPCCConfig, ActionListener, Window
 
         if(fastNewOrderCounter != 0)
         {
-            double tpmC = (6000000*fastNewOrderCounter/(currTimeMillis - sessionStartTimestamp))/100.0;
+            tpmC = (6000000*fastNewOrderCounter/(currTimeMillis - sessionStartTimestamp))/100.0;
             informativeText = "Running Average tpmC: " + tpmC + "      ";
         }
 

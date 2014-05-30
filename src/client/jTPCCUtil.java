@@ -3,9 +3,11 @@
  *    the TPC-C benchmark
  *
  * Copyright (C) 2003, Raul Barbosa
- * Copyright (C) 2004-2006, Denis Lussier
+ * Copyright (C) 2004-2013, Denis Lussier
  *
  */
+
+import org.apache.log4j.*;
 
 import java.io.*;
 import java.sql.*;
@@ -14,7 +16,7 @@ import java.text.*;
  
 public class jTPCCUtil implements jTPCCConfig 
 {
-    
+  static Logger log = Logger.getLogger(jTPCCUtil.class);
 
   public static String getSysProp(String inSysProperty, String defaultValue) {
     
@@ -22,14 +24,8 @@ public class jTPCCUtil implements jTPCCConfig
 
     try {
       outPropertyValue = System.getProperty(inSysProperty, defaultValue);
-      if (inSysProperty.equals("password")) {
-        System.out.println(inSysProperty + "=*****");
-      } else {
-        System.out.println(inSysProperty + "=" + outPropertyValue);
-      } 
     } catch (Exception e) {
-        System.out.println("Error Reading Required System Property '" + 
-          inSysProperty + "'");
+      log.error("Error Reading Required System Property '" + inSysProperty + "'");
     }
 
     return(outPropertyValue);

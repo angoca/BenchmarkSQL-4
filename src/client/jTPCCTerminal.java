@@ -2,9 +2,10 @@
  * jTPCCTerminal - Terminal emulator code for jTPCC (transactions)
  *
  * Copyright (C) 2003, Raul Barbosa
- * Copyright (C) 2004-2006, Denis Lussier
+ * Copyright (C) 2004-2013, Denis Lussier
  *
  */
+import org.apache.log4j.*;
 
 import java.io.*;
 import java.sql.*;
@@ -15,6 +16,8 @@ import javax.swing.*;
 
 public class jTPCCTerminal implements jTPCCConfig, Runnable
 {
+    private static org.apache.log4j.Logger log = Logger.getLogger(jTPCCTerminal.class);
+
     private String terminalName;
     private Connection conn = null;
     private Statement stmt = null;
@@ -22,8 +25,6 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
     private ResultSet rs = null;
     private int terminalWarehouseID, terminalDistrictID;
     private int paymentWeight, orderStatusWeight, deliveryWeight, stockLevelWeight;
-    private JOutputArea terminalOutputArea, errorOutputArea;
-    private boolean debugMessages;
     private jTPCC parent;
     private Random  gen;
 
@@ -77,7 +78,10 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
       private PreparedStatement stockGetDistOrderId = null;
       private PreparedStatement stockGetCountStock = null;
 
-    public jTPCCTerminal(String terminalName, int terminalWarehouseID, int terminalDistrictID, Connection conn, int numTransactions, JOutputArea terminalOutputArea, JOutputArea errorOutputArea, boolean debugMessages, int paymentWeight, int orderStatusWeight, int deliveryWeight, int stockLevelWeight, int numWarehouses, jTPCC parent) throws SQLException
+    public jTPCCTerminal
+      (String terminalName, int terminalWarehouseID, int terminalDistrictID, Connection conn, 
+       int numTransactions, int paymentWeight, int orderStatusWeight, 
+       int deliveryWeight, int stockLevelWeight, int numWarehouses, jTPCC parent) throws SQLException
     {
         this.terminalName = terminalName;
         this.conn = conn;
@@ -90,9 +94,6 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
 
         this.terminalWarehouseID = terminalWarehouseID;
         this.terminalDistrictID = terminalDistrictID;
-        this.terminalOutputArea = terminalOutputArea;
-        this.errorOutputArea = errorOutputArea;
-        this.debugMessages = debugMessages;
         this.parent = parent;
         this.numTransactions = numTransactions;
         this.paymentWeight = paymentWeight;
@@ -101,6 +102,8 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
         this.stockLevelWeight = stockLevelWeight;
         this.numWarehouses = numWarehouses;
         this.newOrderCounter = 0;
+
+        terminalMessage("");
         terminalMessage("Terminal \'" + terminalName + "\' has WarehouseID=" + terminalWarehouseID + " and DistrictID=" + terminalDistrictID + ".");
     }
 
@@ -111,16 +114,20 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
         executeTransactions(numTransactions);
         try
         {
+            printMessage("");
             printMessage("Closing statement and connection...");
+
             stmt.close();
             conn.close();
         }
         catch(Exception e)
         {
+            printMessage("");
             printMessage("An error occurred!");
             logException(e);
         }
 
+        printMessage("");
         printMessage("Terminal \'" + terminalName + "\' finished after " + (transactionCount-1) + " transaction(s).");
 
         parent.signalTerminalEnded(this, newOrderCounter);
@@ -129,6 +136,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
     public void stopRunningWhenPossible()
     {
         stopRunningSignal = true;
+        printMessage("");
         printMessage("Terminal received stop signal!");
         printMessage("Finishing current transaction before exit...");
     }
@@ -233,7 +241,8 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                 if(jTPCCUtil.randomNumber(1, 100, gen) == 1)
                     itemIDs[numItems-1] = -12345;
 
-                terminalMessage("\nStarting transaction #" + transactionCount + " (New-Order)...");
+                terminalMessage("");
+                terminalMessage("Starting transaction #" + transactionCount + " (New-Order)...");
                 newOrderTransaction(terminalWarehouseID, districtID, customerID, numItems, allLocal, itemIDs, supplierWarehouseIDs, orderQuantities);
                 break;
 
@@ -276,7 +285,8 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
 
                 float paymentAmount = (float)(jTPCCUtil.randomNumber(100, 500000, gen)/100.0);
 
-                terminalMessage("\nStarting transaction #" + transactionCount + " (Payment)...");
+                terminalMessage("");
+                terminalMessage("Starting transaction #" + transactionCount + " (Payment)...");
                 paymentTransaction(terminalWarehouseID, customerWarehouseID, paymentAmount, districtID, customerDistrictID, customerID, customerLastName, customerByName);
                 break;
 
@@ -284,7 +294,8 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
             case STOCK_LEVEL:
                 int threshold = jTPCCUtil.randomNumber(10, 20, gen);
 
-                terminalMessage("\nStarting transaction #" + transactionCount + " (Stock-Level)...");
+                terminalMessage("");
+                terminalMessage("Starting transaction #" + transactionCount + " (Stock-Level)...");
                 stockLevelTransaction(terminalWarehouseID, terminalDistrictID, threshold);
                 break;
 
@@ -306,7 +317,8 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                     customerID = jTPCCUtil.getCustomerID(gen);
                 }
 
-                terminalMessage("\nStarting transaction #" + transactionCount + " (Order-Status)...");
+                terminalMessage("");
+                terminalMessage("Starting transaction #" + transactionCount + " (Order-Status)...");
                 orderStatusTransaction(terminalWarehouseID, districtID, customerID, customerLastName, customerByName);
                 break;
 
@@ -314,7 +326,8 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
             case DELIVERY:
                 int orderCarrierID = jTPCCUtil.randomNumber(1, 10, gen);
 
-                terminalMessage("\nStarting transaction #" + transactionCount + " (Delivery)...");
+                terminalMessage("");
+                terminalMessage("Starting transaction #" + transactionCount + " (Delivery)...");
                 result = deliveryTransaction(terminalWarehouseID, orderCarrierID);
                 break;
 
@@ -359,10 +372,15 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                         " AND no_w_id = ?" +
                         " ORDER BY no_o_id ASC");
                     }
+
                     delivGetOrderId.setInt(1, d_id);
                     delivGetOrderId.setInt(2, w_id);
+
                     rs = delivGetOrderId.executeQuery();
-                    if(rs.next()) no_o_id = rs.getInt("no_o_id");
+                    if (rs.next()) {
+                      no_o_id = rs.getInt("no_o_id");
+                    }
+
                     orderIDs[(int)d_id-1] = no_o_id;
                     rs.close();
                     rs = null;
@@ -379,12 +397,16 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                           " AND no_w_id = ?" +
                           " AND no_o_id = ?");
                       }
+
                       delivDeleteNewOrder.setInt(1, d_id);
                       delivDeleteNewOrder.setInt(2, w_id);
                       delivDeleteNewOrder.setInt(3, no_o_id);
-                      result = delivDeleteNewOrder.executeUpdate();
 
-                      if(result > 0) newOrderRemoved = true;
+                      result = delivDeleteNewOrder.executeUpdate();
+                      if (result > 0) {
+                        newOrderRemoved = true;
+                      }
+
                     }
                 }
                 while(no_o_id != -1 && !newOrderRemoved);
@@ -400,12 +422,17 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                           " AND o_d_id = ?" +
                           " AND o_w_id = ?");
                       }
+
                       delivGetCustId.setInt(1, no_o_id);
                       delivGetCustId.setInt(2, d_id);
                       delivGetCustId.setInt(3, w_id);
-                      rs = delivGetCustId.executeQuery();
 
-                      if(!rs.next()) throw new Exception("O_ID=" + no_o_id + " O_D_ID=" + d_id + " O_W_ID=" + w_id + " not found!");
+                      rs = delivGetCustId.executeQuery();
+                      if (!rs.next()) {
+                        log.error("delivGetCustId() not found! " +
+                          "O_ID=" + no_o_id + " O_D_ID=" + d_id + " O_W_ID=" + w_id);
+                      }
+
                       c_id = rs.getInt("o_c_id");
                       rs.close();
                       rs = null;
@@ -417,13 +444,17 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                           " AND o_d_id = ?" +
                           " AND o_w_id = ?");
                       }
+
                       delivUpdateCarrierId.setInt(1, o_carrier_id);
                       delivUpdateCarrierId.setInt(2, no_o_id);
                       delivUpdateCarrierId.setInt(3, d_id);
                       delivUpdateCarrierId.setInt(4, w_id);
-                      result = delivUpdateCarrierId.executeUpdate();
 
-                    if(result != 1) throw new Exception("O_ID=" + no_o_id + " O_D_ID=" + d_id + " O_W_ID=" + w_id + " not found!");
+                      result = delivUpdateCarrierId.executeUpdate();
+                      if (result != 1) {
+                        log.error("delivUpdateCarrierId() not found! " +
+                          "O_ID=" + no_o_id + " O_D_ID=" + d_id + " O_W_ID=" + w_id);
+                      }
 
                       if (delivUpdateDeliveryDate == null) {
                         delivUpdateDeliveryDate = conn.prepareStatement(
@@ -432,13 +463,17 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                           " AND ol_d_id = ?" +
                           " AND ol_w_id = ?");
                       }
+
                       delivUpdateDeliveryDate.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
                       delivUpdateDeliveryDate.setInt(2,no_o_id);
                       delivUpdateDeliveryDate.setInt(3,d_id);
                       delivUpdateDeliveryDate.setInt(4,w_id);
-                      result = delivUpdateDeliveryDate.executeUpdate();
 
-                      if(result == 0) throw new Exception("OL_O_ID=" + no_o_id + " OL_D_ID=" + d_id + " OL_W_ID=" + w_id + " not found!");
+                      result = delivUpdateDeliveryDate.executeUpdate();
+                      if (result == 0) {
+                        log.error("delivUpdateDeliveryDate() not found! " +
+                          "OL_O_ID=" + no_o_id + " OL_D_ID=" + d_id + " OL_W_ID=" + w_id);
+                      }
 
                       if (delivSumOrderAmount == null) {
                         delivSumOrderAmount = conn.prepareStatement(
@@ -448,12 +483,17 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                           " AND ol_d_id = ?" +
                           " AND ol_w_id = ?");
                       }
+
                       delivSumOrderAmount.setInt(1, no_o_id);
                       delivSumOrderAmount.setInt(2, d_id);
                       delivSumOrderAmount.setInt(3, w_id);
-                      rs = delivSumOrderAmount.executeQuery();
 
-                      if(!rs.next()) throw new Exception("OL_O_ID=" + no_o_id + " OL_D_ID=" + d_id + " OL_W_ID=" + w_id + " not found!");
+                      rs = delivSumOrderAmount.executeQuery();
+                      if (!rs.next()) {
+                        log.error("delivSumOrderAmount() not found! " +
+                          "OL_O_ID=" + no_o_id + " OL_D_ID=" + d_id + " OL_W_ID=" + w_id);
+                      }
+
                       ol_total = rs.getFloat("ol_total");
                       rs.close();
                       rs = null;
@@ -466,13 +506,17 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                         " AND c_d_id = ?" +
                         " AND c_w_id = ?");
                     }
+
                     delivUpdateCustBalDelivCnt.setFloat(1, ol_total);
                     delivUpdateCustBalDelivCnt.setInt(2, c_id);
                     delivUpdateCustBalDelivCnt.setInt(3, d_id);
                     delivUpdateCustBalDelivCnt.setInt(4, w_id);
-                    result = delivUpdateCustBalDelivCnt.executeUpdate();
 
-                    if(result == 0) throw new Exception("C_ID=" + c_id + " C_W_ID=" + w_id + " C_D_ID=" + d_id + " not found!");
+                    result = delivUpdateCustBalDelivCnt.executeUpdate();
+                    if (result == 0) {
+                       log.error("delivUpdateCustBalDelivCnt() not found! " +
+                         "C_ID=" + c_id + " C_W_ID=" + w_id + " C_D_ID=" + d_id);
+                    }
                 }
             }
 
@@ -550,12 +594,16 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                     " AND c_d_id = ?" +
                     " AND c_w_id = ?");
                 }
+
                 ordStatCountCust.setString(1, c_last);
                 ordStatCountCust.setInt(2, d_id);
                 ordStatCountCust.setInt(3, w_id);
-                rs = ordStatCountCust.executeQuery();
 
-                if(!rs.next()) throw new Exception("C_LAST=" + c_last + " C_D_ID=" + d_id + " C_W_ID=" + w_id + " not found!");
+                rs = ordStatCountCust.executeQuery();
+                if (!rs.next()) {
+                  log.error("ordStatCountCust() C_LAST=" + c_last + " C_D_ID=" + d_id + " C_W_ID=" + w_id);
+                }
+
                 namecnt = rs.getInt("namecnt");
                 rs.close();
                 rs = null;
@@ -570,12 +618,16 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                     " AND c_w_id = ?" +
                     " ORDER BY c_w_id, c_d_id, c_last, c_first");
                 }
+
                 ordStatGetCust.setString(1, c_last);
                 ordStatGetCust.setInt(2, d_id);
                 ordStatGetCust.setInt(3, w_id);
-                rs = ordStatGetCust.executeQuery();
 
-                if(!rs.next()) throw new Exception("C_LAST=" + c_last + " C_D_ID=" + d_id + " C_W_ID=" + w_id + " not found!");
+                rs = ordStatGetCust.executeQuery();
+                if (!rs.next()) {
+                  log.error("ordStatGetCust() not found! C_LAST=" + c_last + " C_D_ID=" + d_id + " C_W_ID=" + w_id);
+                }
+
                 if(namecnt%2 == 1) namecnt++;
                 for(int i = 1; i < namecnt / 2; i++) rs.next();
                 c_id = rs.getInt("c_id");
@@ -595,12 +647,16 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                     " AND c_d_id = ?" +
                     " AND c_w_id = ?");
                 }
+
                 ordStatGetCustBal.setInt(1, c_id);
                 ordStatGetCustBal.setInt(2, d_id);
                 ordStatGetCustBal.setInt(3, w_id);
-                rs = ordStatGetCustBal.executeQuery();
 
-                if(!rs.next()) throw new Exception("C_ID=" + c_id + " C_D_ID=" + d_id + " C_W_ID=" + w_id + " not found!");
+                rs = ordStatGetCustBal.executeQuery();
+                if (!rs.next()) {
+                  log.error("ordStatGetCustBal() not found! C_ID=" + c_id + " C_D_ID=" + d_id + " C_W_ID=" + w_id);
+                }
+
                 c_last = rs.getString("c_last");
                 c_first = rs.getString("c_first");
                 c_middle = rs.getString("c_middle");
@@ -754,7 +810,8 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
     }
 
 
-    private void newOrderTransaction(int w_id, int d_id, int c_id, int o_ol_cnt, int o_all_local, int[] itemIDs, int[] supplierWarehouseIDs, int[] orderQuantities)
+    private void newOrderTransaction
+    (int w_id, int d_id, int c_id, int o_ol_cnt, int o_all_local, int[] itemIDs, int[] supplierWarehouseIDs, int[] orderQuantities)
     {
         float c_discount, w_tax, d_tax = 0, i_price;
         int d_next_o_id, o_id = -1, s_quantity;
@@ -789,11 +846,16 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                 " WHERE w_id = ? AND w_id = c_w_id" +
                   " AND c_d_id = ? AND c_id = ?");
             }
+
             stmtGetCustWhse.setInt(1, w_id);
             stmtGetCustWhse.setInt(2, d_id);
             stmtGetCustWhse.setInt(3, c_id);
+
             rs = stmtGetCustWhse.executeQuery();
-            if(!rs.next()) throw new Exception("W_ID=" + w_id + " C_D_ID=" + d_id + " C_ID=" + c_id + " not found!");
+            if (!rs.next()) {
+              log.error("stmtGetCustWhse() not found! " + "W_ID=" + w_id + " C_D_ID=" + d_id + " C_ID=" + c_id);
+            }
+
             c_discount = rs.getFloat("c_discount");
             c_last = rs.getString("c_last");
             c_credit = rs.getString("c_credit");
@@ -810,10 +872,15 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                     "SELECT d_next_o_id, d_tax FROM district" +
                     " WHERE d_id = ? AND d_w_id = ? FOR UPDATE");
                 }
+
                 stmtGetDist.setInt(1, d_id);
                 stmtGetDist.setInt(2, w_id);
+
                 rs = stmtGetDist.executeQuery();
-                if(!rs.next()) throw new Exception("D_ID=" + d_id + " D_W_ID=" + w_id + " not found!");
+                if (!rs.next()) {
+                  log.error("stmtGetDist() not found! " + "D_ID=" + d_id + " D_W_ID=" + w_id);
+                }
+
                 d_next_o_id = rs.getInt("d_next_o_id");
                 d_tax = rs.getFloat("d_tax");
                 rs.close();
@@ -827,6 +894,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                         "INSERT INTO NEW_ORDER (no_o_id, no_d_id, no_w_id) " +
                         "VALUES ( ?, ?, ?)");
                     }
+
                     stmtInsertNewOrder.setInt(1, o_id);
                     stmtInsertNewOrder.setInt(2, d_id);
                     stmtInsertNewOrder.setInt(3, w_id);
@@ -845,10 +913,14 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                 "UPDATE district SET d_next_o_id = d_next_o_id + 1 " +
                 " WHERE d_id = ? AND d_w_id = ?");
             }
+
             stmtUpdateDist.setInt(1,d_id);
             stmtUpdateDist.setInt(2,w_id);
+
             result = stmtUpdateDist.executeUpdate();
-            if(result == 0) throw new Exception("Error!! Cannot update next_order_id on DISTRICT for D_ID=" + d_id + " D_W_ID=" + w_id);
+            if (result == 0) {
+              log.error("stmtUpdateDist() Cannot update next_order_id on DISTRICT for D_ID=" + d_id + " D_W_ID=" + w_id);
+            }
 
               if (stmtInsertOOrder == null) {
                 stmtInsertOOrder = conn.prepareStatement(
@@ -856,6 +928,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                   " (o_id, o_d_id, o_w_id, o_c_id, o_entry_d, o_ol_cnt, o_all_local)" +
                   " VALUES (?, ?, ?, ?, ?, ?, ?)");
               }
+
               stmtInsertOOrder.setInt(1,o_id);
               stmtInsertOOrder.setInt(2,d_id);
               stmtInsertOOrder.setInt(3,w_id);
@@ -863,6 +936,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
               stmtInsertOOrder.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
               stmtInsertOOrder.setInt(6,o_ol_cnt);
               stmtInsertOOrder.setInt(7,o_all_local);
+
               stmtInsertOOrder.executeUpdate();
 
             for(int ol_number = 1; ol_number <= o_ol_cnt; ol_number++) {
@@ -881,8 +955,12 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                       "SELECT i_price, i_name , i_data FROM item WHERE i_id = ?");
                   }
                   stmtGetItem.setInt(1, ol_i_id);
+
                   rs = stmtGetItem.executeQuery();
-                  if(!rs.next()) throw new IllegalAccessException("I_ID=" + ol_i_id + " not found!");
+                  if (!rs.next()) {
+                    log.error("stmtGetItem() not found! " + "I_ID=" + ol_i_id);
+                  }
+
                   i_price = rs.getFloat("i_price");
                   i_name = rs.getString("i_name");
                   i_data = rs.getString("i_data");
@@ -898,10 +976,15 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                       "       s_dist_06, s_dist_07, s_dist_08, s_dist_09, s_dist_10" +
                       " FROM stock WHERE s_i_id = ? AND s_w_id = ? FOR UPDATE");
                 }
+
                 stmtGetStock.setInt(1, ol_i_id);
                 stmtGetStock.setInt(2, ol_supply_w_id);
+
                 rs = stmtGetStock.executeQuery();
-                if(!rs.next()) throw new Exception("I_ID=" + ol_i_id + " not found!");
+                if (!rs.next()) {
+                  log.error("stmtGetStock() not found! " + "I_ID=" + ol_i_id + " W_ID=" + ol_supply_w_id);
+                }
+
                 s_quantity = rs.getInt("s_quantity");
                 s_data = rs.getString("s_data");
                 s_dist_01 = rs.getString("s_dist_01");
@@ -1047,13 +1130,10 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
         } //// ugh :-), this is the end of the try block at the begining of this method /////////
 
         catch (SQLException ex) {
-            System.out.println("\n--- Unexpected SQLException caught in NEW-ORDER Txn ---\n");
+            log.error("--- Unexpected SQLException caught in NEW-ORDER Txn ---");
             while (ex != null) {
-              System.out.println("Message:   " + ex.getMessage ());
-              System.out.println("SQLState:  " + ex.getSQLState ());
-              System.out.println("ErrorCode: " + ex.getErrorCode ());
+              log.error(ex.getMessage());
               ex = ex.getNextException();
-              System.out.println("");
             }
 
         } catch (Exception e) {
@@ -1112,15 +1192,20 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                   " WHERE d_w_id = ?" +
                   " AND d_id = ?");
               }
+
               stockGetDistOrderId.setInt(1, w_id);
               stockGetDistOrderId.setInt(2, d_id);
-              rs = stockGetDistOrderId.executeQuery();
 
-              if(!rs.next()) throw new Exception("D_W_ID=" + w_id + " D_ID=" + d_id + " not found!");
+              rs = stockGetDistOrderId.executeQuery();
+              if (!rs.next()) {
+                log.error("stockGetDistOrderId() not found! D_W_ID=" + w_id + " D_ID=" + d_id);
+              }
+
               o_id = rs.getInt("d_next_o_id");
               rs.close();
               rs = null;
-            printMessage("Next Order ID for District = " + o_id);
+
+              printMessage("Next Order ID for District = " + o_id);
 
               if (stockGetCountStock == null) {
                 stockGetCountStock = conn.prepareStatement(
@@ -1134,15 +1219,19 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                   " AND s_i_id = ol_i_id" +
                   " AND s_quantity < ?");
               }
+
               stockGetCountStock.setInt(1, w_id);
               stockGetCountStock.setInt(2, d_id);
               stockGetCountStock.setInt(3, o_id);
               stockGetCountStock.setInt(4, o_id);
               stockGetCountStock.setInt(5, w_id);
               stockGetCountStock.setInt(6, threshold);
-              rs = stockGetCountStock.executeQuery();
 
-              if(!rs.next()) throw new Exception("OL_W_ID=" + w_id + " OL_D_ID=" + d_id + " OL_O_ID=" + o_id + " (...) not found!");
+              rs = stockGetCountStock.executeQuery();
+              if (!rs.next()) {
+                log.error("stockGetCountStock() not found! W_ID=" + w_id + " D_ID=" + d_id + " O_ID=" + o_id);
+              }
+
               stock_count = rs.getInt("stock_count");
               rs.close();
               rs = null;
@@ -1190,19 +1279,28 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                 payUpdateWhse = conn.prepareStatement(
                   "UPDATE warehouse SET w_ytd = w_ytd + ?  WHERE w_id = ? ");
               }
+
               payUpdateWhse.setFloat(1,h_amount);
               payUpdateWhse.setInt(2,w_id);
+
               result = payUpdateWhse.executeUpdate();
-              if(result == 0) throw new Exception("W_ID=" + w_id + " not found!");
+              if (result == 0) {
+                log.error("payUpdateWhse() not found! W_ID=" + w_id);
+              }
 
               if (payGetWhse == null) {
                 payGetWhse = conn.prepareStatement(
                   "SELECT w_street_1, w_street_2, w_city, w_state, w_zip, w_name" +
                   " FROM warehouse WHERE w_id = ?");
               }
+
               payGetWhse.setInt(1, w_id);
+
               rs = payGetWhse.executeQuery();
-              if(!rs.next()) throw new Exception("W_ID=" + w_id + " not found!");
+              if (!rs.next()) {
+                log.error("payGetWhse() not found! W_ID=" + w_id);
+              }
+
               w_street_1 = rs.getString("w_street_1");
               w_street_2 = rs.getString("w_street_2");
               w_city = rs.getString("w_city");
@@ -1220,17 +1318,24 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
               payUpdateDist.setInt(2, w_id);
               payUpdateDist.setInt(3, d_id);
               result = payUpdateDist.executeUpdate();
-              if(result == 0) throw new Exception("D_ID=" + d_id + " D_W_ID=" + w_id + " not found!");
+              if (result == 0) {
+                log.error("payUpdateDist() not found! D_ID=" + d_id + " D_W_ID=" + w_id);
+              }
 
               if (payGetDist == null) {
                 payGetDist = conn.prepareStatement(
                   "SELECT d_street_1, d_street_2, d_city, d_state, d_zip, d_name" +
                   " FROM district WHERE d_w_id = ? AND d_id = ?");
               }
+
               payGetDist.setInt(1, w_id);
               payGetDist.setInt(2, d_id);
+
               rs = payGetDist.executeQuery();
-              if(!rs.next()) throw new Exception("D_ID=" + d_id + " D_W_ID=" + w_id + " not found!");
+              if (!rs.next()) {
+                log.error("payGetDist() not found! D_ID=" + d_id + " D_W_ID=" + w_id);
+              }
+
               d_street_1 = rs.getString("d_street_1");
               d_street_2 = rs.getString("d_street_2");
               d_city = rs.getString("d_city");
@@ -1247,11 +1352,16 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                       "SELECT count(c_id) AS namecnt FROM customer " +
                       " WHERE c_last = ?  AND c_d_id = ? AND c_w_id = ?");
                   }
+
                   payCountCust.setString(1, c_last);
                   payCountCust.setInt(2, c_d_id);
                   payCountCust.setInt(3, c_w_id);
+
                   rs = payCountCust.executeQuery();
-                  if(!rs.next()) throw new Exception("C_LAST=" + c_last + " C_D_ID=" + c_d_id + " C_W_ID=" + c_w_id + " not found!");
+                  if (!rs.next()) {
+                    log.error("payCountCust() not found! C_LAST=" + c_last + " C_D_ID=" + c_d_id + " C_W_ID=" + c_w_id);
+                  }
+
                   namecnt = rs.getInt("namecnt");
                   rs.close();
                   rs = null;
@@ -1263,11 +1373,16 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                     "  FROM customer WHERE c_w_id = ? AND c_d_id = ? AND c_last = ? " +
                     "ORDER BY c_w_id, c_d_id, c_last, c_first ");
                 }
+
                 payCursorCustByName.setInt(1, c_w_id);
                 payCursorCustByName.setInt(2, c_d_id);
                 payCursorCustByName.setString(3, c_last);
+
                 rs = payCursorCustByName.executeQuery();
-                if(!rs.next()) throw new Exception("C_LAST=" + c_last + " C_D_ID=" + c_d_id + " C_W_ID=" + c_w_id + " not found!");
+                if (!rs.next()) {
+                  log.error("payCursorCustByName() not found! C_LAST=" + c_last + " C_D_ID=" + c_d_id + " C_W_ID=" + c_w_id);
+                }
+
                 if(namecnt%2 == 1) namecnt++;
                 for(int i = 1; i < namecnt / 2; i++) rs.next();
                 c_id = rs.getInt("c_id");
@@ -1294,11 +1409,16 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                     "       c_phone, c_credit, c_credit_lim, c_discount, c_balance, c_since " +
                     "  FROM customer WHERE c_w_id = ? AND c_d_id = ? AND c_id = ?");
                 }
+
                 payGetCust.setInt(1, c_w_id);
                 payGetCust.setInt(2, c_d_id);
                 payGetCust.setInt(3, c_id);
+
                 rs = payGetCust.executeQuery();
-                if(!rs.next()) throw new Exception("C_ID=" + c_id + " C_D_ID=" + c_d_id + " C_W_ID=" + c_w_id + " not found!");
+                if (!rs.next()) {
+                  log.error("payGetCust() not found! C_ID=" + c_id + " C_D_ID=" + c_d_id + " C_W_ID=" + c_w_id);
+                }
+
                 c_last = rs.getString("c_last");
                 c_first = rs.getString("c_first");
                 c_middle = rs.getString("c_middle");
@@ -1325,11 +1445,16 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                   payGetCustCdata = conn.prepareStatement(
                     "SELECT c_data FROM customer WHERE c_w_id = ? AND c_d_id = ? AND c_id = ?");
                 }
+
                 payGetCustCdata.setInt(1, c_w_id);
                 payGetCustCdata.setInt(2, c_d_id);
                 payGetCustCdata.setInt(3, c_id);
+
                 rs = payGetCustCdata.executeQuery();
-                if(!rs.next()) throw new Exception("C_ID=" + c_id + " C_W_ID=" + c_w_id + " C_D_ID=" + c_d_id + " not found!");
+                if (!rs.next()) {
+                  log.error("payGetCustCdata() not found! C_ID=" + c_id + " C_W_ID=" + c_w_id + " C_D_ID=" + c_d_id);
+                }
+
                 c_data = rs.getString("c_data");
                 rs.close();
                 rs = null;
@@ -1352,9 +1477,12 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                 payUpdateCustBalCdata.setInt(3, c_w_id);
                 payUpdateCustBalCdata.setInt(4, c_d_id);
                 payUpdateCustBalCdata.setInt(5, c_id);
-                result = payUpdateCustBalCdata.executeUpdate();
 
-              if(result == 0) throw new Exception("Error in PYMNT Txn updating Customer C_ID=" + c_id + " C_W_ID=" + c_w_id + " C_D_ID=" + c_d_id);
+                result = payUpdateCustBalCdata.executeUpdate();
+                if (result == 0) {
+                  log.error("payUpdateCustBalCdata() Error in PYMNT Txn updating Customer!" +
+                    " C_ID=" + c_id + " C_W_ID=" + c_w_id + " C_D_ID=" + c_d_id);
+                }
 
             } else { // GoodCredit
 
@@ -1362,13 +1490,16 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
                   payUpdateCustBal = conn.prepareStatement(
                     "UPDATE customer SET c_balance = ? WHERE c_w_id = ? AND c_d_id = ? AND c_id = ?");
                 }
+
                 payUpdateCustBal.setFloat(1, c_balance);
                 payUpdateCustBal.setInt(2, c_w_id);
                 payUpdateCustBal.setInt(3, c_d_id);
                 payUpdateCustBal.setInt(4, c_id);
-                result = payUpdateCustBal.executeUpdate();
 
-              if(result == 0) throw new Exception("C_ID=" + c_id + " C_W_ID=" + c_w_id + " C_D_ID=" + c_d_id + " not found!");
+                result = payUpdateCustBal.executeUpdate();
+                if (result == 0) {
+                  log.error("payUpdateCustBal() not found! C_ID=" + c_id + " C_W_ID=" + c_w_id + " C_D_ID=" + c_d_id);
+                }
 
             }
 
@@ -1493,28 +1624,25 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
         }
     }
 
-    private void error(String type)
-    {
-        errorOutputArea.println("[ERROR] TERMINAL=" + terminalName + "  TYPE=" + type + "  COUNT=" + transactionCount);
+    private void error(String type) {
+      log.error("TERMINAL=" + terminalName + "  TYPE=" + type + "  COUNT=" + transactionCount);
     }
 
     private void logException(Exception e)
     {
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(stringWriter);
-        e.printStackTrace(printWriter);
-        printWriter.close();
-        errorOutputArea.println(stringWriter.toString());
+      StringWriter stringWriter = new StringWriter();
+      PrintWriter printWriter = new PrintWriter(stringWriter);
+      e.printStackTrace(printWriter);
+      printWriter.close();
+      log.error(stringWriter.toString());
     }
 
-    private void terminalMessage(String message)
-    {
-        if(TERMINAL_MESSAGES) terminalOutputArea.println(message);
+    private void terminalMessage(String message) {
+      log.debug(message);
     }
 
-    private void printMessage(String message)
-    {
-        if(debugMessages) terminalOutputArea.println("[ jTPCC ] " + message);
+    private void printMessage(String message) {
+      log.error(message);
     }
 
 
@@ -1522,7 +1650,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
       try {
         conn.rollback();
       } catch(SQLException se) {
-        System.out.println(se.getMessage());
+        log.error(se.getMessage());
       }
   }
 
@@ -1531,7 +1659,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable
       try {
         conn.commit();
       } catch(SQLException se) {
-        System.out.println(se.getMessage());
+        log.error(se.getMessage());
         transRollback();
       }
 
