@@ -20,6 +20,11 @@ before_install:
   # Creates the database
   - sudo su - db2inst1 -c "db2 create db bmarkdb"
   - sudo su - db2inst1 -c "db2 connect to bmarkdb;db2 grant dbadm on database to user $USER"
+  # Postgres
+  - psql -c 'create database postgres;' -U postgres
+  - sudo -u postgres psql -c "create user benchmarksql with superuser password 'password'"
+  - sudo -u postgres psql -c "grant all privileges on database postgres to benchmarksql"
+  # Modifies the scripts
   - cd
   - pwd
   - cd build/angoca/BenchmarkSQL
@@ -38,10 +43,16 @@ before_install:
   - chmod +x *.sh
 
 install:
+  # DB2
   - ./runSQL.sh props.db2 sqlTableCreates_DB2
   - ./runLoader.sh props.db2
   - ./runSQL.sh props.db2 sqlIndexCreates_DB2
+  # Postgres
+  - ./runSQL.sh props.pg sqlTableCreates
+  - ./runLoader.sh props.pg
+  - ./runSQL.sh props.pg sqlIndexCreates
 
 script:
   - ./runBenchmark.sh props.db2
+  - ./runBenchmark.sh props.pg
 
