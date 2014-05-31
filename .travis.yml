@@ -1,0 +1,40 @@
+language: sql-pl
+before_install:
+  # Install the required libraries
+  - sudo apt-get update -qq
+  - sudo apt-get -y install libaio1 ksh libstdc++6-4.4-pic libstdc++6-4.4-dev libstdc++5 rpm
+  - sudo apt-get -y install libpam0g:i386
+  - sudo ln -s /lib/i386-linux-gnu/libpam.so.0 /lib/libpam.so.0
+  - sudo apt-get install numactl
+  # Retrieves and extracts the DB2 binaries
+  - cd /tmp
+  - wget https://iwm.dhe.ibm.com/sdfdl/v2/regs2/db2pmopn/db2_v105/expc/Xa.2/Xb.aA_60_-idZcPt9tXWVNRLjP1JF9P_RkQwewJfoiVqA/Xc.db2_v105/expc/v10.5fp1_linuxx64_expc.tar.gz/Xd./Xf.LPr.D1vk/Xg.7575683/Xi.swg-db2expressc/XY.regsrvs/XZ.NakzBJGvGJqAVUI5kAxfrEDaJNc/v10.5fp1_linuxx64_expc.tar.gz
+  - tar zvxf v10.5fp1_linuxx64_expc.tar.gz
+  - cd expc
+  # Checks the prerequisites
+  - ./db2prereqcheck -i
+  # Install DB2 and creates an instance (Response file)
+  - sudo ./db2setup -r /home/travis/build/angoca/db2-travis/db2expc.rsp || cat /tmp/db2setup.log
+  - echo -e "db2admin\ndb2admin" | sudo passwd db2inst1
+  # Creates the database
+  - sudo su - db2inst1 -c "db2 create db bmarkdb"
+  - sudo su - db2inst1 -c "db2 connect to bmarkdb;db2 grant dbadm on database to user $USER"
+  - cd
+  - cd BenchmarkSQL/run
+  - sed 's/^myCP="\.\./myCP="\/opt\/ibm\/db2\/V10\.1\/java\/db2jcc4\.jar:\.\./g' runSQL.sh > runSQL2.sh
+  - mv runSQL2.sh runSQL.sh
+  - cat runSQL.sh
+  - sed 's/-cp \.:/-cp \.:\/opt\/ibm\/db2\/V10\.1\/java\/db2jcc4\.jar:/g' runBenchmark.sh > runBenchmark2.sh
+  - mv runBenchmark2.sh runBenchmark.sh
+  - cat runBenchmark.sh
+  - sed 's/-cp \.:/-cp \.:\/opt\/ibm\/db2\/V10\.1\/java\/db2jcc4\.jar:/g' runLoader.sh > runLoader2.sh
+  - mv runLoader2.sh runLoader.sh
+  - cat runLoader.sh
+
+install:
+  - ./runSQL.sh props.db2 sqlTableCreates_DB2
+  - ./runLoader.sh props.db2 numWarehouses 1
+  - ./runSQL.sh props.db2 sqlIndexCreates_DB2
+
+script:
+  - ./runBenchmark.sh props.db2
