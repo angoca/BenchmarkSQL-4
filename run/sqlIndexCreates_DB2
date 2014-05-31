@@ -12,7 +12,6 @@ create index ndx_customer_name
   on  benchmarksql.customer (c_w_id, c_d_id, c_last, c_first);
 
 -- history table has no primary key
--- commit;
 
 alter table benchmarksql.oorder add constraint pk_oorder 
   primary key (o_w_id, o_d_id, o_id);
