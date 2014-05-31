@@ -39,7 +39,7 @@ before_install:
 
 install:
   - ./runSQL.sh props.db2 sqlTableCreates_DB2
-  - ./runLoader.sh props.db2 numWarehouses 1
+  - ./runLoader.sh props.db2
   - ./runSQL.sh props.db2 sqlIndexCreates_DB2
 
 script:
