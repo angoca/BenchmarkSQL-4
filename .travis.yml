@@ -63,7 +63,8 @@ install:
 
 script:
   - ./runBenchmark.sh props.db2
-  - db2 drop db bmarkdb
+  - df -h
+  - sudo su - db2inst1 -c "db2 drop db bmarkdb"
   - df -h
   - df -ih
   - ./runBenchmark.sh props.pg
