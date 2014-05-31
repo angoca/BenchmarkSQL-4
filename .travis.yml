@@ -11,6 +11,8 @@ env:
 before_install:
   - pwd
   - df -h
+
+  # DB2
   # Install the required libraries
   - sudo apt-get update -qq
   - sh -c "if [ '$DB' = 'db2' ]; then sudo apt-get -y install libaio1 ksh libstdc++6-4.4-pic libstdc++6-4.4-dev libstdc++5 rpm; fi"
@@ -36,14 +38,16 @@ before_install:
   # Modifies the scripts
   - cd
   - cd build/angoca/BenchmarkSQL/run
-  - sh -c "if [ '$DB' = 'db2' ]; then sed 's/^myCP="\\\.\\\./myCP="\\\/opt\\\/ibm\\\/db2\\\/V10\\\.5\\\/java\\\/db2jcc4\\\.jar:\\\.\\\./g' runSQL.sh > runSQL2.sh; mv runSQL2.sh runSQL.sh; fi"
-  - sh -c "if [ '$DB' = 'db2' ]; then sed 's/-cp \\\.:/-cp \\\.:\\\/opt\\\/ibm\\\/db2\\\/V10\\\.5\\\/java\\\/db2jcc4\\\.jar:/g' runBenchmark.sh > runBenchmark2.sh; mv runBenchmark2.sh runBenchmark.sh; fi"
-  - sh -c "if [ '$DB' = 'db2' ]; then sed 's/-cp \\\.:/-cp \\\.:\\\/opt\\\/ibm\\\/db2\\\/V10\\\.5\\\/java\\\/db2jcc4\\\.jar:/g' runLoader.sh > runLoader2.sh; mv runLoader2.sh runLoader.sh; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then sed 's/^myCP=\"\.\./myCP=\"\/opt\/ibm\/db2\/V10\.5\/java\/db2jcc4\.jar:\.\./g' runSQL.sh > runSQL2.sh; mv runSQL2.sh runSQL.sh; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then sed 's/-cp \.:/-cp \.:\/opt\/ibm\/db2\/V10\.5\/java\/db2jcc4\.jar:/g' runBenchmark.sh > runBenchmark2.sh; mv runBenchmark2.sh runBenchmark.sh; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then sed 's/-cp \.:/-cp \.:\/opt\/ibm\/db2\/V10\.5\/java\/db2jcc4\.jar:/g' runLoader.sh > runLoader2.sh; mv runLoader2.sh runLoader.sh; fi"
 
   # Postgres
   - sh -c "if [ '$DB' = 'postgres' ]; then sudo -u postgres psql -c \"create user benchmarksql with superuser password 'password'\"; fi"
   - sh -c "if [ '$DB' = 'postgres' ]; then sudo -u postgres psql -c \"grant all privileges on database postgres to benchmarksql\"; fi"
-  - chmod +x *.sh
+
+  - cat run*.sh
+  - chmod +x run*.sh
   - df -h
   - df -ih
 
