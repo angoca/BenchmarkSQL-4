@@ -8,7 +8,7 @@ before_install:
   - sudo apt-get install numactl
   # Retrieves and extracts the DB2 binaries
   - cd /tmp
-  - wget https://iwm.dhe.ibm.com/sdfdl/v2/regs2/db2pmopn/db2_v105/expc/Xa.2/Xb.aA_60_-idZcPt9tXWVNRLjP1JF9P_RkQwewJfoiVqA/Xc.db2_v105/expc/v10.5fp1_linuxx64_expc.tar.gz/Xd./Xf.LPr.D1vk/Xg.7575683/Xi.swg-db2expressc/XY.regsrvs/XZ.NakzBJGvGJqAVUI5kAxfrEDaJNc/v10.5fp1_linuxx64_expc.tar.gz
+  - wget https://iwm.dhe.ibm.com/sdfdl/v2/regs2/db2pmopn/db2_v105/expc/Xa.2/Xb.aA_60_-idZesxvYFTG9wZGeVpL-sk6SitQZbXZ1LQQ/Xc.db2_v105/expc/v10.5fp1_linuxx64_expc.tar.gz/Xd./Xf.LPr.D1vk/Xg.7581679/Xi.swg-db2expressc/XY.regsrvs/XZ.Bs4qLmV_wlEhE_aG_ELNyRq0hh0/v10.5fp1_linuxx64_expc.tar.gz
   - tar zvxf v10.5fp1_linuxx64_expc.tar.gz
   - cd expc
   # Checks the prerequisites
