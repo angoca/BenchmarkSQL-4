@@ -20,7 +20,10 @@ before_install:
   - sudo su - db2inst1 -c "db2 create db bmarkdb"
   - sudo su - db2inst1 -c "db2 connect to bmarkdb;db2 grant dbadm on database to user $USER"
   - cd
-  - cd angoca/BenchmarkSQL/run
+  - pwd
+  - cd angoca/BenchmarkSQL
+  - ls -l
+  - cd run
   - sed 's/^myCP="\.\./myCP="\/opt\/ibm\/db2\/V10\.1\/java\/db2jcc4\.jar:\.\./g' runSQL.sh > runSQL2.sh
   - mv runSQL2.sh runSQL.sh
   - cat runSQL.sh
