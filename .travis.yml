@@ -60,15 +60,15 @@ install:
   # DB2
   - sh -c "if [ '$DB' = 'db2' ]; then ./runSQL.sh props.db2 sqlTableCreates_DB2; fi"
   # Postgres
-  - sh -c "if [ '$DB' = 'pg' ]; then ./runSQL.sh props.pg sqlIndexCreates; fi"
+  - sh -c "if [ '$DB' = 'postgres' ]; then ./runSQL.sh props.pg sqlTableCreates; fi"
   - df -h
 
 script:
-  - sh -c "if [ '$DB' = 'db2' ]; then ./runLoader.sh props.db2; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then ./runLoader.sh props.db2 numWarehouses 1; fi"
   - sh -c "if [ '$DB' = 'db2' ]; then ./runSQL.sh props.db2 sqlIndexCreates_DB2; fi"
-  - sh -c "if [ '$DB' = 'db2' ]; then ./runBenchmark.sh props.db2 numWarehouses 1; fi"
-  - sh -c "if [ '$DB' = 'postgres' ]; then ./runSQL.sh props.pg sqlTableCreates; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then ./runBenchmark.sh props.db2; fi"
   - sh -c "if [ '$DB' = 'postgres' ]; then ./runLoader.sh props.pg numWarehouses 1; fi"
+  - sh -c "if [ '$DB' = 'postgres' ]; then ./runSQL.sh props.pg sqlIndexCreates; fi"
   - sh -c "if [ '$DB' = 'postgres' ]; then ./runBenchmark.sh props.pg; fi"
   - df -h
   - df -ih
