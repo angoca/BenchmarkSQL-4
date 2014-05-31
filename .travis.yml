@@ -55,4 +55,6 @@ install:
 script:
   - ./runBenchmark.sh props.db2
   - ./runBenchmark.sh props.pg
+  - cat run/log/BenchmarkSQLError.log
+  - cat run/log/benchmarksql.log
 
