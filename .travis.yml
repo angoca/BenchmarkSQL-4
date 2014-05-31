@@ -25,7 +25,7 @@ before_install:
   - sh -c "if [ '$DB' = 'db2' ]; then expc/db2prereqcheck -i; fi"
   # Install DB2 and creates an instance (Response file)
   - sh -c "if [ '$DB' = 'db2' ]; then sudo expc/db2setup -r /home/travis/build/angoca/BenchmarkSQL/run/db2expc.rsp || cat /tmp/db2setup.log; fi"
-  - sh -c "if [ '$DB' = 'db2' ]; then echo -e "db2admin\ndb2admin" | sudo passwd db2inst1; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then echo -e \"db2admin\ndb2admin\" | sudo passwd db2inst1; fi"
   # Remove files
   - cd
   - sh -c "if [ '$DB' = 'db2' ]; then rm -Rf /tmp/expc; fi"
