@@ -34,6 +34,8 @@ before_install:
   - sed 's/-cp \.:/-cp \.:\/opt\/ibm\/db2\/V10\.1\/java\/db2jcc4\.jar:/g' runLoader.sh > runLoader2.sh
   - mv runLoader2.sh runLoader.sh
   - cat runLoader.sh
+  - ls -l
+  - chmod +x *.sh
 
 install:
   - ./runSQL.sh props.db2 sqlTableCreates_DB2
