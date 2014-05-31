@@ -22,7 +22,7 @@ before_install:
   - sh -c "if [ '$DB' = 'db2' ]; then wget https://iwm.dhe.ibm.com/sdfdl/v2/regs2/db2pmopn/db2_v105/expc/Xa.2/Xb.aA_60_-idZesxvYFTG9wZGeVpL-sk6SitQZbXZ1LQQ/Xc.db2_v105/expc/v10.5fp1_linuxx64_expc.tar.gz/Xd./Xf.LPr.D1vk/Xg.7581679/Xi.swg-db2expressc/XY.regsrvs/XZ.Bs4qLmV_wlEhE_aG_ELNyRq0hh0/v10.5fp1_linuxx64_expc.tar.gz; fi"
   - sh -c "if [ '$DB' = 'db2' ]; then tar zvxf v10.5fp1_linuxx64_expc.tar.gz; fi"
   # Checks the prerequisites
-  - sh -c "if [ '$DB' = 'db2' ]; then expc/db2prereqcheck-i; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then expc/db2prereqcheck -i; fi"
   # Install DB2 and creates an instance (Response file)
   - sh -c "if [ '$DB' = 'db2' ]; then sudo exp/db2setup -r /home/travis/build/angoca/BenchmarkSQL/run/db2expc.rsp || cat /tmp/db2setup.log; fi"
   - sh -c "if [ '$DB' = 'db2' ]; then echo -e "db2admin\ndb2admin" | sudo passwd db2inst1; fi"
