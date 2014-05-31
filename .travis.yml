@@ -52,21 +52,22 @@ before_install:
 install:
   # DB2
   - ./runSQL.sh props.db2 sqlTableCreates_DB2
-  - ./runLoader.sh props.db2
-  - ./runSQL.sh props.db2 sqlIndexCreates_DB2
-  - df -h
   # Postgres
-  - ./runSQL.sh props.pg sqlTableCreates
-  - ./runLoader.sh props.pg
   - ./runSQL.sh props.pg sqlIndexCreates
   - df -h
 
 script:
+  - ./runLoader.sh props.db2
+  - df -h
+  - ./runSQL.sh props.db2 sqlIndexCreates_DB2
   - ./runBenchmark.sh props.db2
   - df -h
   - sudo su - db2inst1 -c "db2 drop db bmarkdb"
   - df -h
   - df -ih
+  - ./runSQL.sh props.pg sqlTableCreates
+  - df -h
+  - ./runLoader.sh props.pg
   - ./runBenchmark.sh props.pg
   - df -h
   - df -ih
