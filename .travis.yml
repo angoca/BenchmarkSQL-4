@@ -2,6 +2,7 @@ language: sql-pl
 before_install:
   - pwd
   - df -h
+  - df -hi
   # Install the required libraries
   - sudo apt-get update -qq
   - sudo apt-get -y install libaio1 ksh libstdc++6-4.4-pic libstdc++6-4.4-dev libstdc++5 rpm
@@ -62,9 +63,12 @@ install:
 
 script:
   - ./runBenchmark.sh props.db2
+  - db2 drop db bmarkdb
   - df -h
+  - df -ih
   - ./runBenchmark.sh props.pg
   - df -h
+  - df -ih
   - cat log/BenchmarkSQLError.log
   - cat log/benchmarksql.log
 
