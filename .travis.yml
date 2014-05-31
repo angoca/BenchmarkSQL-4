@@ -62,13 +62,14 @@ script:
   - ./runSQL.sh props.db2 sqlIndexCreates_DB2
   - ./runBenchmark.sh props.db2 numWarehouses 1
   - df -h
+  - sudo su - db2inst1 -c "db2 list applications"
   - sudo su - db2inst1 -c "db2 drop db bmarkdb"
   - df -h
   - df -ih
   - ./runSQL.sh props.pg sqlTableCreates
   - df -h
-  - ./runLoader.sh props.pg
-  - ./runBenchmark.sh props.pg numWarehouses 1
+  - ./runLoader.sh props.pg numWarehouses 1
+  - ./runBenchmark.sh props.pg
   - df -h
   - df -ih
   - cat log/BenchmarkSQLError.log
