@@ -25,13 +25,13 @@ before_install:
   - cd build/angoca/BenchmarkSQL
   - ls -l
   - cd run
-  - sed 's/^myCP="\.\./myCP="\/opt\/ibm\/db2\/V10\.1\/java\/db2jcc4\.jar:\.\./g' runSQL.sh > runSQL2.sh
+  - sed 's/^myCP="\.\./myCP="\/opt\/ibm\/db2\/V10\.5\/java\/db2jcc4\.jar:\.\./g' runSQL.sh > runSQL2.sh
   - mv runSQL2.sh runSQL.sh
   - cat runSQL.sh
-  - sed 's/-cp \.:/-cp \.:\/opt\/ibm\/db2\/V10\.1\/java\/db2jcc4\.jar:/g' runBenchmark.sh > runBenchmark2.sh
+  - sed 's/-cp \.:/-cp \.:\/opt\/ibm\/db2\/V10\.5\/java\/db2jcc4\.jar:/g' runBenchmark.sh > runBenchmark2.sh
   - mv runBenchmark2.sh runBenchmark.sh
   - cat runBenchmark.sh
-  - sed 's/-cp \.:/-cp \.:\/opt\/ibm\/db2\/V10\.1\/java\/db2jcc4\.jar:/g' runLoader.sh > runLoader2.sh
+  - sed 's/-cp \.:/-cp \.:\/opt\/ibm\/db2\/V10\.5\/java\/db2jcc4\.jar:/g' runLoader.sh > runLoader2.sh
   - mv runLoader2.sh runLoader.sh
   - cat runLoader.sh
   - ls -l
