@@ -1,49 +1,56 @@
 language: sql-pl
+# blacklist
+branches:
+  except:
+    - master
+
+env:
+  - DB=db2
+  - DB=postgres
+
 before_install:
   - pwd
   - df -h
-  - df -hi
   # Install the required libraries
   - sudo apt-get update -qq
-  - sudo apt-get -y install libaio1 ksh libstdc++6-4.4-pic libstdc++6-4.4-dev libstdc++5 rpm
-  - sudo apt-get -y install libpam0g:i386
-  - sudo ln -s /lib/i386-linux-gnu/libpam.so.0 /lib/libpam.so.0
-  - sudo apt-get install numactl
+  - sh -c "if [ '$DB' = 'db2' ]; then sudo apt-get -y install libaio1 ksh libstdc++6-4.4-pic libstdc++6-4.4-dev libstdc++5 rpm; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then sudo apt-get -y install libpam0g:i386; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then sudo ln -s /lib/i386-linux-gnu/libpam.so.0 /lib/libpam.so.0; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then sudo apt-get install numactl; fi"
   # Retrieves and extracts the DB2 binaries
   - cd /tmp
-  - wget https://iwm.dhe.ibm.com/sdfdl/v2/regs2/db2pmopn/db2_v105/expc/Xa.2/Xb.aA_60_-idZesxvYFTG9wZGeVpL-sk6SitQZbXZ1LQQ/Xc.db2_v105/expc/v10.5fp1_linuxx64_expc.tar.gz/Xd./Xf.LPr.D1vk/Xg.7581679/Xi.swg-db2expressc/XY.regsrvs/XZ.Bs4qLmV_wlEhE_aG_ELNyRq0hh0/v10.5fp1_linuxx64_expc.tar.gz
-  - tar zvxf v10.5fp1_linuxx64_expc.tar.gz
-  - cd expc
+  - sh -c "if [ '$DB' = 'db2' ]; then wget https://iwm.dhe.ibm.com/sdfdl/v2/regs2/db2pmopn/db2_v105/expc/Xa.2/Xb.aA_60_-idZesxvYFTG9wZGeVpL-sk6SitQZbXZ1LQQ/Xc.db2_v105/expc/v10.5fp1_linuxx64_expc.tar.gz/Xd./Xf.LPr.D1vk/Xg.7581679/Xi.swg-db2expressc/XY.regsrvs/XZ.Bs4qLmV_wlEhE_aG_ELNyRq0hh0/v10.5fp1_linuxx64_expc.tar.gz; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then tar zvxf v10.5fp1_linuxx64_expc.tar.gz; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then cd expc; fi"
   # Checks the prerequisites
-  - ./db2prereqcheck -i
+  - sh -c "if [ '$DB' = 'db2' ]; then ./db2prereqcheck -i; fi"
   # Install DB2 and creates an instance (Response file)
-  - sudo ./db2setup -r /home/travis/build/angoca/BenchmarkSQL/run/db2expc.rsp || cat /tmp/db2setup.log
-  - echo -e "db2admin\ndb2admin" | sudo passwd db2inst1
+  - sh -c "if [ '$DB' = 'db2' ]; then sudo ./db2setup -r /home/travis/build/angoca/BenchmarkSQL/run/db2expc.rsp || cat /tmp/db2setup.log; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then echo -e "db2admin\ndb2admin" | sudo passwd db2inst1; fi"
   # Remove files
   - cd
-  - rm -Rf /tmp/expc
-  - rm /tmp/v10.5fp1_linuxx64_expc.tar.gz
+  - sh -c "if [ '$DB' = 'db2' ]; then rm -Rf /tmp/expc; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then rm /tmp/v10.5fp1_linuxx64_expc.tar.gz; fi"
   # Creates the database
-  - sudo su - db2inst1 -c "db2 create db bmarkdb"
-  - sudo su - db2inst1 -c "db2 connect to bmarkdb;db2 grant dbadm on database to user $USER"
+  - sh -c "if [ '$DB' = 'db2' ]; then sudo su - db2inst1 -c \"db2 create db bmarkdb\"; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then sudo su - db2inst1 -c \"db2 connect to bmarkdb;db2 grant dbadm on database to user $USER\"; fi"
+
   # Postgres
-  #- sudo -u postgres psql -c 'create database postgres;'
-  - sudo -u postgres psql -c "create user benchmarksql with superuser password 'password'"
-  - sudo -u postgres psql -c "grant all privileges on database postgres to benchmarksql"
+  - sh -c "if [ '$DB' = 'postgres' ]; then sudo -u postgres psql -c \"create user benchmarksql with superuser password 'password'\"; fi"
+  - sh -c "if [ '$DB' = 'postgres' ]; then sudo -u postgres psql -c \"grant all privileges on database postgres to benchmarksql\"; fi"
   # Modifies the scripts
   - cd
-  - pwd
   - cd build/angoca/BenchmarkSQL
   - ls -l
   - cd run
-  - sed 's/^myCP="\.\./myCP="\/opt\/ibm\/db2\/V10\.5\/java\/db2jcc4\.jar:\.\./g' runSQL.sh > runSQL2.sh
-  - mv runSQL2.sh runSQL.sh
+  - sh -c "if [ '$DB' = 'db2' ]; then sed 's/^myCP="\.\./myCP="\/opt\/ibm\/db2\/V10\.5\/java\/db2jcc4\.jar:\.\./g' runSQL.sh > runSQL2.sh; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then mv runSQL2.sh runSQL.sh; fi"
   - cat runSQL.sh
-  - sed 's/-cp \.:/-cp \.:\/opt\/ibm\/db2\/V10\.5\/java\/db2jcc4\.jar:/g' runBenchmark.sh > runBenchmark2.sh
-  - mv runBenchmark2.sh runBenchmark.sh
+  - sh -c "if [ '$DB' = 'db2' ]; then sed 's/-cp \.:/-cp \.:\/opt\/ibm\/db2\/V10\.5\/java\/db2jcc4\.jar:/g' runBenchmark.sh > runBenchmark2.sh; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then mv runBenchmark2.sh runBenchmark.sh; fi"
   - cat runBenchmark.sh
-  - sed 's/-cp \.:/-cp \.:\/opt\/ibm\/db2\/V10\.5\/java\/db2jcc4\.jar:/g' runLoader.sh > runLoader2.sh
-  - mv runLoader2.sh runLoader.sh
+  - sh -c "if [ '$DB' = 'db2' ]; then sed 's/-cp \.:/-cp \.:\/opt\/ibm\/db2\/V10\.5\/java\/db2jcc4\.jar:/g' runLoader.sh > runLoader2.sh; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then mv runLoader2.sh runLoader.sh; fi"
   - cat runLoader.sh
   - ls -l
   - chmod +x *.sh
@@ -51,25 +58,18 @@ before_install:
 
 install:
   # DB2
-  - ./runSQL.sh props.db2 sqlTableCreates_DB2
+  - sh -c "if [ '$DB' = 'db2' ]; then ./runSQL.sh props.db2 sqlTableCreates_DB2; fi"
   # Postgres
-  - ./runSQL.sh props.pg sqlIndexCreates
+  - sh -c "if [ '$DB' = 'pg' ]; then ./runSQL.sh props.pg sqlIndexCreates; fi"
   - df -h
 
 script:
-  - ./runLoader.sh props.db2
-  - df -h
-  - ./runSQL.sh props.db2 sqlIndexCreates_DB2
-  - ./runBenchmark.sh props.db2 numWarehouses 1
-  - df -h
-  - sudo su - db2inst1 -c "db2 list applications"
-  - sudo su - db2inst1 -c "db2 drop db bmarkdb"
-  - df -h
-  - df -ih
-  - ./runSQL.sh props.pg sqlTableCreates
-  - df -h
-  - ./runLoader.sh props.pg numWarehouses 1
-  - ./runBenchmark.sh props.pg
+  - sh -c "if [ '$DB' = 'db2' ]; then ./runLoader.sh props.db2; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then ./runSQL.sh props.db2 sqlIndexCreates_DB2; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then ./runBenchmark.sh props.db2 numWarehouses 1; fi"
+  - sh -c "if [ '$DB' = 'postgres' ]; then ./runSQL.sh props.pg sqlTableCreates; fi"
+  - sh -c "if [ '$DB' = 'postgres' ]; then ./runLoader.sh props.pg numWarehouses 1; fi"
+  - sh -c "if [ '$DB' = 'postgres' ]; then ./runBenchmark.sh props.pg; fi"
   - df -h
   - df -ih
   - cat log/BenchmarkSQLError.log
