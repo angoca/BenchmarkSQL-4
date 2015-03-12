@@ -7,7 +7,7 @@ Use of JDK7 is required.   Sample JDBC Connection Property files are provided as
   props.db2 : for DB2
   props.fb  : for Firebird
 
-0. As the user postgres, create the benchmarksql user with correct permissions.
+0. (skip for Firebird) As the user postgres, create the benchmarksql user with correct permissions.
 	postgres=# CREATE USER benchmarksql WITH SUPERUSER PASSWORD 'password';
 	postgres=# GRANT ALL PRIVILEGES ON DATABASE postgres TO benchmarksql;
 
@@ -16,7 +16,7 @@ Use of JDK7 is required.   Sample JDBC Connection Property files are provided as
 
 2. Run the "sqlTableCreates" to create the base tables.
 
-        $ ./runSQL.sh props.pg sqlTableCreates
+        $ ./runSQL.sh props.?? sqlTableCreates.??
 
 
 3. Run the Loader command file to load all of the default data 
@@ -26,7 +26,7 @@ Use of JDK7 is required.   Sample JDBC Connection Property files are provided as
   A.) Approximately half a million rows (per Warehouse) will be loaded 
       across 9 tables.  
 
-        $ ./runLoader.sh props.pg numWarehouses 1
+        $ ./runLoader.sh props.?? numWarehouses 1
 
       NOTE: You should run the sqlTableTruncates scripts if your tables
             are not already empty.
@@ -36,25 +36,25 @@ Use of JDK7 is required.   Sample JDBC Connection Property files are provided as
       bulk loaded into the database as many times as required by your 
       testing.
 
-      $ ./runLoader.sh props.pg numWarehouses 1 fileLocation /tmp/csv/   
+      $ ./runLoader.sh props.?? numWarehouses 1 fileLocation /tmp/csv/   
         
       These CSV files can be bulk loaded as follows:
         $  ./runSQL.sh props.pg sqlTableCopies
 
       You may truncate the data via:
 
-        $  ./runSQL.sh props.pg sqlTableTruncates
+        $  ./runSQL.sh props.?? sqlTableTruncates.??
 
 4. Run the "runSQL" command file to execute the SQL script 
    "sqlIndexCreates" to create the primary keys & other indexes 
    on the tables.
 
-        $  ./runSQL.sh props.pg sqlIndexCreates
+        $  ./runSQL.sh props.?? sqlIndexCreates.??
 
 
 5. Run the "runBenchmark" command file to test the database. This command 
    will create terminals and automatically start the transaction based on 
    the parameters set in "props". 
 
-       $  ./runBenchmark.sh props.pg
+       $  ./runBenchmark.sh props.??
 
