@@ -5,6 +5,7 @@ Use of JDK7 is required.   Sample JDBC Connection Property files are provided as
   props.pg  : for PostgreSQL/EnterpriseDB
   props.ora : for Oracle
   props.db2 : for DB2
+  props.fb  : for Firebird
 
 0. As the user postgres, create the benchmarksql user with correct permissions.
 	postgres=# CREATE USER benchmarksql WITH SUPERUSER PASSWORD 'password';

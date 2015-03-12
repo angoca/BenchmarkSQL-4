@@ -2,6 +2,7 @@ driver=org.postgresql.Driver
 conn=jdbc:postgresql://localhost:5432/postgres
 user=benchmarksql
 password=password
+schema=benchmark.
 
 warehouses=1
 terminals=1

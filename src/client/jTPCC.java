@@ -79,6 +79,7 @@ public class jTPCC implements jTPCCConfig
         log.info("Term-00, ");
         String  iWarehouses         = getProp(ini,"warehouses");
         String  iTerminals          = getProp(ini,"terminals");
+        String  iSchema             = getProp(ini, "schema");
         
         String  iRunTxnsPerTerminal =  ini.getProperty("runTxnsPerTerminal");
         String iRunMins  =  ini.getProperty("runMins");
@@ -284,7 +285,7 @@ public class jTPCC implements jTPCCConfig
                         jTPCCTerminal terminal = new jTPCCTerminal
                         (terminalName, terminalWarehouseID, terminalDistrictID, conn,
                          transactionsPerTerminal, paymentWeightValue, orderStatusWeightValue,
-                         deliveryWeightValue, stockLevelWeightValue, numWarehouses, limPerMin_Terminal, this);
+                         deliveryWeightValue, stockLevelWeightValue, numWarehouses, limPerMin_Terminal, this, iSchema);
                         
                         terminals[i] = terminal;
                         terminalNames[i] = terminalName;

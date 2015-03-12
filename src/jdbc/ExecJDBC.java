@@ -9,6 +9,7 @@
 import java.io.*;
 import java.sql.*;
 import java.util.*;
+import java.util.regex.Pattern;
 
 
 public class ExecJDBC {
@@ -38,9 +39,10 @@ public class ExecJDBC {
     stmt = conn.createStatement();
                                                                                 
       // Open inputFile
-      BufferedReader in = new BufferedReader
-        (new FileReader(jTPCCUtil.getSysProp("commandFile",null)));
-  
+      BufferedReader in = new BufferedReader(new FileReader(jTPCCUtil.getSysProp("commandFile",null)));
+
+      char term = ';';
+
       // loop thru input file and concatenate SQL statement fragments
       while((rLine = in.readLine()) != null) {
 
@@ -51,9 +53,13 @@ public class ExecJDBC {
               System.out.println(line);  // print comment line
            } else {
                sql.append(line);
-               if (line.endsWith(";")) {
-                  execJDBC(stmt, sql);
-                  sql = new StringBuffer();
+               if (line.endsWith(String.valueOf(term))) {
+                   if (line.startsWith("set term")) {
+                       term = line.charAt(9);
+                   } else {
+                       execJDBC(stmt, sql, term);
+                   }
+                   sql = new StringBuffer();
                } else {
                  sql.append("\n");
                }
@@ -88,13 +94,13 @@ public class ExecJDBC {
   } // end main
 
 
-  static void execJDBC(Statement stmt, StringBuffer sql) {
+  static void execJDBC(Statement stmt, StringBuffer sql, char term) {
 
     System.out.println(sql);
 
     try {
 
-      stmt.execute(sql.toString().replace(';',' '));
+      stmt.execute(sql.toString().replace(term,' '));
     
     }catch(SQLException se) {
       System.out.println(se.getMessage());
