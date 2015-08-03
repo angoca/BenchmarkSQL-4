@@ -22,7 +22,7 @@ before_install:
   # Retrieves and extracts the DB2 binaries
   - cd /tmp
   
-  - sh -c "if [ '$DB' = 'db2' ]; then curl --url https://raw.githubusercontent.com/wiki/angoca/db2-docker/db2-link-expc.md -s | tail -1 > /tmp/link ; echo $(cat /tmp/link) ; aria2c -x 16 $(cat /tmp/link) ; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then curl --url https://raw.githubusercontent.com/wiki/angoca/db2-docker/db2-link-expc.md -s; curl --url https://raw.githubusercontent.com/wiki/angoca/db2-docker/db2-link-expc.md -s | tail -1 > /tmp/link ; echo $(cat /tmp/link) ; aria2c -x 16 $(cat /tmp/link) ; fi"
  # - sh -c "if [ '$DB' = 'db2' ]; then wget https://iwm.dhe.ibm.com/sdfdl/v2/regs2/db2pmopn/db2_v105/expc/Xa.2/Xb.aA_60_-idZesxvYFTG9wZGeVpL-sk6SitQZbXZ1LQQ/Xc.db2_v105/expc/v10.5fp1_linuxx64_expc.tar.gz/Xd./Xf.LPr.D1vk/Xg.7581679/Xi.swg-db2expressc/XY.regsrvs/XZ.Bs4qLmV_wlEhE_aG_ELNyRq0hh0/v10.5fp1_linuxx64_expc.tar.gz; fi"
   - sh -c "if [ '$DB' = 'db2' ]; then tar zvxf v10.5fp1_linuxx64_expc.tar.gz; fi"
   # Checks the prerequisites
