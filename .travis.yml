@@ -34,7 +34,7 @@ before_install:
   # Remove files
   - cd
   - sh -c "if [ '$DB' = 'db2' ]; then rm -Rf /tmp/expc; fi"
-  - sh -c "if [ '$DB' = 'db2' ]; then rm /tmp/v10.5fp1_linuxx64_expc.tar.gz; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then rm /tmp/v10.5_linuxx64_expc.tar.gz ; fi"
   # Creates the database
   - sh -c "if [ '$DB' = 'db2' ]; then sudo su - db2inst1 -c \"db2 create db bmarkdb\"; fi"
   - sh -c "if [ '$DB' = 'db2' ]; then sudo su - db2inst1 -c \"db2 connect to bmarkdb;db2 grant dbadm on database to user $USER\"; fi"
