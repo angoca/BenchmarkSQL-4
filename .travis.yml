@@ -15,14 +15,14 @@ before_install:
   # DB2
   # Install the required libraries
   - sudo apt-get update -qq
-  - sh -c "if [ '$DB' = 'db2' ]; then sudo apt-get -y install libaio1 ksh libstdc++6-4.4-pic libstdc++6-4.4-dev libstdc++5 rpm; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then sudo apt-get -y install libaio1 ksh libstdc++6-4.4-pic libstdc++6-4.4-dev libstdc++5 rpm curl aria2; fi"
   - sh -c "if [ '$DB' = 'db2' ]; then sudo apt-get -y install libpam0g:i386; fi"
   - sh -c "if [ '$DB' = 'db2' ]; then sudo ln -s /lib/i386-linux-gnu/libpam.so.0 /lib/libpam.so.0; fi"
   - sh -c "if [ '$DB' = 'db2' ]; then sudo apt-get install numactl; fi"
   # Retrieves and extracts the DB2 binaries
   - cd /tmp
   
-  - sh -c "if [ '$DB' = 'db2' ]; then sudo apt-get -y curl aria2 ; LINK=$(curl --url https://raw.githubusercontent.com/wiki/angoca/db2-docker/db2-link-expc.md -s | tail -1) ; echo ${LINK} ; aria2c -x 16 ${LINK} ; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then LINK=$(curl --url https://raw.githubusercontent.com/wiki/angoca/db2-docker/db2-link-expc.md -s | tail -1) ; echo ${LINK} ; aria2c -x 16 ${LINK} ; fi"
  # - sh -c "if [ '$DB' = 'db2' ]; then wget https://iwm.dhe.ibm.com/sdfdl/v2/regs2/db2pmopn/db2_v105/expc/Xa.2/Xb.aA_60_-idZesxvYFTG9wZGeVpL-sk6SitQZbXZ1LQQ/Xc.db2_v105/expc/v10.5fp1_linuxx64_expc.tar.gz/Xd./Xf.LPr.D1vk/Xg.7581679/Xi.swg-db2expressc/XY.regsrvs/XZ.Bs4qLmV_wlEhE_aG_ELNyRq0hh0/v10.5fp1_linuxx64_expc.tar.gz; fi"
   - sh -c "if [ '$DB' = 'db2' ]; then tar zvxf v10.5fp1_linuxx64_expc.tar.gz; fi"
   # Checks the prerequisites
