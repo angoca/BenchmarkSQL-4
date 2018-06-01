@@ -23,7 +23,7 @@ before_install:
     # Retrieves and extracts the DB2 binaries
   - cd /tmp
   - sh -c "if [ '$DB' = 'db2' ]; then curl --url https://raw.githubusercontent.com/wiki/angoca/BenchmarkSQL/DB2-Download-link.md -s > link ; cat link | tail -1 > link2 ; cat link2 ; fi"
-  - sh -c "if [ '$DB' = 'db2' ]; then aria2c -x 16 $(cat link2) ; tar zvxf v*_linuxx64_expc.tar.gz ; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then aria2c -x 16 $(cat link2) ; tar zvxf $(ls -1 v*.tar.gz) ; fi"
   # Checks the prerequisites
   - sh -c "if [ '$DB' = 'db2' ]; then server_t/db2prereqcheck -i -l; fi"
   # Install DB2 and creates an instance (Response file)
