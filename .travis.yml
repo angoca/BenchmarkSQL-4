@@ -28,7 +28,7 @@ before_install:
   - sh -c "if [ '$DB' = 'db2' ]; then aria2c -x 16 $(cat link2) ; fi"
   - sh -c "if [ '$DB' = 'db2' ]; then ls -1 v*.tar.gz ; tar zvxf $(ls -1 v*.tar.gz) ; fi"
   # Checks the prerequisites
-  - sh -c "if [ '$DB' = 'db2' ]; then server_t/db2prereqcheck -i -l; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then server_t/db2prereqcheck -i -l ; fi"
   # Install DB2 and creates an instance (Response file)
   - sh -c "if [ '$DB' = 'db2' ]; then sudo server_t/db2setup -r ${TRAVIS_BUILD_DIR}/run/db2expc.rsp || cat /tmp/db2setup.log ; fi"
   - sh -c "if [ '$DB' = 'db2' ]; then echo \"db2admin\\\ndb2admin\" | sudo passwd db2inst1 ; fi"
@@ -37,11 +37,9 @@ before_install:
   - sh -c "if [ '$DB' = 'db2' ]; then sudo su - db2inst1 -c \"db2 connect to bmarkdb ; db2 grant dbadm on database to user ${USER}\" ; fi"
 
   # Postgres
-  - sh -c "if [ '$DB' = 'postgres' ]; then sudo -u postgres psql -c \"create user benchmarksql with superuser password 'password'\"; fi"
-  - sh -c "if [ '$DB' = 'postgres' ]; then sudo -u postgres psql -c \"grant all privileges on database postgres to benchmarksql\"; fi"
+  - sh -c "if [ '$DB' = 'postgres' ]; then sudo -u postgres psql -c \"create user benchmarksql with superuser password 'password'\" ; fi"
+  - sh -c "if [ '$DB' = 'postgres' ]; then sudo -u postgres psql -c \"grant all privileges on database postgres to benchmarksql\" ; fi"
 
-  - cat run*.sh
-  - chmod +x run*.sh
   - df -h
   - df -ih
 
@@ -51,22 +49,24 @@ install:
   # DB2
   # Modifies the scripts
   - cd ${TRAVIS_BUILD_DIR}/run
-  - sh -c "if [ '$DB' = 'db2' ]; then sed 's/^myCP=\"\.\./myCP=\"\/opt\/ibm\/db2\/Vx\/java\/db2jcc4\.jar:\.\./g' runSQL.sh > runSQL2.sh; mv runSQL2.sh runSQL.sh; fi"
-  - sh -c "if [ '$DB' = 'db2' ]; then sed 's/-cp \.:/-cp \.:\/opt\/ibm\/db2\/Vx\/java\/db2jcc4\.jar:/g' runBenchmark.sh > runBenchmark2.sh; mv runBenchmark2.sh runBenchmark.sh; fi"
-  - sh -c "if [ '$DB' = 'db2' ]; then sed 's/-cp \.:/-cp \.:\/opt\/ibm\/db2\/Vx\/java\/db2jcc4\.jar:/g' runLoader.sh > runLoader2.sh; mv runLoader2.sh runLoader.sh; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then sed 's/^myCP=\"\.\./myCP=\"\/opt\/ibm\/db2\/Vx\/java\/db2jcc4\.jar:\.\./g' runSQL.sh > runSQL2.sh ; mv runSQL2.sh runSQL.sh ; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then sed 's/-cp \.:/-cp \.:\/opt\/ibm\/db2\/Vx\/java\/db2jcc4\.jar:/g' runBenchmark.sh > runBenchmark2.sh ; mv runBenchmark2.sh runBenchmark.sh ; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then sed 's/-cp \.:/-cp \.:\/opt\/ibm\/db2\/Vx\/java\/db2jcc4\.jar:/g' runLoader.sh > runLoader2.sh ; mv runLoader2.sh runLoader.sh ; fi"
+  - cat run*.sh
+  - chmod +x run*.sh
 
-  - sh -c "if [ '$DB' = 'db2' ]; then ./runSQL.sh props.db2 sqlTableCreates_DB2; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then ./runSQL.sh props.db2 sqlTableCreates_DB2 ; fi"
 
   # Postgres
-  - sh -c "if [ '$DB' = 'postgres' ]; then ./runSQL.sh props.pg sqlTableCreates; fi"
+  - sh -c "if [ '$DB' = 'postgres' ]; then ./runSQL.sh props.pg sqlTableCreates ; fi"
   - df -h
 
 script:
-  - sh -c "if [ '$DB' = 'db2' ]; then ./runLoader.sh props.db2 numWarehouses 1; fi"
-  - sh -c "if [ '$DB' = 'db2' ]; then ./runSQL.sh props.db2 sqlIndexCreates_DB2; fi"
-  - sh -c "if [ '$DB' = 'db2' ]; then ./runBenchmark.sh props.db2; fi"
-  - sh -c "if [ '$DB' = 'postgres' ]; then ./runLoader.sh props.pg numWarehouses 1; fi"
-  - sh -c "if [ '$DB' = 'postgres' ]; then ./runSQL.sh props.pg sqlIndexCreates; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then ./runLoader.sh props.db2 numWarehouses 1 ; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then ./runSQL.sh props.db2 sqlIndexCreates_DB2 ; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then ./runBenchmark.sh props.db2 ; fi"
+  - sh -c "if [ '$DB' = 'postgres' ]; then ./runLoader.sh props.pg numWarehouses 1 ; fi"
+  - sh -c "if [ '$DB' = 'postgres' ]; then ./runSQL.sh props.pg sqlIndexCreates ; fi"
   - sh -c "if [ '$DB' = 'postgres' ]; then ./runBenchmark.sh props.pg; fi"
 
 after_script:
