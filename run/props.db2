@@ -2,6 +2,7 @@ driver=com.ibm.db2.jcc.DB2Driver
 conn=jdbc:db2://localhost:50000/bmarkdb
 user=db2inst1
 password=db2admin
+schema=benchmark.
 
 
 warehouses=1
