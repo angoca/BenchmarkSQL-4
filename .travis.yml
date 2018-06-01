@@ -52,7 +52,7 @@ before_install:
   - df -ih
 
 install:
-  - ant dist
+  - cd ${TRAVIS_BUILD_DIR} ; ant dist ; cd run
   # DB2
   - sh -c "if [ '$DB' = 'db2' ]; then ./runSQL.sh props.db2 sqlTableCreates_DB2; fi"
   # Postgres
