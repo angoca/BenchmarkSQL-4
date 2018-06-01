@@ -1,4 +1,4 @@
-language: sql-pl
+language: sql
 # blacklist
 branches:
   except:
@@ -17,7 +17,7 @@ before_install:
   - sudo apt-get update -qq
   - sh -c "if [ '$DB' = 'db2' ]; then sudo apt-get -y install ksh curl aria2 numactl ; fi"
   - sh -c "if [ '$DB' = 'db2' ]; then sudo apt-get -y install rpm binutils libaio1 lib32stdc++6 ; fi"
-  - sh -c "if [ '$DB' = 'db2' ]; then sudo apt-get -qq libpam-ldap:i386 ; fi"
+  - sh -c "if [ '$DB' = 'db2' ]; then sudo apt-get install -qq libpam-ldap:i386 ; fi"
   #libstdc++6-4.4-pic libstdc++6-4.4-dev libstdc++5 rpm
   - sh -c "if [ '$DB' = 'db2' ]; then sudo ln -s /lib/i386-linux-gnu/libpam.so.0 /lib/libpam.so.0 ; fi"
     # Retrieves and extracts the DB2 binaries
