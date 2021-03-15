@@ -11,7 +11,7 @@
 # Author: Denis Lussier.
 # Author: Andres Gomez.
 
-MY_CLASSPATH="../dist/BenchmarkSQL.jar:../lib/db2jcc4.jar"
+MY_CLASSPATH="../target/benchmarksql*.jar:../lib/db2jcc4.jar"
 
 MY_PROPERTIES="-Dprop=${1}"
 

@@ -1,42 +1,51 @@
+--#SET TERMINATOR ;
 
-alter table benchmarksql.warehouse add constraint pk_warehouse 
-  primary key (w_id);  
+-- Adds the primary keys and indexes in the tables.
+--
+-- Author: Andres Gomez
 
-alter table benchmarksql.district add constraint pk_district 
-  primary key (d_w_id, d_id);
+SET CURRENT SCHEMA benchmarksql;
 
-alter table benchmarksql.customer add constraint pk_customer 
-  primary key (c_w_id, c_d_id, c_id);
+ALTER TABLE warehouse ADD CONSTRAINT pk_warehouse 
+  PRIMARY KEY (w_id);  
 
-create index ndx_customer_name 
-  on  benchmarksql.customer (c_w_id, c_d_id, c_last, c_first);
+ALTER TABLE district ADD CONSTRAINT pk_district 
+  PRIMARY KEY (d_w_id, d_id);
 
--- history table has no primary key
+ALTER TABLE customer ADD CONSTRAINT pk_customer 
+  PRIMARY KEY (c_w_id, c_d_id, c_id);
 
-alter table benchmarksql.oorder add constraint pk_oorder 
-  primary key (o_w_id, o_d_id, o_id);
+CREATE INDEX idx_customer_name 
+  ON  customer (c_w_id, c_d_id, c_last, c_first);
 
-create unique index ndx_oorder_carrier 
-  on  benchmarksql.oorder (o_w_id, o_d_id, o_carrier_id, o_id);
+-- History TABLE has no PRIMARY KEY.
+
+ALTER TABLE oorder ADD CONSTRAINT pk_oorder 
+  PRIMARY KEY (o_w_id, o_d_id, o_id);
+
+CREATE unique INDEX idx_oorder_carrier 
+  ON  oorder (o_w_id, o_d_id, o_carrier_id, o_id);
  
-alter table benchmarksql.new_order add constraint pk_new_order 
-  primary key (no_w_id, no_d_id, no_o_id);
+ALTER TABLE new_order ADD CONSTRAINT pk_new_order 
+  PRIMARY KEY (no_w_id, no_d_id, no_o_id);
 
-alter table benchmarksql.order_line add constraint pk_order_line 
-  primary key (ol_w_id, ol_d_id, ol_o_id, ol_number);
+ALTER TABLE order_line ADD CONSTRAINT pk_order_line 
+  PRIMARY KEY (ol_w_id, ol_d_id, ol_o_id, ol_number);
 
-alter table benchmarksql.stock add constraint pk_stock
-  primary key (s_w_id, s_i_id);
+ALTER TABLE stock ADD CONSTRAINT pk_stock
+  PRIMARY KEY (s_w_id, s_i_id);
 
-alter table benchmarksql.item add constraint pk_item
-  primary key (i_id);
+ALTER TABLE item ADD CONSTRAINT pk_item
+  PRIMARY KEY (i_id);
 
-CALL SYSPROC.ADMIN_CMD('RUNSTATS ON TABLE benchmarksql.warehouse AND INDEXES ALL');
-CALL SYSPROC.ADMIN_CMD('RUNSTATS ON TABLE benchmarksql.district AND INDEXES ALL');
-CALL SYSPROC.ADMIN_CMD('RUNSTATS ON TABLE benchmarksql.customer AND INDEXES ALL');
-CALL SYSPROC.ADMIN_CMD('RUNSTATS ON TABLE benchmarksql.history AND INDEXES ALL');
-CALL SYSPROC.ADMIN_CMD('RUNSTATS ON TABLE benchmarksql.oorder AND INDEXES ALL');
-CALL SYSPROC.ADMIN_CMD('RUNSTATS ON TABLE benchmarksql.new_order AND INDEXES ALL');
-CALL SYSPROC.ADMIN_CMD('RUNSTATS ON TABLE benchmarksql.order_line AND INDEXES ALL');
-CALL SYSPROC.ADMIN_CMD('RUNSTATS ON TABLE benchmarksql.stock AND INDEXES ALL');
-CALL SYSPROC.ADMIN_CMD('RUNSTATS ON TABLE benchmarksql.item AND INDEXES ALL');
+-- Calculates statistics in all tables with all indexes.
+
+CALL SYSPROC.ADMIN_CMD('RUNSTATS ON TABLE warehouse AND INDEXES ALL');
+CALL SYSPROC.ADMIN_CMD('RUNSTATS ON TABLE district AND INDEXES ALL');
+CALL SYSPROC.ADMIN_CMD('RUNSTATS ON TABLE customer AND INDEXES ALL');
+CALL SYSPROC.ADMIN_CMD('RUNSTATS ON TABLE history AND INDEXES ALL');
+CALL SYSPROC.ADMIN_CMD('RUNSTATS ON TABLE oorder AND INDEXES ALL');
+CALL SYSPROC.ADMIN_CMD('RUNSTATS ON TABLE new_order AND INDEXES ALL');
+CALL SYSPROC.ADMIN_CMD('RUNSTATS ON TABLE order_line AND INDEXES ALL');
+CALL SYSPROC.ADMIN_CMD('RUNSTATS ON TABLE stock AND INDEXES ALL');
+CALL SYSPROC.ADMIN_CMD('RUNSTATS ON TABLE item AND INDEXES ALL');

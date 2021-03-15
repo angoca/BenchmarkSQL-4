@@ -1,20 +1,27 @@
+--#SET TERMINATOR ;
 
-drop table benchmarksql.warehouse;
+-- Drops all tables.
+--
+-- Author: Andres Gomez
 
-drop table benchmarksql.item;
+SET CURRENT SCHEMA benchmarksql;
 
-drop table benchmarksql.stock;
+DROP TABLE warehouse;
 
-drop table benchmarksql.district;
+DROP TABLE item;
 
-drop table benchmarksql.customer;
+DROP TABLE stock;
 
-drop table benchmarksql.oorder;
+DROP TABLE district;
 
-drop table benchmarksql.order_line;
+DROP TABLE customer;
 
-drop table benchmarksql.history;
+DROP TABLE oorder;
 
-drop table benchmarksql.new_order;
+DROP TABLE order_line;
+
+DROP TABLE history;
+
+DROP TABLE new_order;
 
 DROP SCHEMA benchmarksql RESTRICT;

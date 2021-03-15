@@ -1,6 +1,6 @@
-DROP SCHEMA IF EXISTS benchmarksql CASCADE;
+DROP DATABASE IF EXISTS benchmarksql CASCADE;
 
-CREATE SCHEMA benchmarksql;
+CREATE DATABASE benchmarksql;
 
 create table benchmarksql.warehouse (
   w_id        integer   not null,
@@ -12,7 +12,7 @@ create table benchmarksql.warehouse (
   w_city      varchar(20),
   w_state     char(2),
   w_zip       char(9)
-);
+) engine=innodb;
 
 create table benchmarksql.district (
   d_w_id       integer       not null,
@@ -26,7 +26,7 @@ create table benchmarksql.district (
   d_city       varchar(20),
   d_state      char(2),
   d_zip        char(9)
-);
+) engine=innodb;
 
 create table benchmarksql.customer (
   c_w_id         integer        not null,
@@ -50,12 +50,10 @@ create table benchmarksql.customer (
   c_since        timestamp,
   c_middle       char(2),
   c_data         varchar(500)
-);
-
-create sequence hist_id_seq;
+) engine=innodb;
 
 create table benchmarksql.history (
-  hist_id  integer not null default nextval('hist_id_seq') primary key,
+  hist_id  integer,
   h_c_id   integer,
   h_c_d_id integer,
   h_c_w_id integer,
@@ -64,7 +62,7 @@ create table benchmarksql.history (
   h_date   timestamp,
   h_amount decimal(6,2),
   h_data   varchar(24)
-);
+) engine=innodb;
 
 create table benchmarksql.oorder (
   o_w_id       integer      not null,
@@ -75,13 +73,13 @@ create table benchmarksql.oorder (
   o_ol_cnt     decimal(2,0),
   o_all_local  decimal(1,0),
   o_entry_d    timestamp
-);
+) engine=innodb;
 
 create table benchmarksql.new_order (
   no_w_id  integer   not null,
   no_d_id  integer   not null,
   no_o_id  integer   not null
-);
+) engine=innodb;
 
 create table benchmarksql.order_line (
   ol_w_id         integer   not null,
@@ -94,7 +92,7 @@ create table benchmarksql.order_line (
   ol_supply_w_id  integer,
   ol_quantity     decimal(2,0),
   ol_dist_info    char(24)
-);
+) engine=innodb;
 
 create table benchmarksql.stock (
   s_w_id       integer       not null,
@@ -114,7 +112,7 @@ create table benchmarksql.stock (
   s_dist_08    char(24),
   s_dist_09    char(24),
   s_dist_10    char(24)
-);
+) engine=innodb;
 
 create table benchmarksql.item (
   i_id     integer      not null,
@@ -122,4 +120,4 @@ create table benchmarksql.item (
   i_price  decimal(5,2),
   i_data   varchar(50),
   i_im_id  integer
-);
+) engine=innodb;

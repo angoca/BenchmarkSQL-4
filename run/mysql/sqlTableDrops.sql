@@ -15,5 +15,3 @@ drop table benchmarksql.order_line;
 drop table benchmarksql.history;
 
 drop table benchmarksql.new_order;
-
-DROP SCHEMA IF EXISTS benchmarksql CASCADE;

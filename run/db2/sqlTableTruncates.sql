@@ -1,18 +1,26 @@
--- valid for DB2 V9.7 or later
-truncate table BENCHMARKSQL.warehouse immediate;
+--#SET TERMINATOR ;
 
-truncate table BENCHMARKSQL.item immediate;
+-- Creates all tables.
+--
+-- Author: Andres Gomez
 
-truncate table BENCHMARKSQL.stock immediate;
+SET CURRENT SCHEMA benchmarksql;
 
-truncate table BENCHMARKSQL.district immediate;
+-- Valid for DB2 V9.7 or later.
+TRUNCATE TABLE warehouse IMMEDIATE;
 
-truncate table BENCHMARKSQL.customer immediate;
+TRUNCATE TABLE item IMMEDIATE;
 
-truncate table BENCHMARKSQL.history immediate;
+TRUNCATE TABLE stock IMMEDIATE;
 
-truncate table BENCHMARKSQL.oorder immediate;
+TRUNCATE TABLE district IMMEDIATE;
 
-truncate table BENCHMARKSQL.order_line immediate;
+TRUNCATE TABLE customer IMMEDIATE;
 
-truncate table BENCHMARKSQL.new_order immediate;
+TRUNCATE TABLE history IMMEDIATE;
+
+TRUNCATE TABLE oorder IMMEDIATE;
+
+TRUNCATE TABLE order_line IMMEDIATE;
+
+TRUNCATE TABLE new_order IMMEDIATE;
