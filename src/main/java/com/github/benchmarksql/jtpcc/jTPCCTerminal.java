@@ -12,7 +12,8 @@ import java.util.Enumeration;
 import java.util.Random;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.github.benchmarksql.jtpcc.pojo.Customer;
 import com.github.benchmarksql.jtpcc.pojo.District;
@@ -31,7 +32,7 @@ import com.github.benchmarksql.jtpcc.pojo.Warehouse;
  * @author Denis Lussier - 2004-2014
  */
 public class jTPCCTerminal implements jTPCCConfig, Runnable {
-	private static org.apache.log4j.Logger log = Logger.getLogger(jTPCCTerminal.class);
+	private static Logger log = LogManager.getLogger(jTPCCTerminal.class);
 
 	private String terminalName;
 	private Connection conn = null;

@@ -30,6 +30,9 @@ public class ExecJDBC {
 		try {
 
 			Properties ini = new Properties();
+			if (System.getProperty("prop") == null) {
+				throw new Exception("ERROR: Properties file is invalid.");
+			}
 			ini.load(new FileInputStream(System.getProperty("prop")));
 
 			// Register jdbcDriver
@@ -44,6 +47,9 @@ public class ExecJDBC {
 			stmt = conn.createStatement();
 
 			// Open inputFile
+			if (jTPCCUtil.getSysProp("commandFile", null) == null) {
+				throw new Exception("ERROR: Invalid SQL script.");
+			}
 			BufferedReader in = new BufferedReader(new FileReader(jTPCCUtil.getSysProp("commandFile", null)));
 
 			// loop thru input file and concatenate SQL statement fragments

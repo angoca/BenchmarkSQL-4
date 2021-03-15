@@ -31,6 +31,7 @@ Logged with the instance user db2inst1 (or equivalent), create a database:
 
 Grants Database Authority to the created user:
 
+    db2 connect to benchmrk
     db2 grant dbadm on database to user benchmrk
 
 ## Adjust the BenchmarkSQL configuration file
@@ -47,14 +48,14 @@ Change to the `run` directory.
 
 Execute the `sqlTableCreates.sql` to create the base tables.
 
-    $ ./runSQL db2/db2.properties db2/sqlTableCreates.sql
+    runSQL db2.properties sqlTableCreates.sql
 
 Run the Loader command file to load all of the default data for a benchmark.
 
  * Approximately half a million rows (per warehouse) will be loaded across 9
  tables.
  
-    $ ./runLoader db2/db2.properties numWarehouses 1
+    runLoader db2.properties numWarehouses 1
 
 NOTE: You should run the `sqlTableTruncates.sql` script if your tables are not
 already empty.
@@ -63,25 +64,25 @@ already empty.
  where it can be efficiently bulk loaded into the database as many times as
  required by your testing.
 
-    $ ./runLoader db2.properties numWarehouses 1 fileLocation /tmp/csv/        
+    runLoader db2.properties numWarehouses 1 fileLocation /tmp/csv/        
 
 These CSV files can be bulk loaded as follows:
 
-    $ ./runSQL db2.properties db2/sqlTableCopies.sql
+    runSQL db2.properties sqlTableCopies.sql
 
 You may truncate the data via:
 
-    $ ./runSQL db2.properties db2/sqlTableTruncates.sql
+    runSQL db2.properties sqlTableTruncates.sql
 
 In both cases, run the `runSQL` command file to execute the SQL script
 `sqlIndexCreates.sql` to create the primary keys & other indexes on the tables.
 
-    $ ./runSQL db2.properties db2/sqlIndexCreates.sql
+    runSQL db2.properties sqlIndexCreates.sql
 
 When you restart the test, and you will reload the data, you could delete the
 indexes before this:
 
-    $ ./runSQL db2.properties db2/sqlIndexDrops.sql
+    runSQL db2.properties sqlIndexDrops.sql
 
 # Run the configured benchmark
 
@@ -89,7 +90,7 @@ Run the `runBenchmark` command file to test the database.
 This command will create terminals and automatically start the transaction
 based on the parameters set in `db2.properties`. 
 
-    $ ./runBenchmark db2/db2.properties
+    runBenchmark db2.properties
 
 # Scale the benchmark configuration
 
@@ -105,6 +106,6 @@ Configure the following elements according to the workload:
 
 To clean the database, you can run.
 
-    $ ./runSQL db2/db2.properties db2/sqlTableDrops.sql
+    runSQL db2.properties sqlTableDrops.sql
 
 

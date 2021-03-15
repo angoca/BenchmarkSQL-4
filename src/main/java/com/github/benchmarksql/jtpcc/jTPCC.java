@@ -9,8 +9,8 @@ import java.sql.DriverManager;
 import java.util.Properties;
 import java.util.Random;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Open Source Java implementation of a TPC-C like benchmark
@@ -19,7 +19,7 @@ import org.apache.log4j.PropertyConfigurator;
  * @author Denis Lussier - 2004-2014
  */
 public class jTPCC implements jTPCCConfig {
-	private static org.apache.log4j.Logger log = Logger.getLogger(jTPCC.class);
+	private static Logger log = LogManager.getLogger(jTPCC.class);
 
 	private jTPCCTerminal[] terminals;
 	private String[] terminalNames;
@@ -36,7 +36,7 @@ public class jTPCC implements jTPCCConfig {
 	private int limPerMin_Terminal;
 
 	public static void main(String args[]) {
-		PropertyConfigurator.configure("log4j.xml");
+//		PropertyConfigurator.configure("log4j.xml");
 		new jTPCC();
 	}
 

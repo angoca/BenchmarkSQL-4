@@ -4,7 +4,7 @@
 #
 # 1) Database properties file.
 #
-# This script received a pair of properties:
+# 2-4)This script received a pair of properties:
 # * numWarehouses + Quantity of warehouses to load.
 # * fileLocation + Location of the file to load.
 #

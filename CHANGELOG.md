@@ -11,6 +11,7 @@
   + Scripts for Windows.
   + Directory per RDBMS.
   + Shell scripts for each RDBMS.
+  + Updated to log4j 2.
 
 ## Version 4.1.2 (jannicash)
 
