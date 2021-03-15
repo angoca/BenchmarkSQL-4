@@ -74,6 +74,8 @@ based on the parameters set in `postgres.properties`.
 
 ToDo
 
+As an automated process, you can run the `automate` script that will this whole
+process several times, and shows the time expended in each iteration.
 # Clean the environment
 
 To clean the database, you can run.
