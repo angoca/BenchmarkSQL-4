@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Executes the given SQL with the given database properties.
+#
+# 1) Database properties file.
+#
+# This script received a pair of properties:
+# * numWarehouses + Quantity of warehouses to load.
+# * fileLocation + Location of the file to load.
+#
+# Author: Denis Lussier.
+# Author: Andres Gomez.
+
+MY_CLASSPATH="../dist/BenchmarkSQL.jar:../lib/db2jcc4.jar"
+
+MY_PROPERTIES="-Dprop=${1}"
+
+java -cp .:${MY_CLASSPATH} ${MY_PROPERTIES} com.github.benchmarksql.LoadData ${2} ${3} ${4} ${5}
