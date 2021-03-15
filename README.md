@@ -5,3 +5,8 @@ BenchmarkSQL runs a TPC-C like test against relational databases to compare perf
 PostgreSQL and other databases are supported.
 
 BenchmarkSQL is Open Source, distributed under the GNU General Public License version 2.0 (GPLv2) license.
+
+You can check the documentation by:
+
+* Reading the HOW-TO-RUN files in the root directory.
+* Access the Wiki - https://github.com/ECI-SGBD/BenchmarkSQL-4/wiki.
