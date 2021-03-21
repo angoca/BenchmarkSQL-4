@@ -19,7 +19,7 @@
 	<!-- mvn versions:display-dependency-updates -->
 	<dependencies>
 
-		<!-- Logging facility driveres -->
+		<!-- Logging facility drivers -->
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-1.2-api</artifactId>
@@ -50,7 +50,7 @@
 	</dependencies>
 
 	<!-- When executing mvn, it cleans the target directory, and then creates 
-		the package and copy the ressources. -->
+		the package and copy the resources. -->
 	<build>
 		<defaultGoal>clean package</defaultGoal>
 
@@ -86,7 +86,7 @@
 				</executions>
 			</plugin>
 
-			<!-- Copies the ressource files, the bash, cmd and sql scripts. -->
+			<!-- Copies the resource files, the bash, cmd and sql scripts. -->
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>3.2.0</version>

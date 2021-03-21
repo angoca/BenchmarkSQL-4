@@ -2,24 +2,28 @@
 Instructions for running BenchmarkSQL
 -------------------------------------
 
-Depending on the DBMS, you need to modify a set of files to configure the
+Depending on the RDBMS, you need to modify a set of files to configure the
 connection properties and the environment.
 
-There is a file in the root directory for each DBMS that describes the details
+There is a file in the docs directory for each RDBMS that describes the details
 to configure and execute BenchmarkSQL.
 
-These are the global steps for any DBMS.
+These are the global steps for any RDBMS.
 
 # Requirements
 
-* JDK8 is required.
-* Driver to access the database.
+* JDK7 or higher is required.
+* Maven to builds the sources.
+* Access to the RDBMS to test.
 
 ## Compile the BenchmarkSQL source code
 
 This is a one-time step, to generate the jar file to execute BenchmarkSQL.
+This is done with Maven:
 
-# Create a database and the credentials to access
+    mvn
+
+## Create a database and the credentials to access
 
 In this step the database is created in the DMBS and a set of credentials are
 generated.
