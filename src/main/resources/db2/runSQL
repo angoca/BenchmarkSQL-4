@@ -8,7 +8,7 @@
 # Author: Denis Lussier.
 # Author: Andres Gomez.
 
-MY_CLASSPATH="../dist/BenchmarkSQL.jar:../lib/db2jcc4.jar"
+MY_CLASSPATH="../../BenchmarkSQL.jar:../../lib/*"
 
 MY_PROPERTIES="-Dprop=${1} -DcommandFile=${2}"
 

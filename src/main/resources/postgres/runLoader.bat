@@ -10,7 +10,7 @@
 ::
 :: Author: Andres Gomez.
 
-set MY_CLASSPATH=..\dist\BenchmarkSQL.jar;..\lib\db2jcc4.jar
+set MY_CLASSPATH=..\..\BenchmarkSQL.jar;..\..\lib\*
 
 set MY_PROPERTIES=-Dprop=%1
 

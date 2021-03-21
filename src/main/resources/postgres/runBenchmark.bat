@@ -5,7 +5,7 @@
 ::
 :: Author: Andres Gomez.
 
-set MY_CLASSPATH=..\dist\BenchmarkSQL.jar;..\lib\log4j-1.2.17.jar;..\lib\apache-log4j-extras-1.1.jar;..\lib\db2jcc4.jar
+set MY_CLASSPATH=..\..\BenchmarkSQL.jar;..\..\lib\*
 
 set MY_PROPERTIES=-Dprop=%1
 
