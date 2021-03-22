@@ -1,3 +1,4 @@
+-- Creating primary keys and indexes.
 
 alter table benchmarksql.warehouse add constraint pk_warehouse 
   primary key (w_id);  
@@ -11,7 +12,7 @@ alter table benchmarksql.customer add constraint pk_customer
 create index ndx_customer_name 
   on  benchmarksql.customer (c_w_id, c_d_id, c_last, c_first);
 
--- history table has no primary key
+-- History table has no primary key
 
 alter table benchmarksql.oorder add constraint pk_oorder 
   primary key (o_w_id, o_d_id, o_id);
@@ -31,6 +32,7 @@ alter table benchmarksql.stock add constraint pk_stock
 alter table benchmarksql.item add constraint pk_item
   primary key (i_id);
 
+-- Calculating statistics in all tables.
 CALL SYSPROC.ADMIN_CMD('RUNSTATS ON TABLE benchmarksql.warehouse AND INDEXES ALL');
 CALL SYSPROC.ADMIN_CMD('RUNSTATS ON TABLE benchmarksql.district AND INDEXES ALL');
 CALL SYSPROC.ADMIN_CMD('RUNSTATS ON TABLE benchmarksql.customer AND INDEXES ALL');

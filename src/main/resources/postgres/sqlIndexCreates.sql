@@ -1,3 +1,4 @@
+-- Creating primary keys and indexes.
 
 alter table benchmarksql.warehouse add constraint pk_warehouse 
   primary key (w_id);  
@@ -11,6 +12,7 @@ alter table benchmarksql.customer add constraint pk_customer
 create index ndx_customer_name 
   on  benchmarksql.customer (c_w_id, c_d_id, c_last, c_first);
 
+-- Setting value for sequence.
 select setval('hist_id_seq', (select max(hist_id) + 1 from benchmarksql.history), false);
 
 alter table benchmarksql.oorder add constraint pk_oorder 
@@ -31,4 +33,5 @@ alter table benchmarksql.stock add constraint pk_stock
 alter table benchmarksql.item add constraint pk_item
   primary key (i_id);
 
+-- Performing a vacuum.
 vacuum analyze; 

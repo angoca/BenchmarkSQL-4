@@ -12,6 +12,7 @@ drop index ndx_customer_name;
 -- commit;
 
 alter table benchmarksql.oorder drop constraint pk_oorder;
+
 drop index ndx_oorder_carrier;
 
 alter table benchmarksql.new_order drop constraint pk_new_order;

@@ -1,4 +1,6 @@
--- valid for DB2 V9.7 or later
+-- Performs a truncation of all tables. Faster that a delete.
+-- Valid for DB2 V9.7 or later.
+
 truncate table BENCHMARKSQL.warehouse immediate;
 
 truncate table BENCHMARKSQL.item immediate;

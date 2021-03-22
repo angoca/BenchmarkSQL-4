@@ -1,5 +1,7 @@
 create schema benchmarksql;
 
+-- Creates all tables of the model.
+
 create table benchmarksql.warehouse (
   w_id        integer   not null,
   w_ytd       decimal(12,2),

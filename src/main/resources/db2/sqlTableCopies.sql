@@ -1,5 +1,5 @@
 --LOAD messages will be placed in files, 1 per LOAD,  in <db2_instance_home>/sqllib/tmp
---fully qualified path to the load files required; change paths below  as needed
+--fully qualified path to the load files required; change paths below as needed.
 
 
 CALL SYSPROC.ADMIN_CMD('LOAD FROM /tmp/csv/warehouse.csv OF DEL MESSAGES ON SERVER  REPLACE INTO WAREHOUSE COPY NO'); 

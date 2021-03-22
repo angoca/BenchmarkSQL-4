@@ -1,3 +1,4 @@
+-- Performs a truncation of all tables. Faster that a delete.
 
 truncate table benchmarksql.warehouse;
 
