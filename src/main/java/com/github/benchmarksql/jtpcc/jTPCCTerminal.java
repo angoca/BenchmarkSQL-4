@@ -358,9 +358,14 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 					no_o_id = -1;
 
 					if (delivGetOrderId == null) {
-						delivGetOrderId = conn
-								.prepareStatement("SELECT no_o_id FROM benchmarksql.new_order WHERE no_d_id = ?"
-										+ " AND no_w_id = ?" + " ORDER BY no_o_id ASC");
+						String stmt = "";
+						stmt += "SELECT ";
+						stmt += " no_o_id ";
+						stmt += "FROM benchmarksql.new_order ";
+						stmt += "WHERE no_d_id = ? ";
+						stmt += " AND no_w_id = ? ";
+						stmt += " ORDER BY no_o_id ASC ";
+						delivGetOrderId = conn.prepareStatement(stmt);
 					}
 
 					delivGetOrderId.setInt(1, d_id);
@@ -380,8 +385,12 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 						new_order.no_o_id = no_o_id;
 
 						if (delivDeleteNewOrder == null) {
-							delivDeleteNewOrder = conn.prepareStatement("DELETE FROM benchmarksql.new_order"
-									+ " WHERE no_d_id = ?" + " AND no_w_id = ?" + " AND no_o_id = ?");
+							String stmt = "";
+							stmt += "DELETE FROM benchmarksql.new_order ";
+							stmt += "WHERE no_d_id = ? ";
+							stmt += " AND no_w_id = ? ";
+							stmt += " AND no_o_id = ? ";
+							delivDeleteNewOrder = conn.prepareStatement(stmt);
 						}
 
 						delivDeleteNewOrder.setInt(1, d_id);
@@ -398,8 +407,14 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 
 				if (no_o_id != -1) {
 					if (delivGetCustId == null) {
-						delivGetCustId = conn.prepareStatement("SELECT o_c_id" + " FROM benchmarksql.oorder"
-								+ " WHERE o_id = ?" + " AND o_d_id = ?" + " AND o_w_id = ?");
+						String stmt = "";
+						stmt += "SELECT ";
+						stmt += " o_c_id ";
+						stmt += "FROM benchmarksql.oorder ";
+						stmt += "WHERE o_id = ? ";
+						stmt += " AND o_d_id = ? ";
+						stmt += " AND o_w_id = ? ";
+						delivGetCustId = conn.prepareStatement(stmt);
 					}
 
 					delivGetCustId.setInt(1, no_o_id);
@@ -417,8 +432,14 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 					rs = null;
 
 					if (delivUpdateCarrierId == null) {
-						delivUpdateCarrierId = conn.prepareStatement("UPDATE benchmarksql.oorder SET o_carrier_id = ?"
-								+ " WHERE o_id = ?" + " AND o_d_id = ?" + " AND o_w_id = ?");
+						String stmt = "";
+						stmt += "UPDATE benchmarksql.oorder ";
+						stmt += "SET ";
+						stmt += " o_carrier_id = ? ";
+						stmt += "WHERE o_id = ? ";
+						stmt += " AND o_d_id = ? ";
+						stmt += " AND o_w_id = ? ";
+						delivUpdateCarrierId = conn.prepareStatement(stmt);
 					}
 
 					delivUpdateCarrierId.setInt(1, o_carrier_id);
@@ -433,9 +454,14 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 					}
 
 					if (delivUpdateDeliveryDate == null) {
-						delivUpdateDeliveryDate = conn
-								.prepareStatement("UPDATE benchmarksql.order_line SET ol_delivery_d = ?"
-										+ " WHERE ol_o_id = ?" + " AND ol_d_id = ?" + " AND ol_w_id = ?");
+						String stmt = "";
+						stmt += "UPDATE benchmarksql.order_line ";
+						stmt += "SET ";
+						stmt += " ol_delivery_d = ? ";
+						stmt += "WHERE ol_o_id = ? ";
+						stmt += " AND ol_d_id = ? ";
+						stmt += " AND ol_w_id = ? ";
+						delivUpdateDeliveryDate = conn.prepareStatement(stmt);
 					}
 
 					delivUpdateDeliveryDate.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
@@ -450,9 +476,14 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 					}
 
 					if (delivSumOrderAmount == null) {
-						delivSumOrderAmount = conn
-								.prepareStatement("SELECT SUM(ol_amount) AS ol_total" + " FROM benchmarksql.order_line"
-										+ " WHERE ol_o_id = ?" + " AND ol_d_id = ?" + " AND ol_w_id = ?");
+						String stmt = "";
+						stmt += "SELECT ";
+						stmt += " SUM(ol_amount) AS ol_total ";
+						stmt += "FROM benchmarksql.order_line ";
+						stmt += "WHERE ol_o_id = ? ";
+						stmt += " AND ol_d_id = ? ";
+						stmt += " AND ol_w_id = ? ";
+						delivSumOrderAmount = conn.prepareStatement(stmt);
 					}
 
 					delivSumOrderAmount.setInt(1, no_o_id);
@@ -470,10 +501,15 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 					rs = null;
 
 					if (delivUpdateCustBalDelivCnt == null) {
-						delivUpdateCustBalDelivCnt = conn
-								.prepareStatement("UPDATE benchmarksql.customer SET c_balance = c_balance + ?"
-										+ ", c_delivery_cnt = c_delivery_cnt + 1" + " WHERE c_id = ?"
-										+ " AND c_d_id = ?" + " AND c_w_id = ?");
+						String stmt = "";
+						stmt += "UPDATE benchmarksql.customer ";
+						stmt += "SET ";
+						stmt += " c_balance = c_balance + ?, ";
+						stmt += " c_delivery_cnt = c_delivery_cnt + 1 ";
+						stmt += "WHERE c_id = ? ";
+						stmt += " AND c_d_id = ? ";
+						stmt += " AND c_w_id = ? ";
+						delivUpdateCustBalDelivCnt = conn.prepareStatement(stmt);
 					}
 
 					delivUpdateCustBalDelivCnt.setFloat(1, ol_total);
@@ -538,8 +574,14 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 		try {
 			if (c_by_name) {
 				if (ordStatCountCust == null) {
-					ordStatCountCust = conn.prepareStatement("SELECT count(*) AS namecnt FROM benchmarksql.customer"
-							+ " WHERE c_last = ? AND c_d_id = ? AND c_w_id = ?");
+					String stmt = "";
+					stmt += "SELECT ";
+					stmt += " count(*) AS namecnt ";
+					stmt += "FROM benchmarksql.customer ";
+					stmt += "WHERE c_last = ? ";
+					stmt += " AND c_d_id = ? ";
+					stmt += " AND c_w_id = ? ";
+					ordStatCountCust = conn.prepareStatement(stmt);
 				}
 
 				ordStatCountCust.setString(1, c_last);
@@ -558,10 +600,18 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 				// pick the middle customer from the list of customers
 
 				if (ordStatGetCust == null) {
-					ordStatGetCust = conn
-							.prepareStatement("SELECT c_balance, c_first, c_middle, c_id FROM benchmarksql.customer"
-									+ " WHERE c_last = ?" + " AND c_d_id = ?" + " AND c_w_id = ?"
-									+ " ORDER BY c_w_id, c_d_id, c_last, c_first");
+					String stmt = "";
+					stmt += "SELECT ";
+					stmt += " c_balance, ";
+					stmt += " c_first, ";
+					stmt += " c_middle, ";
+					stmt += " c_id ";
+					stmt += "FROM benchmarksql.customer ";
+					stmt += " WHERE c_last = ? ";
+					stmt += " AND c_d_id = ? ";
+					stmt += " AND c_w_id = ? ";
+					stmt += "ORDER BY c_w_id, c_d_id, c_last, c_first ";
+					ordStatGetCust = conn.prepareStatement(stmt);
 				}
 
 				ordStatGetCust.setString(1, c_last);
@@ -591,9 +641,17 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 			} else {
 
 				if (ordStatGetCustBal == null) {
-					ordStatGetCustBal = conn.prepareStatement(
-							"SELECT c_balance, c_first, c_middle, c_last" + " FROM benchmarksql.customer"
-									+ " WHERE c_id = ?" + " AND c_d_id = ?" + " AND c_w_id = ?");
+					String stmt = "";
+					stmt += "SELECT ";
+					stmt += " c_balance, ";
+					stmt += " c_first, ";
+					stmt += " c_middle, ";
+					stmt += " c_last ";
+					stmt += "FROM benchmarksql.customer ";
+					stmt += " WHERE c_id = ? ";
+					stmt += " AND c_d_id = ? ";
+					stmt += " AND c_w_id = ? ";
+					ordStatGetCustBal = conn.prepareStatement(stmt);
 				}
 
 				ordStatGetCustBal.setInt(1, c_id);
@@ -617,8 +675,14 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 			// find the newest order for the customer
 
 			if (ordStatGetNewestOrd == null) {
-				ordStatGetNewestOrd = conn.prepareStatement("SELECT MAX(o_id) AS maxorderid FROM benchmarksql.oorder"
-						+ " WHERE o_w_id = ?" + " AND o_d_id = ?" + " AND o_c_id = ?");
+				String stmt = "";
+				stmt += "SELECT ";
+				stmt += " MAX(o_id) AS maxorderid ";
+				stmt += "FROM benchmarksql.oorder ";
+				stmt += "WHERE o_w_id = ? ";
+				stmt += " AND o_d_id = ? ";
+				stmt += " AND o_c_id = ? ";
+				ordStatGetNewestOrd = conn.prepareStatement(stmt);
 			}
 			ordStatGetNewestOrd.setInt(1, w_id);
 			ordStatGetNewestOrd.setInt(2, d_id);
@@ -633,9 +697,16 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 				// retrieve the carrier & order date for the most recent order.
 
 				if (ordStatGetOrder == null) {
-					ordStatGetOrder = conn
-							.prepareStatement("SELECT o_carrier_id, o_entry_d" + " FROM benchmarksql.oorder"
-									+ " WHERE o_w_id = ?" + " AND o_d_id = ?" + " AND o_c_id = ?" + " AND o_id = ?");
+					String stmt = "";
+					stmt += "SELECT ";
+					stmt += " o_carrier_id, ";
+					stmt += " o_entry_d ";
+					stmt += "FROM benchmarksql.oorder ";
+					stmt += "WHERE o_w_id = ? ";
+					stmt += " AND o_d_id = ? ";
+					stmt += " AND o_c_id = ? ";
+					stmt += " AND o_id = ? ";
+					ordStatGetOrder = conn.prepareStatement(stmt);
 				}
 				ordStatGetOrder.setInt(1, w_id);
 				ordStatGetOrder.setInt(2, d_id);
@@ -654,9 +725,18 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 			// retrieve the order lines for the most recent order
 
 			if (ordStatGetOrderLines == null) {
-				ordStatGetOrderLines = conn.prepareStatement("SELECT ol_i_id, ol_supply_w_id, ol_quantity,"
-						+ " ol_amount, ol_delivery_d" + " FROM benchmarksql.order_line" + " WHERE ol_o_id = ?"
-						+ " AND ol_d_id =?" + " AND ol_w_id = ?");
+				String stmt = "";
+				stmt += "SELECT ";
+				stmt += " ol_i_id, ";
+				stmt += " ol_supply_w_id, ";
+				stmt += " ol_quantity, ";
+				stmt += " ol_amount, ";
+				stmt += " ol_delivery_d ";
+				stmt += "FROM benchmarksql.order_line ";
+				stmt += "WHERE ol_o_id = ? ";
+				stmt += " AND ol_d_id =? ";
+				stmt += " AND ol_w_id = ? ";
+				ordStatGetOrderLines = conn.prepareStatement(stmt);
 			}
 			ordStatGetOrderLines.setInt(1, o_id);
 			ordStatGetOrderLines.setInt(2, d_id);
@@ -751,9 +831,20 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 		try {
 
 			if (stmtGetCustWhse == null) {
-				stmtGetCustWhse = conn.prepareStatement("SELECT c_discount, c_last, c_credit, w_tax"
-						+ "  FROM benchmarksql.customer, benchmarksql.warehouse" + " WHERE w_id = ? AND w_id = c_w_id"
-						+ " AND c_d_id = ? AND c_id = ?");
+				String stmt = "";
+				stmt += "SELECT ";
+				stmt += " c_discount, ";
+				stmt += " c_last, ";
+				stmt += " c_credit, ";
+				stmt += " w_tax ";
+				stmt += "FROM ";
+				stmt += " benchmarksql.customer, ";
+				stmt += " benchmarksql.warehouse ";
+				stmt += "WHERE w_id = ? ";
+				stmt += " AND w_id = c_w_id ";
+				stmt += " AND c_d_id = ? ";
+				stmt += " AND c_id = ? ";
+				stmtGetCustWhse = conn.prepareStatement(stmt);
 			}
 
 			stmtGetCustWhse.setInt(1, w_id);
@@ -776,8 +867,15 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 			while (!newOrderRowInserted) {
 
 				if (stmtGetDist == null) {
-					stmtGetDist = conn.prepareStatement("SELECT d_next_o_id, d_tax FROM benchmarksql.district"
-							+ " WHERE d_id = ? AND d_w_id = ? FOR UPDATE");
+					String stmt = "";
+					stmt += "SELECT ";
+					stmt += " d_next_o_id, ";
+					stmt += " d_tax ";
+					stmt += "FROM benchmarksql.district ";
+					stmt += "WHERE d_id = ? ";
+					stmt += " AND d_w_id = ? ";
+					stmt += "FOR UPDATE ";
+					stmtGetDist = conn.prepareStatement(stmt);
 				}
 
 				stmtGetDist.setInt(1, d_id);
@@ -796,9 +894,12 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 
 				try {
 					if (stmtInsertNewOrder == null) {
-						stmtInsertNewOrder = conn
-								.prepareStatement("INSERT INTO benchmarksql.NEW_ORDER (no_o_id, no_d_id, no_w_id) "
-										+ "VALUES ( ?, ?, ?)");
+						String stmt = "";
+						stmt += "INSERT INTO benchmarksql.NEW_ORDER ";
+						stmt += " (no_o_id, no_d_id, no_w_id) ";
+						stmt += " VALUES ";
+						stmt += " (?, ?, ?) ";
+						stmtInsertNewOrder = conn.prepareStatement(stmt);
 					}
 
 					stmtInsertNewOrder.setInt(1, o_id);
@@ -812,8 +913,13 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 			}
 
 			if (stmtUpdateDist == null) {
-				stmtUpdateDist = conn.prepareStatement("UPDATE benchmarksql.district SET d_next_o_id = d_next_o_id + 1 "
-						+ " WHERE d_id = ? AND d_w_id = ?");
+				String stmt = "";
+				stmt += "UPDATE benchmarksql.district ";
+				stmt += "SET ";
+				stmt += " d_next_o_id = d_next_o_id + 1 ";
+				stmt += "WHERE d_id = ? ";
+				stmt += " AND d_w_id = ? ";
+				stmtUpdateDist = conn.prepareStatement(stmt);
 			}
 
 			stmtUpdateDist.setInt(1, d_id);
@@ -826,9 +932,12 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 			}
 
 			if (stmtInsertOOrder == null) {
-				stmtInsertOOrder = conn.prepareStatement("INSERT INTO benchmarksql.OORDER "
-						+ " (o_id, o_d_id, o_w_id, o_c_id, o_entry_d, o_ol_cnt, o_all_local)"
-						+ " VALUES (?, ?, ?, ?, ?, ?, ?)");
+				String stmt = "";
+				stmt += "INSERT INTO benchmarksql.OORDER ";
+				stmt += " (o_id, o_d_id, o_w_id, o_c_id, o_entry_d, o_ol_cnt, o_all_local) ";
+				stmt += " VALUES ";
+				stmt += " (?, ?, ?, ?, ?, ?, ?)";
+				stmtInsertOOrder = conn.prepareStatement(stmt);
 			}
 
 			stmtInsertOOrder.setInt(1, o_id);
@@ -855,8 +964,14 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 				}
 
 				if (stmtGetItem == null) {
-					stmtGetItem = conn
-							.prepareStatement("SELECT i_price, i_name , i_data FROM benchmarksql.item WHERE i_id = ?");
+					String stmt = "";
+					stmt += "SELECT ";
+					stmt += " i_price, ";
+					stmt += " i_name, ";
+					stmt += " i_data ";
+					stmt += "FROM benchmarksql.item ";
+					stmt += "WHERE i_id = ? ";
+					stmtGetItem = conn.prepareStatement(stmt);
 				}
 				stmtGetItem.setInt(1, ol_i_id);
 
@@ -875,10 +990,25 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 				itemNames[ol_number - 1] = i_name;
 
 				if (stmtGetStock == null) {
-					stmtGetStock = conn.prepareStatement(
-							"SELECT s_quantity, s_data, s_dist_01, s_dist_02, s_dist_03, s_dist_04, s_dist_05, "
-									+ "       s_dist_06, s_dist_07, s_dist_08, s_dist_09, s_dist_10"
-									+ " FROM benchmarksql.stock WHERE s_i_id = ? AND s_w_id = ? FOR UPDATE");
+					String stmt = "";
+					stmt += "SELECT ";
+					stmt += " s_quantity, ";
+					stmt += " s_data, ";
+					stmt += " s_dist_01, ";
+					stmt += " s_dist_02, ";
+					stmt += " s_dist_03, ";
+					stmt += " s_dist_04, ";
+					stmt += " s_dist_05, ";
+					stmt += " s_dist_06, ";
+					stmt += " s_dist_07, ";
+					stmt += " s_dist_08, ";
+					stmt += " s_dist_09, ";
+					stmt += " s_dist_10 ";
+					stmt += "FROM benchmarksql.stock ";
+					stmt += "WHERE s_i_id = ? ";
+					stmt += " AND s_w_id = ? ";
+					stmt += "FOR UPDATE ";
+					stmtGetStock = conn.prepareStatement(stmt);
 				}
 
 				stmtGetStock.setInt(1, ol_i_id);
@@ -919,9 +1049,15 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 				}
 
 				if (stmtUpdateStock == null) {
-					stmtUpdateStock = conn.prepareStatement(
-							"UPDATE benchmarksql.stock SET s_quantity = ? , s_ytd = s_ytd + ?, s_remote_cnt = s_remote_cnt + ? "
-									+ " WHERE s_i_id = ? AND s_w_id = ?");
+					String stmt = "";
+					stmt += "UPDATE benchmarksql.stock ";
+					stmt += "SET ";
+					stmt += " s_quantity = ?, ";
+					stmt += " s_ytd = s_ytd + ?, ";
+					stmt += " s_remote_cnt = s_remote_cnt + ? ";
+					stmt += "WHERE s_i_id = ? ";
+					stmt += " AND s_w_id = ? ";
+					stmtUpdateStock = conn.prepareStatement(stmt);
 				}
 				stmtUpdateStock.setInt(1, s_quantity);
 				stmtUpdateStock.setInt(2, ol_quantity);
@@ -974,9 +1110,13 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 				}
 
 				if (stmtInsertOrderLine == null) {
-					stmtInsertOrderLine = conn.prepareStatement(
-							"INSERT INTO benchmarksql.order_line (ol_o_id, ol_d_id, ol_w_id, ol_number, ol_i_id, ol_supply_w_id,"
-									+ "  ol_quantity, ol_amount, ol_dist_info) VALUES (?,?,?,?,?,?,?,?,?)");
+					String stmt = "";
+					stmt += "INSERT INTO benchmarksql.order_line ";
+					stmt += " (ol_o_id, ol_d_id, ol_w_id, ol_number, ol_i_id, ol_supply_w_id, ";
+					stmt += "  ol_quantity, ol_amount, ol_dist_info) ";
+					stmt += " VALUES ";
+					stmt += " (?, ?, ?, ?, ?, ?, ?, ?, ?) ";
+					stmtInsertOrderLine = conn.prepareStatement(stmt);
 				}
 				stmtInsertOrderLine.setInt(1, o_id);
 				stmtInsertOrderLine.setInt(2, d_id);
@@ -1029,7 +1169,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 
 			transactionEnd = System.currentTimeMillis();
 
-		} //// ugh :-), this is the end of the try block at the begining of this method
+		} //// ugh :-), this is the end of the try block at the beginning of this method
 			//// /////////
 
 		catch (SQLException ex) {
@@ -1077,8 +1217,13 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 
 		try {
 			if (stockGetDistOrderId == null) {
-				stockGetDistOrderId = conn.prepareStatement(
-						"SELECT d_next_o_id" + " FROM benchmarksql.district" + " WHERE d_w_id = ?" + " AND d_id = ?");
+				String stmt = "";
+				stmt += "SELECT ";
+				stmt += " d_next_o_id ";
+				stmt += "FROM benchmarksql.district ";
+				stmt += "WHERE d_w_id = ? ";
+				stmt += " AND d_id = ? ";
+				stockGetDistOrderId = conn.prepareStatement(stmt);
 			}
 
 			stockGetDistOrderId.setInt(1, w_id);
@@ -1096,10 +1241,20 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 			printMessage("Next Order ID for District = " + o_id);
 
 			if (stockGetCountStock == null) {
-				stockGetCountStock = conn.prepareStatement("SELECT COUNT(DISTINCT (s_i_id)) AS stock_count"
-						+ " FROM benchmarksql.order_line, benchmarksql.stock" + " WHERE ol_w_id = ?"
-						+ " AND ol_d_id = ?" + " AND ol_o_id < ?" + " AND ol_o_id >= ? - 20" + " AND s_w_id = ?"
-						+ " AND s_i_id = ol_i_id" + " AND s_quantity < ?");
+				String stmt = "";
+				stmt += "SELECT ";
+				stmt += " COUNT(DISTINCT (s_i_id)) AS stock_count ";
+				stmt += "FROM ";
+				stmt += " benchmarksql.order_line, ";
+				stmt += " benchmarksql.stock ";
+				stmt += "WHERE ol_w_id = ? ";
+				stmt += " AND ol_d_id = ? ";
+				stmt += " AND ol_o_id < ? ";
+				stmt += " AND ol_o_id >= ? - 20 ";
+				stmt += " AND s_w_id = ? ";
+				stmt += " AND s_i_id = ol_i_id ";
+				stmt += " AND s_quantity < ? ";
+				stockGetCountStock = conn.prepareStatement(stmt);
 			}
 
 			stockGetCountStock.setInt(1, w_id);
@@ -1152,8 +1307,12 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 		try {
 
 			if (payUpdateWhse == null) {
-				payUpdateWhse = conn
-						.prepareStatement("UPDATE benchmarksql.warehouse SET w_ytd = w_ytd + ?  WHERE w_id = ? ");
+				String stmt = "";
+				stmt += "UPDATE benchmarksql.warehouse ";
+				stmt += "SET ";
+				stmt += " w_ytd = w_ytd + ? ";
+				stmt += "WHERE w_id = ? ";
+				payUpdateWhse = conn.prepareStatement(stmt);
 			}
 
 			payUpdateWhse.setFloat(1, h_amount);
@@ -1165,8 +1324,17 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 			}
 
 			if (payGetWhse == null) {
-				payGetWhse = conn.prepareStatement("SELECT w_street_1, w_street_2, w_city, w_state, w_zip, w_name"
-						+ " FROM benchmarksql.warehouse WHERE w_id = ?");
+				String stmt = "";
+				stmt += "SELECT ";
+				stmt += " w_street_1, ";
+				stmt += " w_street_2, ";
+				stmt += " w_city, ";
+				stmt += " w_state, ";
+				stmt += " w_zip, ";
+				stmt += " w_name ";
+				stmt += "FROM benchmarksql.warehouse ";
+				stmt += "WHERE w_id = ? ";
+				payGetWhse = conn.prepareStatement(stmt);
 			}
 
 			payGetWhse.setInt(1, w_id);
@@ -1186,8 +1354,12 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 			rs = null;
 
 			if (payUpdateDist == null) {
-				payUpdateDist = conn.prepareStatement(
-						"UPDATE benchmarksql.district SET d_ytd = d_ytd + ? WHERE d_w_id = ? AND d_id = ?");
+				String stmt = "";
+				stmt += "UPDATE benchmarksql.district ";
+				stmt += "SET d_ytd = d_ytd + ? ";
+				stmt += "WHERE d_w_id = ? ";
+				stmt += " AND d_id = ? ";
+				payUpdateDist = conn.prepareStatement(stmt);
 			}
 			payUpdateDist.setFloat(1, h_amount);
 			payUpdateDist.setInt(2, w_id);
@@ -1198,8 +1370,18 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 			}
 
 			if (payGetDist == null) {
-				payGetDist = conn.prepareStatement("SELECT d_street_1, d_street_2, d_city, d_state, d_zip, d_name"
-						+ " FROM benchmarksql.district WHERE d_w_id = ? AND d_id = ?");
+				String stmt = "";
+				stmt += "SELECT ";
+				stmt += " d_street_1, ";
+				stmt += " d_street_2, ";
+				stmt += " d_city, ";
+				stmt += " d_state, ";
+				stmt += " d_zip, ";
+				stmt += " d_name ";
+				stmt += "FROM benchmarksql.district ";
+				stmt += "WHERE d_w_id = ? ";
+				stmt += " AND d_id = ? ";
+				payGetDist = conn.prepareStatement(stmt);
 			}
 
 			payGetDist.setInt(1, w_id);
@@ -1222,9 +1404,15 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 			if (c_by_name) {
 				// payment is by customer name
 				if (payCountCust == null) {
+					String stmt = "";
+					stmt += "SELECT ";
+					stmt += " count(*) AS namecnt ";
+					stmt += "FROM benchmarksql.customer ";
+					stmt += "WHERE c_last = ? ";
+					stmt += " AND c_d_id = ? ";
+					stmt += " AND c_w_id = ? ";
 					// "SELECT count(c_id)) AS namecnt FROM customer " +
-					payCountCust = conn.prepareStatement("SELECT count(*) AS namecnt FROM benchmarksql.customer "
-							+ " WHERE c_last = ?  AND c_d_id = ? AND c_w_id = ?");
+					payCountCust = conn.prepareStatement(stmt);
 				}
 
 				payCountCust.setString(1, c_last);
@@ -1244,11 +1432,32 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 				rs = null;
 
 				if (payCursorCustByName == null) {
-					payCursorCustByName = conn.prepareStatement(
-							"SELECT c_first, c_middle, c_id, c_street_1, c_street_2, c_city, c_state, c_zip,"
-									+ "       c_phone, c_credit, c_credit_lim, c_discount, c_balance, c_since "
-									+ "  FROM benchmarksql.customer WHERE c_w_id = ? AND c_d_id = ? AND c_last = ? "
-									+ "ORDER BY c_w_id, c_d_id, c_last, c_first ");
+					String stmt = "";
+					stmt += "SELECT ";
+					stmt += " c_first, ";
+					stmt += " c_middle, ";
+					stmt += " c_id, ";
+					stmt += " c_street_1, ";
+					stmt += " c_street_2, ";
+					stmt += " c_city, ";
+					stmt += " c_state, ";
+					stmt += " c_zip, ";
+					stmt += " c_phone, ";
+					stmt += " c_credit, ";
+					stmt += " c_credit_lim, ";
+					stmt += " c_discount, ";
+					stmt += " c_balance, ";
+					stmt += " c_since ";
+					stmt += "FROM benchmarksql.customer ";
+					stmt += "WHERE c_w_id = ? ";
+					stmt += " AND c_d_id = ? ";
+					stmt += " AND c_last = ? ";
+					stmt += "ORDER BY ";
+					stmt += " c_w_id, ";
+					stmt += " c_d_id, ";
+					stmt += " c_last, ";
+					stmt += " c_first ";
+					payCursorCustByName = conn.prepareStatement(stmt);
 				}
 
 				payCursorCustByName.setInt(1, c_w_id);
@@ -1285,10 +1494,27 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 			} else {
 				// payment is by customer ID
 				if (payGetCust == null) {
-					payGetCust = conn.prepareStatement(
-							"SELECT c_first, c_middle, c_last, c_street_1, c_street_2, c_city, c_state, c_zip,"
-									+ "       c_phone, c_credit, c_credit_lim, c_discount, c_balance, c_since "
-									+ "  FROM benchmarksql.customer WHERE c_w_id = ? AND c_d_id = ? AND c_id = ?");
+					String stmt = "";
+					stmt += "SELECT ";
+					stmt += " c_first, ";
+					stmt += " c_middle, ";
+					stmt += " c_last, ";
+					stmt += " c_street_1, ";
+					stmt += " c_street_2, ";
+					stmt += " c_city, ";
+					stmt += " c_state, ";
+					stmt += " c_zip, ";
+					stmt += " c_phone, ";
+					stmt += " c_credit, ";
+					stmt += " c_credit_lim, ";
+					stmt += " c_discount, ";
+					stmt += " c_balance, ";
+					stmt += " c_since ";
+					stmt += "FROM benchmarksql.customer ";
+					stmt += "WHERE c_w_id = ? ";
+					stmt += " AND c_d_id = ? ";
+					stmt += " AND c_id = ? ";
+					payGetCust = conn.prepareStatement(stmt);
 				}
 
 				payGetCust.setInt(1, c_w_id);
@@ -1323,8 +1549,14 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 			if (c_credit.equals("BC")) { // bad credit
 
 				if (payGetCustCdata == null) {
-					payGetCustCdata = conn.prepareStatement(
-							"SELECT c_data FROM benchmarksql.customer WHERE c_w_id = ? AND c_d_id = ? AND c_id = ?");
+					String stmt = "";
+					stmt += "SELECT ";
+					stmt += " c_data ";
+					stmt += "FROM benchmarksql.customer ";
+					stmt += "WHERE c_w_id = ? ";
+					stmt += " AND c_d_id = ? ";
+					stmt += " AND c_id = ? ";
+					payGetCustCdata = conn.prepareStatement(stmt);
 				}
 
 				payGetCustCdata.setInt(1, c_w_id);
@@ -1350,9 +1582,15 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 					c_new_data = c_new_data.substring(0, 500);
 
 				if (payUpdateCustBalCdata == null) {
-					payUpdateCustBalCdata = conn
-							.prepareStatement("UPDATE benchmarksql.customer SET c_balance = ?, c_data = ? "
-									+ " WHERE c_w_id = ? AND c_d_id = ? AND c_id = ?");
+					String stmt = "";
+					stmt += "UPDATE benchmarksql.customer ";
+					stmt += "SET ";
+					stmt += " c_balance = ?, ";
+					stmt += " c_data = ? ";
+					stmt += "WHERE c_w_id = ? ";
+					stmt += " AND c_d_id = ? ";
+					stmt += " AND c_id = ? ";
+					payUpdateCustBalCdata = conn.prepareStatement(stmt);
 				}
 				payUpdateCustBalCdata.setFloat(1, c_balance);
 				payUpdateCustBalCdata.setString(2, c_new_data);
@@ -1369,8 +1607,14 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 			} else { // GoodCredit
 
 				if (payUpdateCustBal == null) {
-					payUpdateCustBal = conn.prepareStatement(
-							"UPDATE benchmarksql.customer SET c_balance = ? WHERE c_w_id = ? AND c_d_id = ? AND c_id = ?");
+					String stmt = "";
+					stmt += "UPDATE benchmarksql.customer ";
+					stmt += "SET ";
+					stmt += " c_balance = ? ";
+					stmt += "WHERE c_w_id = ? ";
+					stmt += " AND c_d_id = ? ";
+					stmt += " AND c_id = ? ";
+					payUpdateCustBal = conn.prepareStatement(stmt);
 				}
 
 				payUpdateCustBal.setFloat(1, c_balance);
@@ -1392,9 +1636,12 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 			h_data = w_name + "    " + d_name;
 
 			if (payInsertHist == null) {
-				payInsertHist = conn.prepareStatement(
-						"INSERT INTO benchmarksql.history (h_c_d_id, h_c_w_id, h_c_id, h_d_id, h_w_id, h_date, h_amount, h_data) "
-								+ " VALUES (?,?,?,?,?,?,?,?)");
+				String stmt = "";
+				stmt += "INSERT INTO benchmarksql.history ";
+				stmt += " (h_c_d_id, h_c_w_id, h_c_id, h_d_id, h_w_id, h_date, h_amount, h_data) ";
+				stmt += " VALUES ";
+				stmt += " (?,?,?,?,?,?,?,?)";
+				payInsertHist = conn.prepareStatement(stmt);
 			}
 			payInsertHist.setInt(1, c_d_id);
 			payInsertHist.setInt(2, c_w_id);
@@ -1471,6 +1718,11 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 		transactionEnd = System.currentTimeMillis();
 	}
 
+	/**
+	 * Writes in the log and prints in the standard output an error message.
+	 * 
+	 * @param type An error type to print.
+	 */
 	private void error(String type) {
 		log.error(terminalName + ", TERMINAL=" + terminalName + "  TYPE=" + type + "  COUNT=" + transactionCount);
 		System.out.println(
