@@ -32,7 +32,7 @@ import com.github.benchmarksql.jtpcc.pojo.Warehouse;
  * @author Denis Lussier - 2004-2014
  */
 public class jTPCCTerminal implements jTPCCConfig, Runnable {
-	private static Logger log = LogManager.getLogger(jTPCCTerminal.class);
+	private static final Logger log = LogManager.getLogger(jTPCCTerminal.class);
 
 	private String terminalName;
 	private Connection conn = null;
@@ -1724,12 +1724,14 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 	 * @param type An error type to print.
 	 */
 	private void error(String type) {
+		// TODO Convert into log4j
 		log.error(terminalName + ", TERMINAL=" + terminalName + "  TYPE=" + type + "  COUNT=" + transactionCount);
 		System.out.println(
 				terminalName + ", TERMINAL=" + terminalName + "  TYPE=" + type + "  COUNT=" + transactionCount);
 	}
 
 	private void logException(Exception e) {
+		// TODO Convert into log4j
 		StringWriter stringWriter = new StringWriter();
 		PrintWriter printWriter = new PrintWriter(stringWriter);
 		e.printStackTrace(printWriter);
@@ -1738,10 +1740,12 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 	}
 
 	private void terminalMessage(String message) {
+		// TODO Convert into log4j
 		log.trace(terminalName + ", " + message);
 	}
 
 	private void printMessage(String message) {
+		// TODO Convert into log4j
 		log.trace(terminalName + ", " + message);
 
 	}

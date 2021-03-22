@@ -19,7 +19,7 @@ import org.apache.logging.log4j.Logger;
  * @author Denis Lussier - 2004-2014
  */
 public class jTPCC implements jTPCCConfig {
-	private static Logger log = LogManager.getLogger(jTPCC.class);
+	private static final Logger log = LogManager.getLogger(jTPCC.class);
 
 	private jTPCCTerminal[] terminals;
 	private String[] terminalNames;
@@ -42,7 +42,6 @@ public class jTPCC implements jTPCCConfig {
 	 * @param args None.
 	 */
 	public static void main(String args[]) {
-//		PropertyConfigurator.configure("log4j.xml");
 		new jTPCC();
 	}
 
@@ -64,10 +63,7 @@ public class jTPCC implements jTPCCConfig {
 
 		log.info("Term-00, ");
 		log.info("Term-00, +-------------------------------------------------------------+");
-		log.info("Term-00,      BenchmarkSQL v" + JTPCCVERSION);
-		log.info("Term-00, +-------------------------------------------------------------+");
-		log.info("Term-00,  (c) 2003, Raul Barbosa");
-		log.info("Term-00,  (c) 2004-2014, Denis Lussier");
+		log.error("Term-00,      BenchmarkSQL v" + JTPCCVERSION);
 		log.info("Term-00, +-------------------------------------------------------------+");
 		log.info("Term-00, ");
 		String iDriver = getProp(ini, "driver");
@@ -368,11 +364,11 @@ public class jTPCC implements jTPCCConfig {
 
 		log.info("Term-00, ");
 		log.info("Term-00, ");
-		log.info("Term-00, Measured tpmC (NewOrders) = " + tpmC);
-		log.info("Term-00, Measured tpmTOTAL = " + tpmTotal);
+		log.warn("Term-00, Measured tpmC (NewOrders) = " + tpmC);
+		log.warn("Term-00, Measured tpmTOTAL = " + tpmTotal);
 		log.info("Term-00, Session Start     = " + sessionStart);
 		log.info("Term-00, Session End       = " + sessionEnd);
-		log.info("Term-00, Transaction Count = " + (transactionCount - 1));
+		log.warn("Term-00, Transaction Count = " + (transactionCount - 1));
 
 	}
 

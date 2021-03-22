@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat;
  * @author Denis Lussier - 2004-2014
  */
 public interface jTPCCConfig {
-	public final static String JTPCCVERSION = "4.1";
+	public final static String JTPCCVERSION = "4.2";
 
 	public final static int NEW_ORDER = 1, PAYMENT = 2, ORDER_STATUS = 3, DELIVERY = 4, STOCK_LEVEL = 5;
 
