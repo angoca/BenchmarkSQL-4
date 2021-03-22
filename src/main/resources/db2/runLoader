@@ -11,8 +11,8 @@
 # Author: Denis Lussier.
 # Author: Andres Gomez.
 
-MY_CLASSPATH="../../BenchmarkSQL.jar:../../lib/*"
+MY_CLASSPATH="..:../../BenchmarkSQL.jar:../../lib/*"
 
 MY_PROPERTIES="-Dprop=${1}"
 
-java -cp .:${MY_CLASSPATH} ${MY_PROPERTIES} com.github.benchmarksql.LoadData ${2} ${3} ${4} ${5}
+java -cp ${MY_CLASSPATH} ${MY_PROPERTIES} com.github.benchmarksql.LoadData ${2} ${3} ${4} ${5}
