@@ -35,6 +35,12 @@ public class jTPCC implements jTPCCConfig {
 	private String sessionStart, sessionEnd;
 	private int limPerMin_Terminal;
 
+	/**
+	 * Main method to run a benchmark. The database properties file is given as a
+	 * JVM parameter: -Dprop=${1}.
+	 * 
+	 * @param args None.
+	 */
 	public static void main(String args[]) {
 //		PropertyConfigurator.configure("log4j.xml");
 		new jTPCC();
@@ -386,6 +392,10 @@ public class jTPCC implements jTPCCConfig {
 		return dateFormat.format(new java.util.Date());
 	}
 
+	/**
+	 * Prints in the standard output several values of the execution, and replaces
+	 * the output with the most recent values.
+	 */
 	private void updateStatusLine() {
 		StringBuilder informativeText = new StringBuilder("");
 		long currTimeMillis = System.currentTimeMillis();

@@ -80,6 +80,12 @@ public class LoadData implements jTPCCConfig {
 	private static PrintWriter out = null;
 	private static long lastTimeMS = 0;
 
+	/**
+	 * Main method to generate the data in the database. The database properties
+	 * file is given as a JVM parameter: -Dprop=${1}.
+	 * 
+	 * @param args None.
+	 */
 	public static void main(String[] args) {
 
 		System.out.println("Starting BenchmarkSQL LoadData");

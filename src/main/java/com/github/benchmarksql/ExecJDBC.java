@@ -20,6 +20,12 @@ import com.github.benchmarksql.jtpcc.jTPCCUtil;
  */
 public class ExecJDBC {
 
+	/**
+	 * Main method to execute a SQL file. The name of the file is passed as a JVM
+	 * parameter: -Dprop=${1} -DcommandFile=${2}
+	 * 
+	 * @param args None.
+	 */
 	public static void main(String[] args) {
 
 		Connection conn = null;
