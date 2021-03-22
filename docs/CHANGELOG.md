@@ -2,14 +2,15 @@
 
 ## Version 4.2 (angoca)
 
-  + More documentation in the root directory with a file for each DBMS.
+  + Documentation in the docs directory with a file for each DBMS.
   + Maven support (Based on https://github.com/andl/benchmarkSQL/blob/master/pom.xml)
   + Code formatted, and imports organized.
   + New package structure and directories.
   + Correction of comments for javadoc.
   + FIXMEs in the code to include any other RDBMS.
-  + Scripts for Windows.
-  + Directory per RDBMS.
+  + Resources directory to include everything that is not java.
+  + Scripts to execute a benchmark in Windows.
+  + Directory per RDBMS, under resources
   + Shell scripts for each RDBMS.
   + Updated to log4j 2.
 

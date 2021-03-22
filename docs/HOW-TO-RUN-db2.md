@@ -6,7 +6,7 @@ Instructions for running BenchmarkSQL on Db2 (LUW)
 
 These are the requirements to run this application:
 
-* Use of JDK7 is required.
+* Use of JDK7.
 * Maven to build the sources.
 * IBM Db2 database.
 
