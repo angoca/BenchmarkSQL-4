@@ -19,10 +19,19 @@ public class History implements Serializable {
 	public String h_data;
 
 	public String toString() {
-		return ("\n***************** History ********************" + "\n*   h_c_id = " + hist_id + "\n*   h_c_id = "
-				+ h_c_id + "\n* h_c_d_id = " + h_c_d_id + "\n* h_c_w_id = " + h_c_w_id + "\n*   h_d_id = " + h_d_id
-				+ "\n*   h_w_id = " + h_w_id + "\n*   h_date = " + h_date + "\n* h_amount = " + h_amount
-				+ "\n*   h_data = " + h_data + "\n**********************************************");
+		String ret = "";
+		ret += "\n***************** History ********************";
+		ret += "\n*   h_c_id = " + hist_id;
+		ret += "\n*   h_c_id = " + h_c_id;
+		ret += "\n* h_c_d_id = " + h_c_d_id;
+		ret += "\n* h_c_w_id = " + h_c_w_id;
+		ret += "\n*   h_d_id = " + h_d_id;
+		ret += "\n*   h_w_id = " + h_w_id;
+		ret += "\n*   h_date = " + h_date;
+		ret += "\n* h_amount = " + h_amount;
+		ret += "\n*   h_data = " + h_data;
+		ret += "\n**********************************************";
+		return (ret);
 	}
 
 } // end History

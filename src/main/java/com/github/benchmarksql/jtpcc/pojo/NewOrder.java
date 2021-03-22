@@ -13,9 +13,13 @@ public class NewOrder implements Serializable {
 	public int no_o_id;
 
 	public String toString() {
-		return ("\n***************** NewOrder ********************" + "\n*      no_w_id = " + no_w_id
-				+ "\n*      no_d_id = " + no_d_id + "\n*      no_o_id = " + no_o_id
-				+ "\n**********************************************");
+		String ret = "";
+		ret += "\n***************** NewOrder ********************";
+		ret += "\n*      no_w_id = " + no_w_id;
+		ret += "\n*      no_d_id = " + no_d_id;
+		ret += "\n*      no_o_id = " + no_o_id;
+		ret += "\n**********************************************";
+		return (ret);
 	}
 
 } // end NewOrder

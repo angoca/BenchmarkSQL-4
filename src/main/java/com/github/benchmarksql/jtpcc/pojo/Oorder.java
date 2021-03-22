@@ -20,10 +20,18 @@ public class Oorder implements Serializable {
 	public String toString() {
 		java.sql.Timestamp entry_d = new java.sql.Timestamp(o_entry_d);
 
-		return ("\n***************** Oorder ********************" + "\n*         o_id = " + o_id + "\n*       o_w_id = "
-				+ o_w_id + "\n*       o_d_id = " + o_d_id + "\n*       o_c_id = " + o_c_id + "\n* o_carrier_id = "
-				+ o_carrier_id + "\n*     o_ol_cnt = " + o_ol_cnt + "\n*  o_all_local = " + o_all_local
-				+ "\n*    o_entry_d = " + entry_d + "\n**********************************************");
+		String ret = "";
+		ret += "\n***************** Oorder ********************";
+		ret += "\n*         o_id = " + o_id;
+		ret += "\n*       o_w_id = " + o_w_id;
+		ret += "\n*       o_d_id = " + o_d_id;
+		ret += "\n*       o_c_id = " + o_c_id;
+		ret += "\n* o_carrier_id = " + o_carrier_id;
+		ret += "\n*     o_ol_cnt = " + o_ol_cnt;
+		ret += "\n*  o_all_local = " + o_all_local;
+		ret += "\n*    o_entry_d = " + entry_d;
+		ret += "\n**********************************************";
+		return (ret);
 	}
 
 } // end Oorder

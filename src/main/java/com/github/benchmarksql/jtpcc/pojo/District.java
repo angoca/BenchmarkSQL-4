@@ -22,11 +22,21 @@ public class District implements Serializable {
 	public String d_zip;
 
 	public String toString() {
-		return ("\n***************** District ********************" + "\n*        d_id = " + d_id + "\n*      d_w_id = "
-				+ d_w_id + "\n*       d_ytd = " + d_ytd + "\n*       d_tax = " + d_tax + "\n* d_next_o_id = "
-				+ d_next_o_id + "\n*      d_name = " + d_name + "\n*  d_street_1 = " + d_street_1 + "\n*  d_street_2 = "
-				+ d_street_2 + "\n*      d_city = " + d_city + "\n*     d_state = " + d_state + "\n*       d_zip = "
-				+ d_zip + "\n**********************************************");
+		String ret = "";
+		ret += "\n***************** District ********************";
+		ret += "\n*        d_id = " + d_id;
+		ret += "\n*      d_w_id = " + d_w_id;
+		ret += "\n*       d_ytd = " + d_ytd;
+		ret += "\n*       d_tax = " + d_tax;
+		ret += "\n* d_next_o_id = " + d_next_o_id;
+		ret += "\n*      d_name = " + d_name;
+		ret += "\n*  d_street_1 = " + d_street_1;
+		ret += "\n*  d_street_2 = " + d_street_2;
+		ret += "\n*      d_city = " + d_city;
+		ret += "\n*     d_state = " + d_state;
+		ret += "\n*       d_zip = " + d_zip;
+		ret += "\n**********************************************";
+		return (ret);
 	}
 
 } // end District

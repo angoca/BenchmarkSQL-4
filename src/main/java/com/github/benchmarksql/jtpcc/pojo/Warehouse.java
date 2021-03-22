@@ -19,10 +19,19 @@ public class Warehouse implements Serializable {
 	public String w_zip;
 
 	public String toString() {
-		return ("\n***************** Warehouse ********************" + "\n*       w_id = " + w_id + "\n*      w_ytd = "
-				+ w_ytd + "\n*      w_tax = " + w_tax + "\n*     w_name = " + w_name + "\n* w_street_1 = " + w_street_1
-				+ "\n* w_street_2 = " + w_street_2 + "\n*     w_city = " + w_city + "\n*    w_state = " + w_state
-				+ "\n*      w_zip = " + w_zip + "\n**********************************************");
+		String ret = "";
+		ret += "\n***************** Warehouse ********************";
+		ret += "\n*       w_id = " + w_id;
+		ret += "\n*      w_ytd = " + w_ytd;
+		ret += "\n*      w_tax = " + w_tax;
+		ret += "\n*     w_name = " + w_name;
+		ret += "\n* w_street_1 = " + w_street_1;
+		ret += "\n* w_street_2 = " + w_street_2;
+		ret += "\n*     w_city = " + w_city;
+		ret += "\n*    w_state = " + w_state;
+		ret += "\n*      w_zip = " + w_zip;
+		ret += "\n**********************************************";
+		return (ret);
 	}
 
 } // end Warehouse

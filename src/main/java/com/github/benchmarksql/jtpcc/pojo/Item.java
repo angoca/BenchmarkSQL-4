@@ -15,9 +15,15 @@ public class Item implements Serializable {
 	public String i_data;
 
 	public String toString() {
-		return ("\n***************** Item ********************" + "\n*    i_id = " + i_id + "\n*  i_name = " + i_name
-				+ "\n* i_price = " + i_price + "\n*  i_data = " + i_data + "\n* i_im_id = " + i_im_id
-				+ "\n**********************************************");
+		String ret = "";
+		ret += "\n***************** Item ********************";
+		ret += "\n*    i_id = " + i_id;
+		ret += "\n*  i_name = " + i_name;
+		ret += "\n* i_price = " + i_price;
+		ret += "\n*  i_data = " + i_data;
+		ret += "\n* i_im_id = " + i_im_id;
+		ret += "\n**********************************************";
+		return (ret);
 	}
 
 } // end Item
