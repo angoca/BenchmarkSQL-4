@@ -4,14 +4,20 @@
 #
 # 1) Database properties file.
 #
-# This script received a pair of properties:
+# 2-4)This script received a pair of properties:
 # * numWarehouses + Quantity of warehouses to load.
 # * fileLocation + Location of the file to load.
 #
 # Author: Denis Lussier.
 # Author: Andres Gomez.
 
-MY_CLASSPATH="..:../../BenchmarkSQL.jar:../../lib/*"
+if [ "${1}" == "" ] ; then
+ echo "ERROR: Please indicate the properties file."
+ exit 1
+fi
+BASEDIR=$(dirname "$0")
+
+MY_CLASSPATH=".:${BASEDIR}/../BenchmarkSQL.jar:${BASEDIR}/../lib/*"
 
 MY_PROPERTIES="-Dprop=${1}"
 
