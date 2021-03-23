@@ -6,7 +6,7 @@ Instructions for running BenchmarkSQL on PostgreSQL
 
 These are the requirements to run this application:
 
-* Use of JDK7 is required.
+* Use of JDK7.
 * Maven to build the sources.
 * Postgres database.
 
@@ -33,6 +33,10 @@ A sample JDBC connection property files is provided for PostgreSQL called
 Go to the `run/postgres` directory, edit the `postgres.properties` file to point to
 the database instance you would like to test.   
 
+    cd run
+    cd postgres
+    vi postgres.properties
+
 # Build the schema and initial database load
 
 Change to the `run/postgres` directory.
@@ -44,11 +48,11 @@ Execute the `sqlTableCreates.sql` to create the base tables.
 
 _Windows:_
 
-    runSQL postgres.properties sqlTableCreates.sql
+    runSQL postgres\postgres.properties postgres\sqlTableCreates.sql
 
 _Linux:_
 
-    ./runSQL postgres.properties sqlTableCreates.sql
+    ./runSQL postgres/postgres.properties postgres/sqlTableCreates.sql
 
 Run the Loader command file to load all of the default data for a benchmark.
 
@@ -59,11 +63,11 @@ To run the following command, indicating the quantity of warehouses:
 
 _Windows:_
 
-    runLoader postgres.properties numWarehouses 1
+    runLoader postgres\postgres.properties numWarehouses 1
 
 _Linux:_
 
-    ./runLoader postgres.properties numWarehouses 1
+    ./runLoader postgres/postgres.properties numWarehouses 1
 
 NOTE: You should run the `sqlTableTruncates.sql` script if your tables are not
 already empty.
@@ -76,53 +80,53 @@ To run the following command, indicating the location of the files.
 
 _Windows:_
 
-    runLoader postgres.properties numWarehouses 1 fileLocation c:\temp\csv\   
+    runLoader postgres\postgres.properties numWarehouses 1 fileLocation c:\tmp\csv   
 
 _Linux:_
 
-    ./runLoader postgres.properties numWarehouses 1 fileLocation /tmp/csv/   
+    ./runLoader postgres/postgres.properties numWarehouses 1 fileLocation /tmp/csv/   
 
 These CSV files can be bulk loaded as follows:
 
 _Windows:_
 
-    runSQL postgres.properties sqlTableCopies.sql
+    runSQL postgres\postgres.properties postgres\sqlTableCopies.sql
 
 _Linux:_
 
-    ./runSQL postgres.properties sqlTableCopies.sql
+    ./runSQL postgres/postgres.properties postgres/sqlTableCopies.sql
 
 You may truncate the data via:
 
 _Windows:_
 
-    runSQL postgres.properties sqlTableTruncates.sql
+    runSQL postgres\postgres.properties postgres\sqlTableTruncates.sql
 
 _Linux:_
 
-    ./runSQL postgres.properties sqlTableTruncates.sql
+    ./runSQL postgres/postgres.properties postgres/sqlTableTruncates.sql
 
 In both cases, run the `runSQL` command file to execute the SQL script
 `sqlIndexCreates.sql` to create the primary keys & other indexes on the tables.
 
 _Windows:_
 
-    runSQL postgres.properties sqlIndexCreates.sql
+    runSQL postgres\postgres.properties postgres\sqlIndexCreates.sql
 
 _Linux:_
 
-    ./runSQL postgres.properties sqlIndexCreates.sql
+    ./runSQL postgres/postgres.properties postgres/sqlIndexCreates.sql
 
 When you restart the test, and you will reload the data, you could delete the
 indexes before this:
 
 _Windows:_
 
-    runSQL postgres.properties sqlIndexDrops.sql
+    runSQL postgres\postgres.properties postgres\sqlIndexDrops.sql
 
 _Linux:_
 
-    ./runSQL postgres.properties sqlIndexDrops.sql
+    ./runSQL postgres/postgres.properties postgres/sqlIndexDrops.sql
 
 # Run the configured benchmark
 
@@ -132,11 +136,11 @@ based on the parameters set in `postgres.properties`.
 
 _Windows:_
 
-    runBenchmark postgres.properties
+    runBenchmark postgres\postgres.properties
 
 _Linux:_
 
-    ./runBenchmark postgres.properties
+    ./runBenchmark postgres/postgres.properties
 
 # Scale the benchmark configuration
 
@@ -148,9 +152,9 @@ To clean the database, you can run.
 
 _Windows:_
 
-    runSQL postgres.properties sqlTableDrops.sql
+    runSQL postgres\postgres.properties postgres\sqlTableDrops.sql
 
 _Linux:_
 
-    ./runSQL postgres.properties sqlTableDrops.sql
+    ./runSQL postgres/postgres.properties postgres/sqlTableDrops.sql
 

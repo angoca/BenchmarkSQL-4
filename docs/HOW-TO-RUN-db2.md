@@ -56,10 +56,11 @@ database you would like to test.
 
     cd run
     cd db2
+    vi db2.properties
 
 # Build the schema and initial database load
 
-Change to the `run/db2` directory.
+Change to the `run` directory.
 
     cd run
     cd db2
@@ -68,11 +69,11 @@ Execute the `sqlTableCreates.sql` to create the base tables.
 
 _Windows:_
 
-    runSQL db2.properties sqlTableCreates.sql
+    runSQL db2\db2.properties db2\sqlTableCreates.sql
 
 _Linux:_
 
-    ./runSQL db2.properties sqlTableCreates.sql
+    ./runSQL db2/db2.properties db2/sqlTableCreates.sql
 
 Run the Loader command file to load all of the default data for a benchmark.
 
@@ -83,11 +84,11 @@ To run the following command, indicating the quantity of warehouses:
 
 _Windows:_
 
-    runLoader db2.properties numWarehouses 1
+    runLoader db2\db2.properties numWarehouses 1
 
 _Linux:_
 
-    ./runLoader db2.properties numWarehouses 1
+    ./runLoader db2/db2.properties numWarehouses 1
 
 NOTE: You should run the `sqlTableTruncates.sql` script if your tables are not
 already empty.
@@ -100,53 +101,53 @@ To run the following command, indicating the location of the files.
 
 _Windows:_
 
-    runLoader db2.properties numWarehouses 1 fileLocation /tmp/csv/        
+    runLoader db2\db2.properties numWarehouses 1 fileLocation c:\tmp\csv        
 
 _Linux:_
 
-    ./runLoader db2.properties numWarehouses 1 fileLocation /tmp/csv/        
+    ./runLoader db2/db2.properties numWarehouses 1 fileLocation /tmp/csv/        
 
 These CSV files can be bulk loaded as follows:
 
 _Windows:_
 
-    runSQL db2.properties sqlTableCopies.sql
+    runSQL db2\db2.properties db2\sqlTableCopies.sql
 
 _Linux:_
 
-    ./runSQL db2.properties sqlTableCopies.sql
+    ./runSQL db2/db2.properties db2/sqlTableCopies.sql
 
 You may truncate the data via:
 
 _Windows:_
 
-    runSQL db2.properties sqlTableTruncates.sql
+    runSQL db2\db2.properties db2\sqlTableTruncates.sql
 
 _Linux:_
 
-    ./runSQL db2.properties sqlTableTruncates.sql
+    ./runSQL db2/db2.properties db2/sqlTableTruncates.sql
 
 In both cases, run the `runSQL` command file to execute the SQL script
 `sqlIndexCreates.sql` to create the primary keys & other indexes on the tables.
 
 _Windows:_
 
-    runSQL db2.properties sqlIndexCreates.sql
+    runSQL db2\db2.properties db2\sqlIndexCreates.sql
 
 _Linux:_
 
-    ./runSQL db2.properties sqlIndexCreates.sql
+    ./runSQL db2/db2.properties db2/sqlIndexCreates.sql
 
 When you restart the test, and you will reload the data, you could delete the
 indexes before this:
 
 _Windows:_
 
-    runSQL db2.properties sqlIndexDrops.sql
+    runSQL db2\db2.properties db2\sqlIndexDrops.sql
 
 _Linux:_
 
-    ./runSQL db2.properties sqlIndexDrops.sql
+    ./runSQL db2/db2.properties db2/sqlIndexDrops.sql
 
 # Run the configured benchmark
 
@@ -156,11 +157,11 @@ based on the parameters set in `db2.properties`.
 
 _Windows:_
 
-    runBenchmark db2.properties
+    runBenchmark db2\db2.properties
 
 _Linux:_
 
-    ./runBenchmark db2.properties
+    ./runBenchmark db2/db2.properties
 
 # Scale the benchmark configuration
 
@@ -178,9 +179,9 @@ To clean the database, you can run.
 
 _Windows:_
 
-    runSQL db2.properties sqlTableDrops.sql
+    runSQL db2\db2.properties db2\sqlTableDrops.sql
 
 _Linux:_
 
-    ./runSQL db2.properties sqlTableDrops.sql
+    ./runSQL db2/db2.properties db2/sqlTableDrops.sql
 
