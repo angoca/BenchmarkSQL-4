@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# 1) Database properties file.
+# 2) SQL script file.
+#
+# Author: Denis Lussier.
+# Author: Andres Gomez.
+
+if [ "${1}" == "" ] ; then
+ echo "ERROR: Please indicate the properties file."
+ exit 1
+fi
+BASEDIR=$(dirname "$0")
+
+MY_CLASSPATH=".:${BASEDIR}/../BenchmarkSQL.jar:${BASEDIR}/../lib/*"
+
+MY_PROPERTIES="-Dprop=${1}"
+
+java -cp ${MY_CLASSPATH} ${MY_PROPERTIES} com.github.benchmarksql.jtpcc.jTPCC

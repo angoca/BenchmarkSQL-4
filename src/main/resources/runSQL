@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Executes the given SQL with the given database properties.
+#
+# 1) Database properties file.
+# 2) SQL script file.
+#
+# Author: Denis Lussier.
+# Author: Andres Gomez.
+
+if [ "${1}" == "" -o "${2}" == "" ] ; then
+ echo "ERROR: Please indicate the properties file and the name of the script file to execute."
+ exit 1
+fi
+BASEDIR=$(dirname "$0")
+
+MY_CLASSPATH=".:${BASEDIR}/../BenchmarkSQL.jar:${BASEDIR}/../lib/*"
+
+MY_PROPERTIES="-Dprop=${1} -DcommandFile=${2}"
+
+java -cp ${MY_CLASSPATH} ${MY_PROPERTIES} com.github.benchmarksql.ExecJDBC
