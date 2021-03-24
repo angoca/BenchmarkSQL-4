@@ -144,7 +144,7 @@ public class jTPCC implements jTPCCConfig {
 					if (numWarehouses <= 0)
 						throw new NumberFormatException();
 				} catch (NumberFormatException e1) {
-					log.error("Invalid number of warehouses!",e1);
+					log.error("Invalid number of warehouses!", e1);
 					throw new Exception();
 				}
 
@@ -153,7 +153,7 @@ public class jTPCC implements jTPCCConfig {
 					if (numTerminals <= 0 || numTerminals > 10 * numWarehouses)
 						throw new NumberFormatException();
 				} catch (NumberFormatException e1) {
-					log.error("Invalid number of terminals!",e1);
+					log.error("Invalid number of terminals!", e1);
 					throw new Exception();
 				}
 
@@ -163,7 +163,7 @@ public class jTPCC implements jTPCCConfig {
 						if (executionTimeMillis <= 0)
 							throw new NumberFormatException();
 					} catch (NumberFormatException e1) {
-						log.error("Invalid number of minutes!",e1);
+						log.error("Invalid number of minutes!", e1);
 						throw new Exception();
 					}
 				} else {
@@ -172,7 +172,7 @@ public class jTPCC implements jTPCCConfig {
 						if (transactionsPerTerminal <= 0)
 							throw new NumberFormatException();
 					} catch (NumberFormatException e1) {
-						log.error("Invalid number of transactions per terminal!",e1);
+						log.error("Invalid number of transactions per terminal!", e1);
 						throw new Exception();
 					}
 				}
@@ -191,7 +191,7 @@ public class jTPCC implements jTPCCConfig {
 							&& deliveryWeightValue == 0 && stockLevelWeightValue == 0)
 						throw new NumberFormatException();
 				} catch (NumberFormatException e1) {
-					log.error("Invalid number in mix percentage!",e1);
+					log.error("Invalid number in mix percentage!", e1);
 					throw new Exception();
 				}
 
@@ -405,7 +405,9 @@ public class jTPCC implements jTPCCConfig {
 
 		long freeMem = Runtime.getRuntime().freeMemory() / (1024 * 1024);
 		long totalMem = Runtime.getRuntime().totalMemory() / (1024 * 1024);
-		informativeText.append("Memory Usage: " + (totalMem - freeMem) + "MB / " + totalMem + "MB");
+		long maxMem = Runtime.getRuntime().maxMemory() / (1024 * 1024);
+		informativeText
+				.append("Memory Usage: " + (totalMem - freeMem) + "MB / " + totalMem + "MB of max " + maxMem + "MB");
 
 		System.out.print(informativeText);
 		for (int count = 0; count < 1 + informativeText.length(); count++) {
