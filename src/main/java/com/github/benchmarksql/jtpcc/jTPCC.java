@@ -74,6 +74,14 @@ public class jTPCC implements jTPCCConfig {
 		log.info("Term-00, ");
 		String iWarehouses = getProp(ini, "warehouses");
 		String iTerminals = getProp(ini, "terminals");
+		String iSchema = getProp(ini, "schema");
+		if (iSchema == null) {
+			iSchema = "benchmarksql.";
+		} else if (iSchema == "") {
+			iSchema = "";
+		} else {
+			iSchema += ".";
+		}
 
 		String iRunTxnsPerTerminal = ini.getProperty("runTxnsPerTerminal");
 		String iRunMins = ini.getProperty("runMins");
@@ -132,6 +140,7 @@ public class jTPCC implements jTPCCConfig {
 					} else if (Integer.parseInt(iRunMins) == 0 && Integer.parseInt(iRunTxnsPerTerminal) != 0) {
 						iRunMinsBool = false;
 					} else {
+						log.error("Quantity of minutes or quantity of transactions, but not both!");
 						throw new NumberFormatException();
 					}
 				} catch (NumberFormatException e1) {
@@ -141,8 +150,10 @@ public class jTPCC implements jTPCCConfig {
 
 				try {
 					numWarehouses = Integer.parseInt(iWarehouses);
-					if (numWarehouses <= 0)
+					if (numWarehouses <= 0) {
+						log.error("Quantity of warehouses cannot be negative nor zero!");
 						throw new NumberFormatException();
+					}
 				} catch (NumberFormatException e1) {
 					log.error("Invalid number of warehouses!", e1);
 					throw new Exception();
@@ -150,8 +161,10 @@ public class jTPCC implements jTPCCConfig {
 
 				try {
 					numTerminals = Integer.parseInt(iTerminals);
-					if (numTerminals <= 0 || numTerminals > 10 * numWarehouses)
+					if (numTerminals <= 0 || numTerminals > 10 * numWarehouses) {
+						log.error("Invalid number of terminals per warehouse!");
 						throw new NumberFormatException();
+					}
 				} catch (NumberFormatException e1) {
 					log.error("Invalid number of terminals!", e1);
 					throw new Exception();
@@ -160,8 +173,10 @@ public class jTPCC implements jTPCCConfig {
 				if (Long.parseLong(iRunMins) != 0 && Integer.parseInt(iRunTxnsPerTerminal) == 0) {
 					try {
 						executionTimeMillis = Long.parseLong(iRunMins) * 60000;
-						if (executionTimeMillis <= 0)
+						if (executionTimeMillis <= 0) {
+							log.error("Quantity of minutes cannot be negative nor zero!");
 							throw new NumberFormatException();
+						}
 					} catch (NumberFormatException e1) {
 						log.error("Invalid number of minutes!", e1);
 						throw new Exception();
@@ -169,8 +184,10 @@ public class jTPCC implements jTPCCConfig {
 				} else {
 					try {
 						transactionsPerTerminal = Integer.parseInt(iRunTxnsPerTerminal);
-						if (transactionsPerTerminal <= 0)
+						if (transactionsPerTerminal <= 0) {
+							log.error("Quantity of transactions cannot be negative nor zero!");
 							throw new NumberFormatException();
+						}
 					} catch (NumberFormatException e1) {
 						log.error("Invalid number of transactions per terminal!", e1);
 						throw new Exception();
@@ -202,12 +219,13 @@ public class jTPCC implements jTPCCConfig {
 				}
 
 				log.warn("Session started!");
-				if (!limitIsTime)
+				if (!limitIsTime) {
 					log.info("Creating " + numTerminals + " terminal(s) with " + transactionsPerTerminal
 							+ " transaction(s) per terminal...");
-				else
+				} else {
 					log.info("Creating " + numTerminals + " terminal(s) with " + (executionTimeMillis / 60000)
 							+ " minute(s) of execution...");
+				}
 				log.info("Transaction Weights: " + newOrderWeightValue + "% New-Order, " + paymentWeightValue
 						+ "% Payment, " + orderStatusWeightValue + "% Order-Status, " + deliveryWeightValue
 						+ "% Delivery, " + stockLevelWeightValue + "% Stock-Level");
@@ -245,7 +263,7 @@ public class jTPCC implements jTPCCConfig {
 						jTPCCTerminal terminal = new jTPCCTerminal(terminalName, terminalWarehouseID,
 								terminalDistrictID, conn, transactionsPerTerminal, paymentWeightValue,
 								orderStatusWeightValue, deliveryWeightValue, stockLevelWeightValue, numWarehouses,
-								limPerMin_Terminal, this);
+								limPerMin_Terminal, this, iSchema);
 
 						terminals[i] = terminal;
 						terminalNames[i] = terminalName;

@@ -52,6 +52,15 @@ public class ExecJDBC {
 			// Create Statement
 			stmt = conn.createStatement();
 
+			// Statement terminator.
+			String termValue = ini.getProperty("terminator");
+			char term;
+			if (termValue == null) {
+				term = ';';
+			}else {
+				term = termValue.charAt(0);
+			}
+
 			// Open inputFile
 			if (jTPCCUtil.getSysProp("commandFile", null) == null) {
 				throw new Exception("ERROR: Invalid SQL script.");
@@ -68,8 +77,8 @@ public class ExecJDBC {
 						System.out.println(line); // print comment line
 					} else {
 						sql.append(line);
-						if (line.endsWith(";")) {
-							execJDBC(stmt, sql);
+						if (line.endsWith(Character.toString(term))) {
+							execJDBC(stmt, sql, term);
 							sql = new StringBuffer();
 						} else {
 							sql.append("\n");
@@ -104,13 +113,13 @@ public class ExecJDBC {
 
 	} // end main
 
-	static void execJDBC(Statement stmt, StringBuffer sql) {
+	static void execJDBC(Statement stmt, StringBuffer sql, char term) {
 
 		System.out.println(sql);
 
 		try {
 
-			stmt.execute(sql.toString().replace(';', ' '));
+			stmt.execute(sql.toString().replace(term, ' '));
 
 		} catch (SQLException se) {
 			System.out.println(se.getMessage());
