@@ -1,7 +1,11 @@
 package com.github.benchmarksql.helper;
+
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.github.benchmarksql.jtpcc.pojo.NewOrder;
 import com.github.benchmarksql.jtpcc.pojo.Oorder;
@@ -12,9 +16,19 @@ import com.github.benchmarksql.jtpcc.pojo.OrderLine;
  * 
  * @author Denis Lussier - 2004-2014
  */
-public class jdbcIO {
+public final class jdbcIO {
+	/**
+	 * Logger.
+	 */
+	private static final Logger log = LogManager.getLogger(jdbcIO.class);
 
-	public void insertOrder(PreparedStatement ordrPrepStmt, Oorder oorder) {
+	/**
+	 * Inserts an order.
+	 * 
+	 * @param ordrPrepStmt Already prepared statement to insert.
+	 * @param oorder       Object order to insert to take the values from.
+	 */
+	public void insertOrder(final PreparedStatement ordrPrepStmt, final Oorder oorder) {
 
 		try {
 
@@ -25,20 +39,24 @@ public class jdbcIO {
 			ordrPrepStmt.setInt(5, oorder.o_carrier_id);
 			ordrPrepStmt.setInt(6, oorder.o_ol_cnt);
 			ordrPrepStmt.setInt(7, oorder.o_all_local);
-			Timestamp entry_d = new java.sql.Timestamp(oorder.o_entry_d);
+			final Timestamp entry_d = new Timestamp(oorder.o_entry_d);
 			ordrPrepStmt.setTimestamp(8, entry_d);
 
 			ordrPrepStmt.addBatch();
 
 		} catch (SQLException se) {
-			System.out.println(se.getMessage());
-		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Error in SQL", se);
 		}
 
 	} // end insertOrder()
 
-	public void insertNewOrder(PreparedStatement nworPrepStmt, NewOrder new_order) {
+	/**
+	 * Inserts a new order.
+	 * 
+	 * @param nworPrepStmt Already prepared statement to insert.
+	 * @param new_order    Object new order to take the values from.
+	 */
+	public void insertNewOrder(final PreparedStatement nworPrepStmt, final NewOrder new_order) {
 
 		try {
 			nworPrepStmt.setInt(1, new_order.no_w_id);
@@ -48,14 +66,18 @@ public class jdbcIO {
 			nworPrepStmt.addBatch();
 
 		} catch (SQLException se) {
-			System.out.println(se.getMessage());
-		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Error in SQL", se);
 		}
 
 	} // end insertNewOrder()
 
-	public void insertOrderLine(PreparedStatement orlnPrepStmt, OrderLine order_line) {
+	/**
+	 * Inserts an order line.
+	 * 
+	 * @param orlnPrepStmt Already prepared statement to insert.
+	 * @param order_line   Object order line to take the values from.
+	 */
+	public void insertOrderLine(final PreparedStatement orlnPrepStmt, final OrderLine order_line) {
 
 		try {
 			orlnPrepStmt.setInt(1, order_line.ol_w_id);
@@ -64,7 +86,7 @@ public class jdbcIO {
 			orlnPrepStmt.setInt(4, order_line.ol_number);
 			orlnPrepStmt.setLong(5, order_line.ol_i_id);
 
-			Timestamp delivery_d = new Timestamp(order_line.ol_delivery_d);
+			final Timestamp delivery_d = new Timestamp(order_line.ol_delivery_d);
 			orlnPrepStmt.setTimestamp(6, delivery_d);
 
 			orlnPrepStmt.setDouble(7, order_line.ol_amount);
@@ -75,9 +97,7 @@ public class jdbcIO {
 			orlnPrepStmt.addBatch();
 
 		} catch (SQLException se) {
-			System.out.println(se.getMessage());
-		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Error in SQL", se);
 		}
 
 	} // end insertOrderLine()
