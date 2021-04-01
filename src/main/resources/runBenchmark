@@ -16,4 +16,5 @@ MY_CLASSPATH=".:${BASEDIR}/../BenchmarkSQL.jar:${BASEDIR}/../lib/*"
 
 MY_PROPERTIES="-Dprop=${1}"
 
-java -Xmx2g -Xms1g -cp ${MY_CLASSPATH} ${MY_PROPERTIES} com.github.benchmarksql.jtpcc.jTPCC
+java -Xmx2g -Xms1g -cp "${MY_CLASSPATH}" "${MY_PROPERTIES}" \
+  com.github.benchmarksql.jtpcc.jTPCC
