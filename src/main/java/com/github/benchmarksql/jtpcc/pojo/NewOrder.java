@@ -19,7 +19,7 @@ public class NewOrder implements Serializable {
 		ret += "\n*      no_d_id = " + no_d_id;
 		ret += "\n*      no_o_id = " + no_o_id;
 		ret += "\n**********************************************";
-		return (ret);
+		return ret;
 	}
 
 } // end NewOrder

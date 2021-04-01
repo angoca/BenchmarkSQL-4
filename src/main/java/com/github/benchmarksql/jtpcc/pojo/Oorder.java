@@ -31,7 +31,7 @@ public class Oorder implements Serializable {
 		ret += "\n*  o_all_local = " + o_all_local;
 		ret += "\n*    o_entry_d = " + entry_d;
 		ret += "\n**********************************************";
-		return (ret);
+		return ret;
 	}
 
 } // end Oorder

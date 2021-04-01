@@ -47,9 +47,7 @@ public class Stock implements Serializable {
 		ret += "\n*    s_dist_09 = " + s_dist_09;
 		ret += "\n*    s_dist_10 = " + s_dist_10;
 		ret += "\n**********************************************";
-		return (
-
-		ret);
+		return ret;
 	}
 
 } // end Stock

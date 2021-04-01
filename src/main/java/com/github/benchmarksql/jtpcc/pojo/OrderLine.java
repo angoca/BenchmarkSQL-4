@@ -33,7 +33,7 @@ public class OrderLine implements Serializable {
 		ret += "\n*    ol_quantity = " + ol_quantity;
 		ret += "\n*   ol_dist_info = " + ol_dist_info;
 		ret += "\n**********************************************";
-		return (ret);
+		return ret;
 	}
 
 } // end OrderLine

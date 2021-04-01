@@ -31,7 +31,7 @@ public class Warehouse implements Serializable {
 		ret += "\n*    w_state = " + w_state;
 		ret += "\n*      w_zip = " + w_zip;
 		ret += "\n**********************************************";
-		return (ret);
+		return ret;
 	}
 
 } // end Warehouse

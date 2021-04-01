@@ -23,7 +23,7 @@ public class Item implements Serializable {
 		ret += "\n*  i_data = " + i_data;
 		ret += "\n* i_im_id = " + i_im_id;
 		ret += "\n**********************************************";
-		return (ret);
+		return ret;
 	}
 
 } // end Item
