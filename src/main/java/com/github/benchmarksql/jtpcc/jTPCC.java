@@ -74,7 +74,7 @@ public class jTPCC implements jTPCCConfig {
 
 		log.info("Term-00, ");
 		log.info("Term-00, +-------------------------------------------------------------+");
-		log.error("Term-00, BenchmarkSQL v{}", JTPCCVERSION);
+		log.error("Term-00, BenchmarkSQL v{}", BENCHMARKSQL_VERSION);
 		log.info("Term-00, +-------------------------------------------------------------+");
 		log.info("Term-00, ");
 		String iDriver = getProp(ini, "driver");
