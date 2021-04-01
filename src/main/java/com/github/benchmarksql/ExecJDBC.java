@@ -11,6 +11,8 @@ import java.sql.Statement;
 import java.util.Properties;
 
 import com.github.benchmarksql.jtpcc.jTPCCUtil;
+import com.github.benchmarksql.jtpcc.exceptions.BenchmarkInitException;
+import com.github.benchmarksql.jtpcc.exceptions.ExecutionException;
 
 /**
  * Command line program to process SQL DDL statements, from a text input file,
@@ -37,7 +39,7 @@ public class ExecJDBC {
 
 			Properties ini = new Properties();
 			if (System.getProperty("prop") == null) {
-				throw new Exception("ERROR: Properties file is invalid.");
+				throw new BenchmarkInitException("ERROR: Properties file is invalid.");
 			}
 			ini.load(new FileInputStream(System.getProperty("prop")));
 
@@ -53,17 +55,17 @@ public class ExecJDBC {
 			stmt = conn.createStatement();
 
 			// Statement terminator.
-			String termValue = ini.getProperty("terminator");
+			final String termValue = ini.getProperty("terminator");
 			char term;
 			if (termValue == null) {
 				term = ';';
-			}else {
+			} else {
 				term = termValue.charAt(0);
 			}
 
 			// Open inputFile
 			if (jTPCCUtil.getSysProp("commandFile", null) == null) {
-				throw new Exception("ERROR: Invalid SQL script.");
+				throw new ExecutionException("ERROR: Invalid SQL script.");
 			}
 			BufferedReader in = new BufferedReader(new FileReader(jTPCCUtil.getSysProp("commandFile", null)));
 
