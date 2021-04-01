@@ -12,6 +12,10 @@ import java.util.Random;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.github.benchmarksql.jtpcc.exceptions.BenchmarkInitException;
+import com.github.benchmarksql.jtpcc.exceptions.ExecutionException;
+
+
 /**
  * Open Source Java implementation of a TPC-C like benchmark
  * 
@@ -24,15 +28,22 @@ public class jTPCC implements jTPCCConfig {
 	private jTPCCTerminal[] terminals;
 	private String[] terminalNames;
 	private Random random;
-	private long terminalsStarted = 0, transactionCount;
+	private long terminalsStarted = 0;
+	private long transactionCount;
 
-	private long sessionStartTimestamp, sessionNextTimestamp = 0, sessionNextKounter = 0;
-	private long sessionEndTargetTime = -1, fastNewOrderCounter, recentTpmTotal = 0;
-	private boolean signalTerminalsRequestEndSent = false, databaseDriverLoaded = false;
+	private long sessionStartTimestamp;
+	private long sessionNextTimestamp = 0;
+	private long sessionNextKounter = 0;
+	private long sessionEndTargetTime = -1;
+	private long fastNewOrderCounter;
+	private long recentTpmTotal = 0;
+	private boolean signalTerminalsRequestEndSent = false;
+	private boolean databaseDriverLoaded = false;
 
 	private FileOutputStream fileOutputStream;
 	private PrintStream printStreamReport;
-	private String sessionStart, sessionEnd;
+	private String sessionStart;
+	private String sessionEnd;
 	private int limPerMin_Terminal;
 
 	/**
@@ -47,8 +58,8 @@ public class jTPCC implements jTPCCConfig {
 
 	private String getProp(Properties p, String pName) {
 		String prop = p.getProperty(pName);
-		log.warn("Term-00, " + pName + "=" + prop);
-		return (prop);
+		log.warn("Term-00, {}={}", pName, prop);
+		return prop;
 	}
 
 	public jTPCC() {
@@ -63,7 +74,7 @@ public class jTPCC implements jTPCCConfig {
 
 		log.info("Term-00, ");
 		log.info("Term-00, +-------------------------------------------------------------+");
-		log.error("Term-00, BenchmarkSQL v" + JTPCCVERSION);
+		log.error("Term-00, BenchmarkSQL v{}", JTPCCVERSION);
 		log.info("Term-00, +-------------------------------------------------------------+");
 		log.info("Term-00, ");
 		String iDriver = getProp(ini, "driver");
@@ -77,7 +88,7 @@ public class jTPCC implements jTPCCConfig {
 		String iSchema = getProp(ini, "schema");
 		if (iSchema == null) {
 			iSchema = "benchmarksql.";
-		} else if (iSchema == "") {
+		} else if (iSchema.equals("")) {
 			iSchema = "";
 		} else {
 			iSchema += ".";
@@ -86,9 +97,9 @@ public class jTPCC implements jTPCCConfig {
 		String iRunTxnsPerTerminal = ini.getProperty("runTxnsPerTerminal");
 		String iRunMins = ini.getProperty("runMins");
 		if (Integer.parseInt(iRunTxnsPerTerminal) == 0 && Integer.parseInt(iRunMins) != 0) {
-			log.warn("Term-00, runMins" + "=" + iRunMins);
+			log.warn("Term-00, runMins={}", iRunMins);
 		} else if (Integer.parseInt(iRunTxnsPerTerminal) != 0 && Integer.parseInt(iRunMins) == 0) {
-			log.warn("Term-00, runTxnsPerTerminal" + "=" + iRunTxnsPerTerminal);
+			log.warn("Term-00, runTxnsPerTerminal={}", iRunTxnsPerTerminal);
 		} else {
 			log.error("Term-00, Must indicate either transactions per terminal or number of run minutes!");
 		}
@@ -118,7 +129,7 @@ public class jTPCC implements jTPCCConfig {
 
 		try {
 			String driver = iDriver;
-			log.warn("Loading database driver: \'" + driver + "\'...");
+			log.warn("Loading database driver: '{}'...", driver);
 			Class.forName(iDriver);
 			databaseDriverLoaded = true;
 		} catch (Exception ex) {
@@ -145,7 +156,7 @@ public class jTPCC implements jTPCCConfig {
 					}
 				} catch (NumberFormatException e1) {
 					log.error("Must indicate either transactions per terminal or number of run minutes!", e1);
-					throw new Exception();
+					throw new BenchmarkInitException(BenchmarkInitException.MinutesOrQuantity);
 				}
 
 				try {
@@ -156,7 +167,7 @@ public class jTPCC implements jTPCCConfig {
 					}
 				} catch (NumberFormatException e1) {
 					log.error("Invalid number of warehouses!", e1);
-					throw new Exception();
+					throw new BenchmarkInitException(BenchmarkInitException.NumberOfWHs);
 				}
 
 				try {
@@ -167,7 +178,7 @@ public class jTPCC implements jTPCCConfig {
 					}
 				} catch (NumberFormatException e1) {
 					log.error("Invalid number of terminals!", e1);
-					throw new Exception();
+					throw new BenchmarkInitException(BenchmarkInitException.NumberOfTerminals);
 				}
 
 				if (Long.parseLong(iRunMins) != 0 && Integer.parseInt(iRunTxnsPerTerminal) == 0) {
@@ -179,7 +190,7 @@ public class jTPCC implements jTPCCConfig {
 						}
 					} catch (NumberFormatException e1) {
 						log.error("Invalid number of minutes!", e1);
-						throw new Exception();
+						throw new BenchmarkInitException(BenchmarkInitException.NumberOfMinutes);
 					}
 				} else {
 					try {
@@ -190,7 +201,7 @@ public class jTPCC implements jTPCCConfig {
 						}
 					} catch (NumberFormatException e1) {
 						log.error("Invalid number of transactions per terminal!", e1);
-						throw new Exception();
+						throw new BenchmarkInitException(BenchmarkInitException.NumberOfTrxs);
 					}
 				}
 
@@ -209,28 +220,29 @@ public class jTPCC implements jTPCCConfig {
 						throw new NumberFormatException();
 				} catch (NumberFormatException e1) {
 					log.error("Invalid number in mix percentage!", e1);
-					throw new Exception();
+					throw new BenchmarkInitException(BenchmarkInitException.PercentageMix);
 				}
 
 				if (newOrderWeightValue + paymentWeightValue + orderStatusWeightValue + deliveryWeightValue
 						+ stockLevelWeightValue > 100) {
 					log.error("Sum of mix percentage parameters exceeds 100%!");
-					throw new Exception();
+					throw new BenchmarkInitException(BenchmarkInitException.PctgHigherThan100);
 				}
 
 				log.warn("Session started!");
 				if (!limitIsTime) {
-					log.info("Creating " + numTerminals + " terminal(s) with " + transactionsPerTerminal
-							+ " transaction(s) per terminal...");
+					log.info("Creating {} terminal(s) with {} transaction(s) per terminal...", numTerminals,
+							transactionsPerTerminal);
 				} else {
-					log.info("Creating " + numTerminals + " terminal(s) with " + (executionTimeMillis / 60000)
-							+ " minute(s) of execution...");
+					log.info("Creating {} terminal(s) with {} minute(s) of execution...", numTerminals,
+							executionTimeMillis / 60000);
 				}
-				log.info("Transaction Weights: " + newOrderWeightValue + "% New-Order, " + paymentWeightValue
-						+ "% Payment, " + orderStatusWeightValue + "% Order-Status, " + deliveryWeightValue
-						+ "% Delivery, " + stockLevelWeightValue + "% Stock-Level");
+				log.info(
+						"Transaction Weights: {}% New-Order, {}% Payment, {}% Order-Status, {}% Delivery, {}% Stock-Level",
+						newOrderWeightValue, paymentWeightValue, orderStatusWeightValue, deliveryWeightValue,
+						stockLevelWeightValue);
 
-				log.info("Number of Terminals\t" + numTerminals);
+				log.info("Number of Terminals\t{}", numTerminals);
 
 				terminals = new jTPCCTerminal[numTerminals];
 				terminalNames = new String[numTerminals];
@@ -256,7 +268,7 @@ public class jTPCC implements jTPCCConfig {
 
 						String terminalName = "Term-" + (i >= 9 ? "" + (i + 1) : "0" + (i + 1));
 						Connection conn = null;
-						log.info("Creating database connection for " + terminalName + "...");
+						log.info("Creating database connection for {}...", terminalName);
 						conn = DriverManager.getConnection(database, username, password);
 						conn.setAutoCommit(false);
 
@@ -267,22 +279,22 @@ public class jTPCC implements jTPCCConfig {
 
 						terminals[i] = terminal;
 						terminalNames[i] = terminalName;
-						log.info(terminalName + "\t" + terminalWarehouseID);
+						log.info("{}\t{}", terminalName, terminalWarehouseID);
 					}
 
 					sessionEndTargetTime = executionTimeMillis;
 					signalTerminalsRequestEndSent = false;
 
 					log.info("Transaction\tWeight");
-					log.info("% New-Order\t" + newOrderWeightValue);
-					log.info("% Payment\t" + paymentWeightValue);
-					log.info("% Order-Status\t" + orderStatusWeightValue);
-					log.info("% Delivery\t" + deliveryWeightValue);
-					log.info("% Stock-Level\t" + stockLevelWeightValue);
+					log.info("% New-Order\t{}", newOrderWeightValue);
+					log.info("% Payment\t{}", paymentWeightValue);
+					log.info("% Order-Status\t{}", orderStatusWeightValue);
+					log.info("% Delivery\t{}", deliveryWeightValue);
+					log.info("% Stock-Level\t{}", stockLevelWeightValue);
 
 					log.info("Transaction Number\tTerminal\tType\tExecution Time (ms)\t\tComment");
 
-					log.info("Created " + numTerminals + " terminal(s) successfully!");
+					log.info("Created {} terminal(s) successfully!", numTerminals);
 					boolean dummvar = true;
 
 					// ^Create Terminals, Start Transactions v //
@@ -302,16 +314,14 @@ public class jTPCC implements jTPCCConfig {
 
 						}
 
-						log.warn("All terminals started executing " + sessionStart);
+						log.warn("All terminals started executing {}", sessionStart);
 					}
-				}
-
-				catch (Exception e1) {
+				} catch (Exception e1) {
 					log.error("This session ended with errors!");
 					printStreamReport.close();
 					fileOutputStream.close();
 
-					throw new Exception();
+					throw new ExecutionException("This session ended with errors!");
 				}
 
 			} catch (Exception ex) {
@@ -354,7 +364,7 @@ public class jTPCC implements jTPCCConfig {
 			sessionEnd = getCurrentTime();
 			System.currentTimeMillis();
 			sessionEndTargetTime = -1;
-			log.info("All terminals finished executing " + sessionEnd);
+			log.info("All terminals finished executing {}", sessionEnd);
 			endReport();
 		}
 	}
@@ -381,11 +391,11 @@ public class jTPCC implements jTPCCConfig {
 
 		log.info("Term-00, ");
 		log.info("Term-00, ");
-		log.warn("Term-00, Measured tpmC (NewOrders) = " + tpmC);
-		log.warn("Term-00, Measured tpmTOTAL = " + tpmTotal);
-		log.info("Term-00, Session Start     = " + sessionStart);
-		log.info("Term-00, Session End       = " + sessionEnd);
-		log.warn("Term-00, Transaction Count = " + (transactionCount - 1));
+		log.warn("Term-00, Measured tpmC (NewOrders) = {}", tpmC);
+		log.warn("Term-00, Measured tpmTOTAL = {}", tpmTotal);
+		log.info("Term-00, Session Start     = {}", sessionStart);
+		log.info("Term-00, Session End       = {}", sessionEnd);
+		log.warn("Term-00, Transaction Count = {}", transactionCount - 1);
 
 	}
 
@@ -407,7 +417,7 @@ public class jTPCC implements jTPCCConfig {
 
 		if (fastNewOrderCounter != 0) {
 			double tpmTotal = (6000000 * transactionCount / (currTimeMillis - sessionStartTimestamp)) / 100.0;
-			informativeText.append("Term-00, Running Average tpmTOTAL: " + tpmTotal + "    ");
+			informativeText.append("Term-00, Running Average tpmTOTAL: {}" + tpmTotal + "    ");
 		}
 
 		if (currTimeMillis > sessionNextTimestamp) {
@@ -427,6 +437,8 @@ public class jTPCC implements jTPCCConfig {
 		informativeText
 				.append("Memory Usage: " + (totalMem - freeMem) + "MB / " + totalMem + "MB of max " + maxMem + "MB");
 
+		// Keeps the last line of the console with the current status of the
+		// execution.
 		System.out.print(informativeText);
 		for (int count = 0; count < 1 + informativeText.length(); count++) {
 			System.out.print("\b");
