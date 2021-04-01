@@ -8,7 +8,7 @@
 # Author: Denis Lussier.
 # Author: Andres Gomez.
 
-if [ "${1}" == "" ]  ||  [ "${2}" == "" ] ; then
+if [ "${1}" == "" ] || [ "${2}" == "" ]; then
  echo "ERROR: Please indicate the properties file and the name of the script file to execute."
  exit 1
 fi
