@@ -14,27 +14,414 @@ public class Customer implements Serializable {
 	 * Generated Id.
 	 */
 	private static final long serialVersionUID = -8122701038727177452L;
-	public int c_id;
-	public int c_d_id;
-	public int c_w_id;
-	public int c_payment_cnt;
-	public int c_delivery_cnt;
-	public long c_since;
-	public float c_discount;
-	public float c_credit_lim;
 	public float c_balance;
-	public float c_ytd_payment;
+	public String c_city;
 	public String c_credit;
-	public String c_last;
+	public float c_credit_lim;
+	public int c_d_id;
+	public String c_data;
+	public int c_delivery_cnt;
+	public float c_discount;
 	public String c_first;
+	public int c_id;
+	public String c_last;
+	public String c_middle;
+	public int c_payment_cnt;
+	public String c_phone;
+	public long c_since;
+	public String c_state;
 	public String c_street_1;
 	public String c_street_2;
-	public String c_city;
-	public String c_state;
+	public int c_w_id;
+	public float c_ytd_payment;
 	public String c_zip;
-	public String c_phone;
-	public String c_middle;
-	public String c_data;
+
+	/**
+	 * Gets the balance of the customer.
+	 * 
+	 * @return Balance of the customer.
+	 */
+	public float getC_balance() {
+		return c_balance;
+	}
+
+	/**
+	 * Gets the name of the city. A random string between 10 to 20 characters.
+	 * 
+	 * @return Name of the city.
+	 */
+	public String getC_city() {
+		return c_city;
+	}
+
+	/**
+	 * Gets the credit status of the client. TODO convert into enum.
+	 * <ul>
+	 * <li>GC - good.</li>
+	 * <li>BC - bad</li>
+	 * </ul>
+	 * 
+	 * @return Status of the client.
+	 */
+	public String getC_credit() {
+		return c_credit;
+	}
+
+	/**
+	 * Gets the credit limit of the client.
+	 * 
+	 * @return Credit limit of the client.
+	 */
+	public float getC_credit_lim() {
+		return c_credit_lim;
+	}
+
+	/**
+	 * Gets the district of the customer.
+	 * 
+	 * @return District of the customer.
+	 */
+	public int getC_d_id() {
+		return c_d_id;
+	}
+
+	/**
+	 * Gets miscellaneous information.
+	 * 
+	 * @return Miscellaneous information.
+	 */
+	public String getC_data() {
+		return c_data;
+	}
+
+	/**
+	 * Gets the quantity of deliveries.
+	 * 
+	 * @return Quantity of deliveries.
+	 */
+	public int getC_delivery_cnt() {
+		return c_delivery_cnt;
+	}
+
+	/**
+	 * Gets the discount rate for the client.
+	 * 
+	 * @return Discount rate.
+	 */
+	public float getC_discount() {
+		return c_discount;
+	}
+
+	/**
+	 * Gets the customer's first name. A random string between 8 and 16 characters.
+	 * 
+	 * @return Customer's first name.
+	 */
+	public String getC_first() {
+		return c_first;
+	}
+
+	/**
+	 * Gets the customer id.
+	 * 
+	 * @return Id of the customer.
+	 */
+	public int getC_id() {
+		return c_id;
+	}
+
+	/**
+	 * Gets the customer's last name.
+	 * 
+	 * @return Customer's last name.
+	 */
+	public String getC_last() {
+		return c_last;
+	}
+
+	/**
+	 * Gets the middle name, which is "OE"
+	 * 
+	 * @return Middle name.
+	 */
+	public String getC_middle() {
+		return c_middle;
+	}
+
+	/**
+	 * Gets the quantity of payments.
+	 * 
+	 * @return quantity of payments.
+	 */
+	public int getC_payment_cnt() {
+		return c_payment_cnt;
+	}
+
+	/**
+	 * Gets the phone number. A random number of 16 digits.
+	 * 
+	 * @return Phone number.
+	 */
+	public String getC_phone() {
+		return c_phone;
+	}
+
+	/**
+	 * Gets timestamp when the customer was populated.
+	 * 
+	 * @return Date/time when the customer was populated.
+	 */
+	public long getC_since() {
+		return c_since;
+	}
+
+	/**
+	 * Sets the name of the state. Random string of 2 characters.
+	 * 
+	 * @return Name of the state.
+	 */
+	public String getC_state() {
+		return c_state;
+	}
+
+	/**
+	 * Gets the customer's address. A random string between 10 to 20 characters.
+	 * 
+	 * @return Customer's address.
+	 */
+	public String getC_street_1() {
+		return c_street_1;
+	}
+
+	/**
+	 * Gets the complement of the address. A random string between 10 to 20
+	 * characters.
+	 * 
+	 * @return Complement of the address.
+	 */
+	public String getC_street_2() {
+		return c_street_2;
+	}
+
+	/**
+	 * Gets the id of associated warehouse.
+	 * 
+	 * @return Id of associated warehouse.
+	 */
+	public int getC_w_id() {
+		return c_w_id;
+	}
+
+	/**
+	 * Gest the year to date payment of the customer.
+	 * 
+	 * @return Year to date payment of the customer.
+	 */
+	public float getC_ytd_payment() {
+		return c_ytd_payment;
+	}
+
+	/**
+	 * Gets the zip code. Defined at 4.3.2.7.
+	 * 
+	 * @return Zip code.
+	 */
+	public String getC_zip() {
+		return c_zip;
+	}
+
+	/**
+	 * Sets the balance of the customer.
+	 * 
+	 * @param c_balance Balance of the customer.
+	 */
+	public void setC_balance(float c_balance) {
+		this.c_balance = c_balance;
+	}
+
+	/**
+	 * Sets the name of the city. A random string between 10 to 20 characters.
+	 * 
+	 * @param c_city Name of the city.
+	 */
+	public void setC_city(String c_city) {
+		this.c_city = c_city;
+	}
+
+	/**
+	 * Sets the credit status of the client.
+	 * <ul>
+	 * <li>GC - good.</li>
+	 * <li>BC - bad</li>
+	 * </ul>
+	 * 
+	 * @param c_credit Status of the client.
+	 */
+	public void setC_credit(String c_credit) {
+		this.c_credit = c_credit;
+	}
+
+	/**
+	 * Sets the credit limit of the client.
+	 * 
+	 * @param c_credit_lim Credit limit of the client.
+	 */
+	public void setC_credit_lim(float c_credit_lim) {
+		this.c_credit_lim = c_credit_lim;
+	}
+
+	/**
+	 * Sets the district of the customer.
+	 * 
+	 * @param c_d_id District of the customer.
+	 */
+	public void setC_d_id(int c_d_id) {
+		this.c_d_id = c_d_id;
+	}
+
+	/**
+	 * Sets miscellaneous information.
+	 * 
+	 * @param c_data Miscellaneous information.
+	 */
+	public void setC_data(String c_data) {
+		this.c_data = c_data;
+	}
+
+	/**
+	 * Sets the quantity of deliveries.
+	 * 
+	 * @param c_delivery_cnt Quantity of deliveries.
+	 */
+	public void setC_delivery_cnt(int c_delivery_cnt) {
+		this.c_delivery_cnt = c_delivery_cnt;
+	}
+
+	/**
+	 * Sets the discount rate for the client.
+	 * 
+	 * @param c_discount Discount rate.
+	 */
+	public void setC_discount(float c_discount) {
+		this.c_discount = c_discount;
+	}
+
+	/**
+	 * Sets the customer's first name. A random string between 8 and 16 characters.
+	 * 
+	 * @param c_first Customer's first name
+	 */
+	public void setC_first(String c_first) {
+		this.c_first = c_first;
+	}
+
+	/**
+	 * Sets the customer id.
+	 * 
+	 * @param c_id Id of the customer.
+	 */
+	public void setC_id(int c_id) {
+		this.c_id = c_id;
+	}
+
+	/**
+	 * Sets customer's last name. The generated name is defined in 4.3.2.3.
+	 * 
+	 * @param c_last Customer's last name.
+	 */
+	public void setC_last(String c_last) {
+		this.c_last = c_last;
+	}
+
+	/**
+	 * Sets the middle name.
+	 * 
+	 * @param c_middle Middle name.
+	 */
+	public void setC_middle(String c_middle) {
+		this.c_middle = c_middle;
+	}
+
+	/**
+	 * Sets the quantity of payments.
+	 * 
+	 * @param c_payment_cnt Quantity of payments.
+	 */
+	public void setC_payment_cnt(int c_payment_cnt) {
+		this.c_payment_cnt = c_payment_cnt;
+	}
+
+	/**
+	 * Sets the phone number.
+	 * 
+	 * @param c_phone Phone number.
+	 */
+	public void setC_phone(String c_phone) {
+		this.c_phone = c_phone;
+	}
+
+	/**
+	 * Sets timestamp when the customer was populated.
+	 * 
+	 * @param c_since Timestamp when the customer was populated.
+	 */
+	public void setC_since(long c_since) {
+		this.c_since = c_since;
+	}
+
+	/**
+	 * Gets the name of the state.
+	 * 
+	 * @param c_state Name of the state.
+	 */
+	public void setC_state(String c_state) {
+		this.c_state = c_state;
+	}
+
+	/**
+	 * Sets the customer's address.
+	 * 
+	 * @param c_street_1 Customer's address.
+	 */
+	public void setC_street_1(String c_street_1) {
+		this.c_street_1 = c_street_1;
+	}
+
+	/**
+	 * Sets the complement of the address.
+	 * 
+	 * @param c_street_2 Complement of the address.
+	 */
+	public void setC_street_2(String c_street_2) {
+		this.c_street_2 = c_street_2;
+	}
+
+	/**
+	 * Set the id of associated warehouse.
+	 * 
+	 * @param c_w_id Id of associated warehouse.
+	 */
+	public void setC_w_id(int c_w_id) {
+		this.c_w_id = c_w_id;
+	}
+
+	/**
+	 * Sets the year to date payment of the customer.
+	 * 
+	 * @param c_ytd_payment Year to date payment of the customer.
+	 */
+	public void setC_ytd_payment(float c_ytd_payment) {
+		this.c_ytd_payment = c_ytd_payment;
+	}
+
+	/**
+	 * Sets the zip code.
+	 * 
+	 * @param c_zip Zip code.
+	 */
+	public void setC_zip(String c_zip) {
+		this.c_zip = c_zip;
+	}
 
 	/**
 	 * Describes the customer.
@@ -70,391 +457,4 @@ public class Customer implements Serializable {
 		return ret.toString();
 	}
 
-	/**
-	 * Gets the customer id.
-	 * 
-	 * @return Id of the customer.
-	 */
-	public int getC_id() {
-		return c_id;
-	}
-
-	/**
-	 * Sets the customer id.
-	 * 
-	 * @param c_id Id of the customer.
-	 */
-	public void setC_id(int c_id) {
-		this.c_id = c_id;
-	}
-
-	/**
-	 * Gets the district of the customer.
-	 * 
-	 * @return District of the customer.
-	 */
-	public int getC_d_id() {
-		return c_d_id;
-	}
-
-	/**
-	 * Sets the district of the customer.
-	 * 
-	 * @param c_d_id District of the customer.
-	 */
-	public void setC_d_id(int c_d_id) {
-		this.c_d_id = c_d_id;
-	}
-
-	/**
-	 * Gets the id of associated warehouse.
-	 * 
-	 * @return Id of associated warehouse.
-	 */
-	public int getC_w_id() {
-		return c_w_id;
-	}
-
-	/**
-	 * Set the id of associated warehouse.
-	 * 
-	 * @param c_w_id Id of associated warehouse.
-	 */
-	public void setC_w_id(int c_w_id) {
-		this.c_w_id = c_w_id;
-	}
-
-	/**
-	 * Gets the quantity of payments.
-	 * 
-	 * @return quantity of payments.
-	 */
-	public int getC_payment_cnt() {
-		return c_payment_cnt;
-	}
-
-	/**
-	 * Sets the quantity of payments.
-	 * 
-	 * @param c_payment_cnt Quantity of payments.
-	 */
-	public void setC_payment_cnt(int c_payment_cnt) {
-		this.c_payment_cnt = c_payment_cnt;
-	}
-
-	/**
-	 * Gets the quantity of deliveries.
-	 * 
-	 * @return Quantity of deliveries.
-	 */
-	public int getC_delivery_cnt() {
-		return c_delivery_cnt;
-	}
-
-	/**
-	 * Sets the quantity of deliveries.
-	 * 
-	 * @param c_delivery_cnt Quantity of deliveries.
-	 */
-	public void setC_delivery_cnt(int c_delivery_cnt) {
-		this.c_delivery_cnt = c_delivery_cnt;
-	}
-
-	/**
-	 * Gets timestamp when the customer was populated.
-	 * 
-	 * @return Date/time when the customer was populated.
-	 */
-	public long getC_since() {
-		return c_since;
-	}
-
-	/**
-	 * Sets timestamp when the customer was populated.
-	 * 
-	 * @param c_since Timestamp when the customer was populated.
-	 */
-	public void setC_since(long c_since) {
-		this.c_since = c_since;
-	}
-
-	/**
-	 * Gets the discount rate for the client.
-	 * 
-	 * @return Discount rate.
-	 */
-	public float getC_discount() {
-		return c_discount;
-	}
-
-	/**
-	 * Sets the discount rate for the client.
-	 * 
-	 * @param c_discount Discount rate.
-	 */
-	public void setC_discount(float c_discount) {
-		this.c_discount = c_discount;
-	}
-
-	/**
-	 * Gets the credit limit of the client.
-	 * 
-	 * @return Credit limit of the client.
-	 */
-	public float getC_credit_lim() {
-		return c_credit_lim;
-	}
-
-	/**
-	 * Sets the credit limit of the client.
-	 * 
-	 * @param c_credit_lim Credit limit of the client.
-	 */
-	public void setC_credit_lim(float c_credit_lim) {
-		this.c_credit_lim = c_credit_lim;
-	}
-
-	/**
-	 * Gets the balance of the customer.
-	 * 
-	 * @return Balance of the customer.
-	 */
-	public float getC_balance() {
-		return c_balance;
-	}
-
-	/**
-	 * Sets the balance of the customer.
-	 * 
-	 * @param c_balance Balance of the customer.
-	 */
-	public void setC_balance(float c_balance) {
-		this.c_balance = c_balance;
-	}
-
-	/**
-	 * Gest the year to date payment of the customer.
-	 * 
-	 * @return Year to date payment of the customer.
-	 */
-	public float getC_ytd_payment() {
-		return c_ytd_payment;
-	}
-
-	/**
-	 * Sets the year to date payment of the customer.
-	 * 
-	 * @param c_ytd_payment Year to date payment of the customer.
-	 */
-	public void setC_ytd_payment(float c_ytd_payment) {
-		this.c_ytd_payment = c_ytd_payment;
-	}
-
-	/**
-	 * Gets the credit status of the client. TODO convert into enum.
-	 * <ul>
-	 * <li>GC - good.</li>
-	 * <li>BC - bad</li>
-	 * </ul>
-	 * 
-	 * @return Status of the client.
-	 */
-	public String getC_credit() {
-		return c_credit;
-	}
-
-	/**
-	 * Sets the credit status of the client.
-	 * <ul>
-	 * <li>GC - good.</li>
-	 * <li>BC - bad</li>
-	 * </ul>
-	 * 
-	 * @param c_credit Status of the client.
-	 */
-	public void setC_credit(String c_credit) {
-		this.c_credit = c_credit;
-	}
-
-	/**
-	 * Gets the customer's last name.
-	 * 
-	 * @return Customer's last name.
-	 */
-	public String getC_last() {
-		return c_last;
-	}
-
-	/**
-	 * Sets customer's last name. The generated name is defined in 4.3.2.3.
-	 * 
-	 * @param c_last Customer's last name.
-	 */
-	public void setC_last(String c_last) {
-		this.c_last = c_last;
-	}
-
-	/**
-	 * Gets the customer's first name. A random string between 8 and 16 characters.
-	 * 
-	 * @return Customer's first name.
-	 */
-	public String getC_first() {
-		return c_first;
-	}
-
-	/**
-	 * Sets the customer's first name. A random string between 8 and 16 characters.
-	 * 
-	 * @param c_first Customer's first name
-	 */
-	public void setC_first(String c_first) {
-		this.c_first = c_first;
-	}
-
-	/**
-	 * Gets the customer's address. A random string between 10 to 20 characters.
-	 * 
-	 * @return Customer's address.
-	 */
-	public String getC_street_1() {
-		return c_street_1;
-	}
-
-	/**
-	 * Sets the customer's address.
-	 * 
-	 * @param c_street_1 Customer's address.
-	 */
-	public void setC_street_1(String c_street_1) {
-		this.c_street_1 = c_street_1;
-	}
-
-	/**
-	 * Gets the complement of the address. A random string between 10 to 20
-	 * characters.
-	 * 
-	 * @return Complement of the address.
-	 */
-	public String getC_street_2() {
-		return c_street_2;
-	}
-
-	/**
-	 * Sets the complement of the address.
-	 * 
-	 * @param c_street_2 Complement of the address.
-	 */
-	public void setC_street_2(String c_street_2) {
-		this.c_street_2 = c_street_2;
-	}
-
-	/**
-	 * Gets the name of the city. A random string between 10 to 20 characters.
-	 * 
-	 * @return Name of the city.
-	 */
-	public String getC_city() {
-		return c_city;
-	}
-
-	/**
-	 * Sets the name of the city. A random string between 10 to 20 characters.
-	 * 
-	 * @param c_city Name of the city.
-	 */
-	public void setC_city(String c_city) {
-		this.c_city = c_city;
-	}
-
-	/**
-	 * Sets the name of the state. Random string of 2 characters.
-	 * 
-	 * @return Name of the state.
-	 */
-	public String getC_state() {
-		return c_state;
-	}
-
-	/**
-	 * Gets the name of the state.
-	 * 
-	 * @param c_state Name of the state.
-	 */
-	public void setC_state(String c_state) {
-		this.c_state = c_state;
-	}
-
-	/**
-	 * Gets the zip code. Defined at 4.3.2.7.
-	 * 
-	 * @return Zip code.
-	 */
-	public String getC_zip() {
-		return c_zip;
-	}
-
-	/**
-	 * Sets the zip code.
-	 * 
-	 * @param c_zip Zip code.
-	 */
-	public void setC_zip(String c_zip) {
-		this.c_zip = c_zip;
-	}
-
-	/**
-	 * Gets the phone number. A random number of 16 digits.
-	 * 
-	 * @return Phone number.
-	 */
-	public String getC_phone() {
-		return c_phone;
-	}
-
-	/**
-	 * Sets the phone number.
-	 * 
-	 * @param c_phone Phone number.
-	 */
-	public void setC_phone(String c_phone) {
-		this.c_phone = c_phone;
-	}
-
-	/**
-	 * Gets the middle name, which is "OE"
-	 * 
-	 * @return Middle name.
-	 */
-	public String getC_middle() {
-		return c_middle;
-	}
-
-	/**
-	 * Sets the middle name.
-	 * 
-	 * @param c_middle Middle name.
-	 */
-	public void setC_middle(String c_middle) {
-		this.c_middle = c_middle;
-	}
-
-	/**
-	 * Gets miscellaneous information.
-	 * 
-	 * @return Miscellaneous information.
-	 */
-	public String getC_data() {
-		return c_data;
-	}
-
-	/**
-	 * Sets miscellaneous information.
-	 * 
-	 * @param c_data Miscellaneous information.
-	 */
-	public void setC_data(String c_data) {
-		this.c_data = c_data;
-	}
-
-} // end Customer
+}
