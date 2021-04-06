@@ -16,6 +16,7 @@ BASEDIR=$(dirname "$0")
 
 MY_CLASSPATH=".:${BASEDIR}/../BenchmarkSQL.jar:${BASEDIR}/../lib/*"
 
-MY_PROPERTIES="-Dprop=${1} -DcommandFile=${2}"
+MY_PROPERTIES="-Dprop=${1}"
+MY_FILE="-DcommandFile=${2}"
 
-java -cp "${MY_CLASSPATH}" "${MY_PROPERTIES}" com.github.benchmarksql.ExecJDBC
+java -cp "${MY_CLASSPATH}" "${MY_PROPERTIES}" "${MY_FILE}" com.github.benchmarksql.ExecJDBC
