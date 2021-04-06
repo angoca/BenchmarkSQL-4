@@ -9,7 +9,6 @@ alter table benchmarksql.customer drop constraint pk_customer;
 drop index ndx_customer_name;
 
 -- History table has no primary key.
--- commit;
 
 alter table benchmarksql.oorder drop constraint pk_oorder;
 
