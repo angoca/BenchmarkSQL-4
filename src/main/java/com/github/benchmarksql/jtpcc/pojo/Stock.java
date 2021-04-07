@@ -11,29 +11,36 @@ public class Stock implements Serializable {
 	 * Generated Id.
 	 */
 	private static final long serialVersionUID = 2517524050543329694L;
-	public String s_data;
-	public String s_dist_01;
-	public String s_dist_02;
-	public String s_dist_03;
-	public String s_dist_04;
-	public String s_dist_05;
-	public String s_dist_06;
-	public String s_dist_07;
-	public String s_dist_08;
-	public String s_dist_09;
-	public String s_dist_10;
+	private String s_data;
+	private String s_dist_01;
+	private String s_dist_02;
+	private String s_dist_03;
+	private String s_dist_04;
+	private String s_dist_05;
+	private String s_dist_06;
+	private String s_dist_07;
+	private String s_dist_08;
+	private String s_dist_09;
+	private String s_dist_10;
 	/**
 	 * Id of the stock. Part of the primary key.
 	 */
-	public int s_i_id;
-	public int s_order_cnt;
-	public int s_quantity;
-	public int s_remote_cnt;
+	private int s_i_id;
+	private int s_order_cnt;
+	private int s_quantity;
+	private int s_remote_cnt;
 	/**
 	 * Id of the warehouse. Part of the primary key.
 	 */
 	public int s_w_id;
 	public float s_ytd;
+
+	/**
+	 * Default constructor.
+	 */
+	public Stock() {
+		// Empty
+	}
 
 	/**
 	 * Gets the data, which 10% contain the string ORIGINAL.

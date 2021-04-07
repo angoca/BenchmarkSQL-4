@@ -287,33 +287,33 @@ public class LoadData implements jTPCCConfig {
 
 			for (int i = 1; i <= itemKount; i++) {
 
-				item.i_id = i;
-				item.i_name = jTPCCUtil.randomStr(jTPCCUtil.randomNumber(14, 24, gen));
-				item.i_price = (float) (jTPCCUtil.randomNumber(100, 10000, gen) / 100.0);
+				item.setI_id(i);
+				item.setI_name(jTPCCUtil.randomStr(jTPCCUtil.randomNumber(14, 24, gen)));
+				item.setI_price((float) (jTPCCUtil.randomNumber(100, 10000, gen) / 100.0));
 
 				// i_data
 				randPct = jTPCCUtil.randomNumber(1, 100, gen);
 				len = jTPCCUtil.randomNumber(26, 50, gen);
 				if (randPct > 10) {
 					// 90% of time i_data isa random string of length [26 .. 50]
-					item.i_data = jTPCCUtil.randomStr(len);
+					item.setI_data(jTPCCUtil.randomStr(len));
 				} else {
 					// 10% of time i_data has "ORIGINAL" crammed somewhere in middle
 					startORIGINAL = jTPCCUtil.randomNumber(2, (len - 8), gen);
-					item.i_data = jTPCCUtil.randomStr(startORIGINAL - 1) + "ORIGINAL"
-							+ jTPCCUtil.randomStr(len - startORIGINAL - 9);
+					item.setI_data(jTPCCUtil.randomStr(startORIGINAL - 1) + "ORIGINAL"
+							+ jTPCCUtil.randomStr(len - startORIGINAL - 9));
 				}
 
-				item.i_im_id = jTPCCUtil.randomNumber(1, 10000, gen);
+				item.setI_im_id(jTPCCUtil.randomNumber(1, 10000, gen));
 
 				k++;
 
 				if (outputFiles == false) {
-					itemPrepStmt.setLong(1, item.i_id);
-					itemPrepStmt.setString(2, item.i_name);
-					itemPrepStmt.setDouble(3, item.i_price);
-					itemPrepStmt.setString(4, item.i_data);
-					itemPrepStmt.setLong(5, item.i_im_id);
+					itemPrepStmt.setLong(1, item.getI_id());
+					itemPrepStmt.setString(2, item.getI_name());
+					itemPrepStmt.setDouble(3, item.getI_price());
+					itemPrepStmt.setString(4, item.getI_data());
+					itemPrepStmt.setLong(5, item.getI_im_id());
 					itemPrepStmt.addBatch();
 
 					if ((k % configCommitCount) == 0) {
@@ -328,11 +328,11 @@ public class LoadData implements jTPCCConfig {
 					}
 				} else {
 					String str = "";
-					str = str + item.i_id + ",";
-					str = str + item.i_name + ",";
-					str = str + item.i_price + ",";
-					str = str + item.i_data + ",";
-					str = str + item.i_im_id;
+					str = str + item.getI_id() + ",";
+					str = str + item.getI_name() + ",";
+					str = str + item.getI_price() + ",";
+					str = str + item.getI_data() + ",";
+					str = str + item.getI_im_id();
 					out.println(str);
 
 					if ((k % configCommitCount) == 0) {
@@ -385,41 +385,41 @@ public class LoadData implements jTPCCConfig {
 			Warehouse warehouse = new Warehouse();
 			for (int i = 1; i <= whseKount; i++) {
 
-				warehouse.w_id = i;
-				warehouse.w_ytd = 300000;
+				warehouse.setW_id(i);
+				warehouse.setW_ytd(300000);
 
 				// random within [0.0000 .. 0.2000]
-				warehouse.w_tax = (float) ((jTPCCUtil.randomNumber(0, 2000, gen)) / 10000.0);
+				warehouse.setW_tax((float) ((jTPCCUtil.randomNumber(0, 2000, gen)) / 10000.0));
 
-				warehouse.w_name = jTPCCUtil.randomStr(jTPCCUtil.randomNumber(6, 10, gen));
-				warehouse.w_street_1 = jTPCCUtil.randomStr(jTPCCUtil.randomNumber(10, 20, gen));
-				warehouse.w_street_2 = jTPCCUtil.randomStr(jTPCCUtil.randomNumber(10, 20, gen));
-				warehouse.w_city = jTPCCUtil.randomStr(jTPCCUtil.randomNumber(10, 20, gen));
-				warehouse.w_state = jTPCCUtil.randomStr(3).toUpperCase();
-				warehouse.w_zip = "123456789";
+				warehouse.setW_name(jTPCCUtil.randomStr(jTPCCUtil.randomNumber(6, 10, gen)));
+				warehouse.setW_street_1(jTPCCUtil.randomStr(jTPCCUtil.randomNumber(10, 20, gen)));
+				warehouse.setW_street_2(jTPCCUtil.randomStr(jTPCCUtil.randomNumber(10, 20, gen)));
+				warehouse.setW_city(jTPCCUtil.randomStr(jTPCCUtil.randomNumber(10, 20, gen)));
+				warehouse.setW_state(jTPCCUtil.randomStr(3).toUpperCase());
+				warehouse.setW_zip("123456789");
 
 				if (outputFiles == false) {
-					whsePrepStmt.setLong(1, warehouse.w_id);
-					whsePrepStmt.setDouble(2, warehouse.w_ytd);
-					whsePrepStmt.setDouble(3, warehouse.w_tax);
-					whsePrepStmt.setString(4, warehouse.w_name);
-					whsePrepStmt.setString(5, warehouse.w_street_1);
-					whsePrepStmt.setString(6, warehouse.w_street_2);
-					whsePrepStmt.setString(7, warehouse.w_city);
-					whsePrepStmt.setString(8, warehouse.w_state);
-					whsePrepStmt.setString(9, warehouse.w_zip);
+					whsePrepStmt.setLong(1, warehouse.getW_id());
+					whsePrepStmt.setDouble(2, warehouse.getW_ytd());
+					whsePrepStmt.setDouble(3, warehouse.getW_tax());
+					whsePrepStmt.setString(4, warehouse.getW_name());
+					whsePrepStmt.setString(5, warehouse.getW_street_1());
+					whsePrepStmt.setString(6, warehouse.getW_street_2());
+					whsePrepStmt.setString(7, warehouse.getW_city());
+					whsePrepStmt.setString(8, warehouse.getW_state());
+					whsePrepStmt.setString(9, warehouse.getW_zip());
 					whsePrepStmt.executeUpdate();
 				} else {
 					String str = "";
-					str = str + warehouse.w_id + ",";
-					str = str + warehouse.w_ytd + ",";
-					str = str + warehouse.w_tax + ",";
-					str = str + warehouse.w_name + ",";
-					str = str + warehouse.w_street_1 + ",";
-					str = str + warehouse.w_street_2 + ",";
-					str = str + warehouse.w_city + ",";
-					str = str + warehouse.w_state + ",";
-					str = str + warehouse.w_zip;
+					str = str + warehouse.getW_id() + ",";
+					str = str + warehouse.getW_ytd() + ",";
+					str = str + warehouse.getW_tax() + ",";
+					str = str + warehouse.getW_name() + ",";
+					str = str + warehouse.getW_street_1() + ",";
+					str = str + warehouse.getW_street_2() + ",";
+					str = str + warehouse.getW_city() + ",";
+					str = str + warehouse.getW_state() + ",";
+					str = str + warehouse.getW_zip();
 					out.println(str);
 				}
 
@@ -470,56 +470,56 @@ public class LoadData implements jTPCCConfig {
 
 				for (int w = 1; w <= whseKount; w++) {
 
-					stock.s_i_id = i;
-					stock.s_w_id = w;
-					stock.s_quantity = jTPCCUtil.randomNumber(10, 100, gen);
-					stock.s_ytd = 0;
-					stock.s_order_cnt = 0;
-					stock.s_remote_cnt = 0;
+					stock.setS_i_id(i);
+					stock.setS_w_id(w);
+					stock.setS_quantity(jTPCCUtil.randomNumber(10, 100, gen));
+					stock.setS_ytd(0);
+					stock.setS_order_cnt(0);
+					stock.setS_remote_cnt(0);
 
 					// s_data
 					randPct = jTPCCUtil.randomNumber(1, 100, gen);
 					len = jTPCCUtil.randomNumber(26, 50, gen);
 					if (randPct > 10) {
 						// 90% of time i_data isa random string of length [26 .. 50]
-						stock.s_data = jTPCCUtil.randomStr(len);
+						stock.setS_data(jTPCCUtil.randomStr(len));
 					} else {
 						// 10% of time i_data has "ORIGINAL" crammed somewhere in middle
 						startORIGINAL = jTPCCUtil.randomNumber(2, (len - 8), gen);
-						stock.s_data = jTPCCUtil.randomStr(startORIGINAL - 1) + "ORIGINAL"
-								+ jTPCCUtil.randomStr(len - startORIGINAL - 9);
+						stock.setS_data(jTPCCUtil.randomStr(startORIGINAL - 1) + "ORIGINAL"
+								+ jTPCCUtil.randomStr(len - startORIGINAL - 9));
 					}
 
-					stock.s_dist_01 = jTPCCUtil.randomStr(24);
-					stock.s_dist_02 = jTPCCUtil.randomStr(24);
-					stock.s_dist_03 = jTPCCUtil.randomStr(24);
-					stock.s_dist_04 = jTPCCUtil.randomStr(24);
-					stock.s_dist_05 = jTPCCUtil.randomStr(24);
-					stock.s_dist_06 = jTPCCUtil.randomStr(24);
-					stock.s_dist_07 = jTPCCUtil.randomStr(24);
-					stock.s_dist_08 = jTPCCUtil.randomStr(24);
-					stock.s_dist_09 = jTPCCUtil.randomStr(24);
-					stock.s_dist_10 = jTPCCUtil.randomStr(24);
+					stock.setS_dist_01(jTPCCUtil.randomStr(24));
+					stock.setS_dist_02(jTPCCUtil.randomStr(24));
+					stock.setS_dist_03(jTPCCUtil.randomStr(24));
+					stock.setS_dist_04(jTPCCUtil.randomStr(24));
+					stock.setS_dist_05(jTPCCUtil.randomStr(24));
+					stock.setS_dist_06(jTPCCUtil.randomStr(24));
+					stock.setS_dist_07(jTPCCUtil.randomStr(24));
+					stock.setS_dist_08(jTPCCUtil.randomStr(24));
+					stock.setS_dist_09(jTPCCUtil.randomStr(24));
+					stock.setS_dist_10(jTPCCUtil.randomStr(24));
 
 					k++;
 					if (outputFiles == false) {
-						stckPrepStmt.setLong(1, stock.s_i_id);
-						stckPrepStmt.setLong(2, stock.s_w_id);
-						stckPrepStmt.setDouble(3, stock.s_quantity);
-						stckPrepStmt.setDouble(4, stock.s_ytd);
-						stckPrepStmt.setLong(5, stock.s_order_cnt);
-						stckPrepStmt.setLong(6, stock.s_remote_cnt);
-						stckPrepStmt.setString(7, stock.s_data);
-						stckPrepStmt.setString(8, stock.s_dist_01);
-						stckPrepStmt.setString(9, stock.s_dist_02);
-						stckPrepStmt.setString(10, stock.s_dist_03);
-						stckPrepStmt.setString(11, stock.s_dist_04);
-						stckPrepStmt.setString(12, stock.s_dist_05);
-						stckPrepStmt.setString(13, stock.s_dist_06);
-						stckPrepStmt.setString(14, stock.s_dist_07);
-						stckPrepStmt.setString(15, stock.s_dist_08);
-						stckPrepStmt.setString(16, stock.s_dist_09);
-						stckPrepStmt.setString(17, stock.s_dist_10);
+						stckPrepStmt.setLong(1, stock.getS_i_id());
+						stckPrepStmt.setLong(2, stock.getS_w_id());
+						stckPrepStmt.setDouble(3, stock.getS_quantity());
+						stckPrepStmt.setDouble(4, stock.getS_ytd());
+						stckPrepStmt.setLong(5, stock.getS_order_cnt());
+						stckPrepStmt.setLong(6, stock.getS_remote_cnt());
+						stckPrepStmt.setString(7, stock.getS_data());
+						stckPrepStmt.setString(8, stock.getS_dist_01());
+						stckPrepStmt.setString(9, stock.getS_dist_02());
+						stckPrepStmt.setString(10, stock.getS_dist_03());
+						stckPrepStmt.setString(11, stock.getS_dist_04());
+						stckPrepStmt.setString(12, stock.getS_dist_05());
+						stckPrepStmt.setString(13, stock.getS_dist_06());
+						stckPrepStmt.setString(14, stock.getS_dist_07());
+						stckPrepStmt.setString(15, stock.getS_dist_08());
+						stckPrepStmt.setString(16, stock.getS_dist_09());
+						stckPrepStmt.setString(17, stock.getS_dist_10());
 						stckPrepStmt.addBatch();
 						if ((k % configCommitCount) == 0) {
 							long tmpTime = new java.util.Date().getTime();
@@ -533,23 +533,23 @@ public class LoadData implements jTPCCConfig {
 						}
 					} else {
 						String str = "";
-						str = str + stock.s_i_id + ",";
-						str = str + stock.s_w_id + ",";
-						str = str + stock.s_quantity + ",";
-						str = str + stock.s_ytd + ",";
-						str = str + stock.s_order_cnt + ",";
-						str = str + stock.s_remote_cnt + ",";
-						str = str + stock.s_data + ",";
-						str = str + stock.s_dist_01 + ",";
-						str = str + stock.s_dist_02 + ",";
-						str = str + stock.s_dist_03 + ",";
-						str = str + stock.s_dist_04 + ",";
-						str = str + stock.s_dist_05 + ",";
-						str = str + stock.s_dist_06 + ",";
-						str = str + stock.s_dist_07 + ",";
-						str = str + stock.s_dist_08 + ",";
-						str = str + stock.s_dist_09 + ",";
-						str = str + stock.s_dist_10;
+						str = str + stock.getS_i_id() + ",";
+						str = str + stock.getS_w_id() + ",";
+						str = str + stock.getS_quantity() + ",";
+						str = str + stock.getS_ytd() + ",";
+						str = str + stock.getS_order_cnt() + ",";
+						str = str + stock.getS_remote_cnt() + ",";
+						str = str + stock.getS_data() + ",";
+						str = str + stock.getS_dist_01() + ",";
+						str = str + stock.getS_dist_02() + ",";
+						str = str + stock.getS_dist_03() + ",";
+						str = str + stock.getS_dist_04() + ",";
+						str = str + stock.getS_dist_05() + ",";
+						str = str + stock.getS_dist_06() + ",";
+						str = str + stock.getS_dist_07() + ",";
+						str = str + stock.getS_dist_08() + ",";
+						str = str + stock.getS_dist_09() + ",";
+						str = str + stock.getS_dist_10();
 						out.println(str);
 
 						if ((k % configCommitCount) == 0) {
@@ -613,48 +613,48 @@ public class LoadData implements jTPCCConfig {
 
 				for (int d = 1; d <= distWhseKount; d++) {
 
-					district.d_id = d;
-					district.d_w_id = w;
-					district.d_ytd = 30000;
+					district.setD_id(d);
+					district.setD_w_id(w);
+					district.setD_ytd(30000);
 
 					// random within [0.0000 .. 0.2000]
-					district.d_tax = (float) ((jTPCCUtil.randomNumber(0, 2000, gen)) / 10000.0);
+					district.setD_tax((float) ((jTPCCUtil.randomNumber(0, 2000, gen)) / 10000.0));
 
-					district.d_next_o_id = 3001;
-					district.d_name = jTPCCUtil.randomStr(jTPCCUtil.randomNumber(6, 10, gen));
-					district.d_street_1 = jTPCCUtil.randomStr(jTPCCUtil.randomNumber(10, 20, gen));
-					district.d_street_2 = jTPCCUtil.randomStr(jTPCCUtil.randomNumber(10, 20, gen));
-					district.d_city = jTPCCUtil.randomStr(jTPCCUtil.randomNumber(10, 20, gen));
-					district.d_state = jTPCCUtil.randomStr(3).toUpperCase();
-					district.d_zip = "123456789";
+					district.setD_next_o_id(3001);
+					district.setD_name(jTPCCUtil.randomStr(jTPCCUtil.randomNumber(6, 10, gen)));
+					district.setD_street_1(jTPCCUtil.randomStr(jTPCCUtil.randomNumber(10, 20, gen)));
+					district.setD_street_2(jTPCCUtil.randomStr(jTPCCUtil.randomNumber(10, 20, gen)));
+					district.setD_city(jTPCCUtil.randomStr(jTPCCUtil.randomNumber(10, 20, gen)));
+					district.setD_state(jTPCCUtil.randomStr(3).toUpperCase());
+					district.setD_zip("123456789");
 
 					k++;
 					if (outputFiles == false) {
-						distPrepStmt.setLong(1, district.d_id);
-						distPrepStmt.setLong(2, district.d_w_id);
-						distPrepStmt.setDouble(3, district.d_ytd);
-						distPrepStmt.setDouble(4, district.d_tax);
-						distPrepStmt.setLong(5, district.d_next_o_id);
-						distPrepStmt.setString(6, district.d_name);
-						distPrepStmt.setString(7, district.d_street_1);
-						distPrepStmt.setString(8, district.d_street_2);
-						distPrepStmt.setString(9, district.d_city);
-						distPrepStmt.setString(10, district.d_state);
-						distPrepStmt.setString(11, district.d_zip);
+						distPrepStmt.setLong(1, district.getD_id());
+						distPrepStmt.setLong(2, district.getD_w_id());
+						distPrepStmt.setDouble(3, district.getD_ytd());
+						distPrepStmt.setDouble(4, district.getD_tax());
+						distPrepStmt.setLong(5, district.getD_next_o_id());
+						distPrepStmt.setString(6, district.getD_name());
+						distPrepStmt.setString(7, district.getD_street_1());
+						distPrepStmt.setString(8, district.getD_street_2());
+						distPrepStmt.setString(9, district.getD_city());
+						distPrepStmt.setString(10, district.getD_state());
+						distPrepStmt.setString(11, district.getD_zip());
 						distPrepStmt.executeUpdate();
 					} else {
 						String str = "";
-						str = str + district.d_id + ",";
-						str = str + district.d_w_id + ",";
-						str = str + district.d_ytd + ",";
-						str = str + district.d_tax + ",";
-						str = str + district.d_next_o_id + ",";
-						str = str + district.d_name + ",";
-						str = str + district.d_street_1 + ",";
-						str = str + district.d_street_2 + ",";
-						str = str + district.d_city + ",";
-						str = str + district.d_state + ",";
-						str = str + district.d_zip;
+						str = str + district.getD_id() + ",";
+						str = str + district.getD_w_id() + ",";
+						str = str + district.getD_ytd() + ",";
+						str = str + district.getD_tax() + ",";
+						str = str + district.getD_next_o_id() + ",";
+						str = str + district.getD_name() + ",";
+						str = str + district.getD_street_1() + ",";
+						str = str + district.getD_street_2() + ",";
+						str = str + district.getD_city() + ",";
+						str = str + district.getD_state() + ",";
+						str = str + district.getD_zip();
 						out.println(str);
 					}
 
@@ -697,6 +697,7 @@ public class LoadData implements jTPCCConfig {
 
 			if (outputFiles == true) {
 				out = new PrintWriter(new FileOutputStream(fileLocation + "customer.csv"));
+				// TODO convert into log4j
 				System.out.println("Writing Customer file to: " + fileLocation + "customer.csv");
 				outHist = new PrintWriter(new FileOutputStream(fileLocation + "cust-hist.csv"));
 				System.out.println("Writing Customer History file to: " + fileLocation + "cust-hist.csv");
@@ -713,91 +714,91 @@ public class LoadData implements jTPCCConfig {
 
 						sysdate = new java.sql.Timestamp(System.currentTimeMillis());
 
-						customer.c_id = c;
-						customer.c_d_id = d;
-						customer.c_w_id = w;
+						customer.setC_d_id(c);
+						customer.setC_d_id(d);
+						customer.setC_w_id(w);
 
 						// discount is random between [0.0000 ... 0.5000]
-						customer.c_discount = (float) (jTPCCUtil.randomNumber(1, 5000, gen) / 10000.0);
+						customer.setC_discount((float) (jTPCCUtil.randomNumber(1, 5000, gen) / 10000.0));
 
 						if (jTPCCUtil.randomNumber(1, 100, gen) <= 90) {
-							customer.c_credit = "BC"; // 10% Bad Credit
+							customer.setC_credit("BC"); // 10% Bad Credit
 						} else {
-							customer.c_credit = "GC"; // 90% Good Credit
+							customer.setC_credit("GC"); // 90% Good Credit
 						}
 						// customer.c_credit = "GC";
 
-						customer.c_last = jTPCCUtil.getLastName(gen);
-						customer.c_first = jTPCCUtil.randomStr(jTPCCUtil.randomNumber(8, 16, gen));
-						customer.c_credit_lim = 50000;
+						customer.setC_last(jTPCCUtil.getLastName(gen));
+						customer.setC_first(jTPCCUtil.randomStr(jTPCCUtil.randomNumber(8, 16, gen)));
+						customer.setC_credit_lim(50000);
 
-						customer.c_balance = -10;
-						customer.c_ytd_payment = 10;
-						customer.c_payment_cnt = 1;
-						customer.c_delivery_cnt = 0;
+						customer.setC_balance(-10);
+						customer.setC_ytd_payment(10);
+						customer.setC_payment_cnt(1);
+						customer.setC_delivery_cnt(0);
 
-						customer.c_street_1 = jTPCCUtil.randomStr(jTPCCUtil.randomNumber(10, 20, gen));
-						customer.c_street_2 = jTPCCUtil.randomStr(jTPCCUtil.randomNumber(10, 20, gen));
-						customer.c_city = jTPCCUtil.randomStr(jTPCCUtil.randomNumber(10, 20, gen));
-						customer.c_state = jTPCCUtil.randomStr(3).toUpperCase();
-						customer.c_zip = "123456789";
+						customer.setC_street_1(jTPCCUtil.randomStr(jTPCCUtil.randomNumber(10, 20, gen)));
+						customer.setC_street_2(jTPCCUtil.randomStr(jTPCCUtil.randomNumber(10, 20, gen)));
+						customer.setC_city(jTPCCUtil.randomStr(jTPCCUtil.randomNumber(10, 20, gen)));
+						customer.setC_state(jTPCCUtil.randomStr(3).toUpperCase());
+						customer.setC_zip("123456789");
 
-						customer.c_phone = "(732)744-1700";
+						customer.setC_phone("(732)744-1700");
 
-						customer.c_since = sysdate.getTime();
-						customer.c_middle = "OE";
-						customer.c_data = jTPCCUtil.randomStr(jTPCCUtil.randomNumber(300, 500, gen));
+						customer.setC_since(sysdate.getTime());
+						customer.setC_middle("OE");
+						customer.setC_data(jTPCCUtil.randomStr(jTPCCUtil.randomNumber(300, 500, gen)));
 
-						history.hist_id = i;
+						history.setHist_id(i);
 						i++;
-						history.h_c_id = c;
-						history.h_c_d_id = d;
-						history.h_c_w_id = w;
-						history.h_d_id = d;
-						history.h_w_id = w;
-						history.h_date = sysdate.getTime();
-						history.h_amount = 10;
-						history.h_data = jTPCCUtil.randomStr(jTPCCUtil.randomNumber(10, 24, gen));
+						history.setH_c_id(c);
+						history.setH_c_d_id(d);
+						history.setH_c_w_id(w);
+						history.setH_d_id(d);
+						history.setH_w_id(w);
+						history.setH_date(sysdate.getTime());
+						history.setH_amount(10);
+						history.setH_data(jTPCCUtil.randomStr(jTPCCUtil.randomNumber(10, 24, gen)));
 
 						k = k + 2;
 						if (outputFiles == false) {
-							custPrepStmt.setLong(1, customer.c_id);
-							custPrepStmt.setLong(2, customer.c_d_id);
-							custPrepStmt.setLong(3, customer.c_w_id);
-							custPrepStmt.setDouble(4, customer.c_discount);
-							custPrepStmt.setString(5, customer.c_credit);
-							custPrepStmt.setString(6, customer.c_last);
-							custPrepStmt.setString(7, customer.c_first);
-							custPrepStmt.setDouble(8, customer.c_credit_lim);
-							custPrepStmt.setDouble(9, customer.c_balance);
-							custPrepStmt.setDouble(10, customer.c_ytd_payment);
-							custPrepStmt.setDouble(11, customer.c_payment_cnt);
-							custPrepStmt.setDouble(12, customer.c_delivery_cnt);
-							custPrepStmt.setString(13, customer.c_street_1);
-							custPrepStmt.setString(14, customer.c_street_2);
-							custPrepStmt.setString(15, customer.c_city);
-							custPrepStmt.setString(16, customer.c_state);
-							custPrepStmt.setString(17, customer.c_zip);
-							custPrepStmt.setString(18, customer.c_phone);
+							custPrepStmt.setLong(1, customer.getC_id());
+							custPrepStmt.setLong(2, customer.getC_d_id());
+							custPrepStmt.setLong(3, customer.getC_w_id());
+							custPrepStmt.setDouble(4, customer.getC_discount());
+							custPrepStmt.setString(5, customer.getC_credit());
+							custPrepStmt.setString(6, customer.getC_last());
+							custPrepStmt.setString(7, customer.getC_first());
+							custPrepStmt.setDouble(8, customer.getC_credit_lim());
+							custPrepStmt.setDouble(9, customer.getC_balance());
+							custPrepStmt.setDouble(10, customer.getC_ytd_payment());
+							custPrepStmt.setDouble(11, customer.getC_payment_cnt());
+							custPrepStmt.setDouble(12, customer.getC_delivery_cnt());
+							custPrepStmt.setString(13, customer.getC_street_1());
+							custPrepStmt.setString(14, customer.getC_street_2());
+							custPrepStmt.setString(15, customer.getC_city());
+							custPrepStmt.setString(16, customer.getC_state());
+							custPrepStmt.setString(17, customer.getC_zip());
+							custPrepStmt.setString(18, customer.getC_phone());
 
-							Timestamp since = new Timestamp(customer.c_since);
+							Timestamp since = new Timestamp(customer.getC_since());
 							custPrepStmt.setTimestamp(19, since);
-							custPrepStmt.setString(20, customer.c_middle);
-							custPrepStmt.setString(21, customer.c_data);
+							custPrepStmt.setString(20, customer.getC_middle());
+							custPrepStmt.setString(21, customer.getC_data());
 
 							custPrepStmt.addBatch();
 
-							histPrepStmt.setInt(1, history.hist_id);
-							histPrepStmt.setInt(2, history.h_c_id);
-							histPrepStmt.setInt(3, history.h_c_d_id);
-							histPrepStmt.setInt(4, history.h_c_w_id);
+							histPrepStmt.setInt(1, history.getHist_id());
+							histPrepStmt.setInt(2, history.getH_c_id());
+							histPrepStmt.setInt(3, history.getH_c_d_id());
+							histPrepStmt.setInt(4, history.getH_c_w_id());
 
-							histPrepStmt.setInt(5, history.h_d_id);
-							histPrepStmt.setInt(6, history.h_w_id);
-							Timestamp hdate = new Timestamp(history.h_date);
+							histPrepStmt.setInt(5, history.getH_d_id());
+							histPrepStmt.setInt(6, history.getH_w_id());
+							Timestamp hdate = new Timestamp(history.getH_date());
 							histPrepStmt.setTimestamp(7, hdate);
-							histPrepStmt.setDouble(8, history.h_amount);
-							histPrepStmt.setString(9, history.h_data);
+							histPrepStmt.setDouble(8, history.getH_amount());
+							histPrepStmt.setString(9, history.getH_data());
 
 							histPrepStmt.addBatch();
 
@@ -816,41 +817,41 @@ public class LoadData implements jTPCCConfig {
 							}
 						} else {
 							String str = "";
-							str = str + customer.c_id + ",";
-							str = str + customer.c_d_id + ",";
-							str = str + customer.c_w_id + ",";
-							str = str + customer.c_discount + ",";
-							str = str + customer.c_credit + ",";
-							str = str + customer.c_last + ",";
-							str = str + customer.c_first + ",";
-							str = str + customer.c_credit_lim + ",";
-							str = str + customer.c_balance + ",";
-							str = str + customer.c_ytd_payment + ",";
-							str = str + customer.c_payment_cnt + ",";
-							str = str + customer.c_delivery_cnt + ",";
-							str = str + customer.c_street_1 + ",";
-							str = str + customer.c_street_2 + ",";
-							str = str + customer.c_city + ",";
-							str = str + customer.c_state + ",";
-							str = str + customer.c_zip + ",";
-							str = str + customer.c_phone + ",";
-							Timestamp since = new Timestamp(customer.c_since);
+							str = str + customer.getC_id() + ",";
+							str = str + customer.getC_d_id() + ",";
+							str = str + customer.getC_w_id() + ",";
+							str = str + customer.getC_discount() + ",";
+							str = str + customer.getC_credit() + ",";
+							str = str + customer.getC_last() + ",";
+							str = str + customer.getC_first() + ",";
+							str = str + customer.getC_credit_lim() + ",";
+							str = str + customer.getC_balance() + ",";
+							str = str + customer.getC_ytd_payment() + ",";
+							str = str + customer.getC_payment_cnt() + ",";
+							str = str + customer.getC_delivery_cnt() + ",";
+							str = str + customer.getC_street_1() + ",";
+							str = str + customer.getC_street_2() + ",";
+							str = str + customer.getC_city() + ",";
+							str = str + customer.getC_state() + ",";
+							str = str + customer.getC_zip() + ",";
+							str = str + customer.getC_phone() + ",";
+							Timestamp since = new Timestamp(customer.getC_since());
 							str = str + since + ",";
-							str = str + customer.c_middle + ",";
-							str = str + customer.c_data;
+							str = str + customer.getC_middle() + ",";
+							str = str + customer.getC_data();
 							out.println(str);
 
 							str = "";
-							str = str + history.hist_id + ",";
-							str = str + history.h_c_id + ",";
-							str = str + history.h_c_d_id + ",";
-							str = str + history.h_c_w_id + ",";
-							str = str + history.h_d_id + ",";
-							str = str + history.h_w_id + ",";
-							Timestamp hdate = new Timestamp(history.h_date);
+							str = str + history.getHist_id() + ",";
+							str = str + history.getH_c_id() + ",";
+							str = str + history.getH_c_d_id() + ",";
+							str = str + history.getH_c_w_id() + ",";
+							str = str + history.getH_d_id() + ",";
+							str = str + history.getH_w_id() + ",";
+							Timestamp hdate = new Timestamp(history.getH_date());
 							str = str + hdate + ",";
-							str = str + history.h_amount + ",";
-							str = str + history.h_data;
+							str = str + history.getH_amount() + ",";
+							str = str + history.getH_data();
 							outHist.println(str);
 
 							if ((k % configCommitCount) == 0) {
@@ -941,28 +942,28 @@ public class LoadData implements jTPCCConfig {
 
 					for (int c = 1; c <= custDistKount; c++) {
 
-						oorder.o_id = c;
-						oorder.o_w_id = w;
-						oorder.o_d_id = d;
-						oorder.o_c_id = jTPCCUtil.randomNumber(1, custDistKount, gen);
-						oorder.o_carrier_id = jTPCCUtil.randomNumber(1, 10, gen);
-						oorder.o_ol_cnt = jTPCCUtil.randomNumber(5, 15, gen);
-						oorder.o_all_local = 1;
-						oorder.o_entry_d = System.currentTimeMillis();
+						oorder.setO_id(c);
+						oorder.setO_w_id(w);
+						oorder.setO_d_id(d);
+						oorder.setO_c_id(jTPCCUtil.randomNumber(1, custDistKount, gen));
+						oorder.setO_carrier_id(jTPCCUtil.randomNumber(1, 10, gen));
+						oorder.setO_ol_cnt(jTPCCUtil.randomNumber(5, 15, gen));
+						oorder.setO_all_local(1);
+						oorder.setO_entry_d(System.currentTimeMillis());
 
 						k++;
 						if (outputFiles == false) {
 							myJdbcIO.insertOrder(ordrPrepStmt, oorder);
 						} else {
 							String str = "";
-							str = str + oorder.o_id + ",";
-							str = str + oorder.o_w_id + ",";
-							str = str + oorder.o_d_id + ",";
-							str = str + oorder.o_c_id + ",";
-							str = str + oorder.o_carrier_id + ",";
-							str = str + oorder.o_ol_cnt + ",";
-							str = str + oorder.o_all_local + ",";
-							Timestamp entry_d = new java.sql.Timestamp(oorder.o_entry_d);
+							str = str + oorder.getO_id() + ",";
+							str = str + oorder.getO_w_id() + ",";
+							str = str + oorder.getO_d_id() + ",";
+							str = str + oorder.getO_c_id() + ",";
+							str = str + oorder.getO_carrier_id() + ",";
+							str = str + oorder.getO_ol_cnt() + ",";
+							str = str + oorder.getO_all_local() + ",";
+							Timestamp entry_d = new java.sql.Timestamp(oorder.getO_entry_d());
 							str = str + entry_d;
 							outO.println(str);
 						}
@@ -973,59 +974,59 @@ public class LoadData implements jTPCCConfig {
 
 						if (c > 2100) {
 
-							new_order.no_w_id = w;
-							new_order.no_d_id = d;
-							new_order.no_o_id = c;
+							new_order.setNo_w_id(w);
+							new_order.setNo_d_id(d);
+							new_order.setNo_o_id(c);
 
 							k++;
 							if (outputFiles == false) {
 								myJdbcIO.insertNewOrder(nworPrepStmt, new_order);
 							} else {
 								String str = "";
-								str = str + new_order.no_w_id + ",";
-								str = str + new_order.no_d_id + ",";
-								str = str + new_order.no_o_id;
+								str = str + new_order.getNo_w_id() + ",";
+								str = str + new_order.getNo_d_id() + ",";
+								str = str + new_order.getNo_o_id();
 								outNewOrder.println(str);
 							}
 
 						} // end new order
 
-						for (int l = 1; l <= oorder.o_ol_cnt; l++) {
+						for (int l = 1; l <= oorder.getO_ol_cnt(); l++) {
 
-							order_line.ol_w_id = w;
-							order_line.ol_d_id = d;
-							order_line.ol_o_id = c;
-							order_line.ol_number = l; // ol_number
-							order_line.ol_i_id = jTPCCUtil.randomNumber(1, 100000, gen);
-							order_line.ol_delivery_d = oorder.o_entry_d;
+							order_line.setOl_w_id(w);
+							order_line.setOl_d_id(d);
+							order_line.setOl_o_id(c);
+							order_line.setOl_number(l); // ol_number
+							order_line.setOl_i_id(jTPCCUtil.randomNumber(1, 100000, gen));
+							order_line.setOl_delivery_d(oorder.getO_entry_d());
 
-							if (order_line.ol_o_id < 2101) {
-								order_line.ol_amount = 0;
+							if (order_line.getOl_o_id() < 2101) {
+								order_line.setOl_amount(0);
 							} else {
 								// random within [0.01 .. 9,999.99]
-								order_line.ol_amount = (float) (jTPCCUtil.randomNumber(1, 999999, gen) / 100.0);
+								order_line.setOl_amount((float) (jTPCCUtil.randomNumber(1, 999999, gen) / 100.0));
 							}
 
-							order_line.ol_supply_w_id = jTPCCUtil.randomNumber(1, numWarehouses, gen);
-							order_line.ol_quantity = 5;
-							order_line.ol_dist_info = jTPCCUtil.randomStr(24);
+							order_line.setOl_supply_w_id(jTPCCUtil.randomNumber(1, numWarehouses, gen));
+							order_line.setOl_quantity(5);
+							order_line.setOl_dist_info(jTPCCUtil.randomStr(24));
 
 							k++;
 							if (outputFiles == false) {
 								myJdbcIO.insertOrderLine(orlnPrepStmt, order_line);
 							} else {
 								String str = "";
-								str = str + order_line.ol_w_id + ",";
-								str = str + order_line.ol_d_id + ",";
-								str = str + order_line.ol_o_id + ",";
-								str = str + order_line.ol_number + ",";
-								str = str + order_line.ol_i_id + ",";
-								Timestamp delivery_d = new Timestamp(order_line.ol_delivery_d);
+								str = str + order_line.getOl_w_id() + ",";
+								str = str + order_line.getOl_d_id() + ",";
+								str = str + order_line.getOl_o_id() + ",";
+								str = str + order_line.getOl_number() + ",";
+								str = str + order_line.getOl_i_id() + ",";
+								Timestamp delivery_d = new Timestamp(order_line.getOl_delivery_d());
 								str = str + delivery_d + ",";
-								str = str + order_line.ol_amount + ",";
-								str = str + order_line.ol_supply_w_id + ",";
-								str = str + order_line.ol_quantity + ",";
-								str = str + order_line.ol_dist_info;
+								str = str + order_line.getOl_amount() + ",";
+								str = str + order_line.getOl_supply_w_id() + ",";
+								str = str + order_line.getOl_quantity() + ",";
+								str = str + order_line.getOl_dist_info();
 								outLine.println(str);
 							}
 

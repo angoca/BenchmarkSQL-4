@@ -15,15 +15,11 @@ import java.util.Vector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.github.benchmarksql.jtpcc.pojo.Customer;
 import com.github.benchmarksql.jtpcc.pojo.District;
-import com.github.benchmarksql.jtpcc.pojo.History;
-import com.github.benchmarksql.jtpcc.pojo.Item;
 import com.github.benchmarksql.jtpcc.pojo.NewOrder;
 import com.github.benchmarksql.jtpcc.pojo.Oorder;
 import com.github.benchmarksql.jtpcc.pojo.OrderLine;
 import com.github.benchmarksql.jtpcc.pojo.Stock;
-import com.github.benchmarksql.jtpcc.pojo.Warehouse;
 
 /**
  * Terminal emulator code for jTPCC (transactions).
@@ -357,12 +353,12 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 		new Oorder();
 		new OrderLine();
 		NewOrder new_order = new NewOrder();
-		new_order.no_w_id = w_id;
+		new_order.setNo_w_id(w_id);
 
 		try {
 			orderIDs = new int[10];
 			for (d_id = 1; d_id <= 10; d_id++) {
-				new_order.no_d_id = d_id;
+				new_order.setNo_d_id(d_id);
 
 				do {
 					no_o_id = -1;
@@ -392,7 +388,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 
 					newOrderRemoved = false;
 					if (no_o_id != -1) {
-						new_order.no_o_id = no_o_id;
+						new_order.setNo_o_id(no_o_id);
 
 						if (delivDeleteNewOrder == null) {
 							String stmt = "";
@@ -827,14 +823,14 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 		float ol_amount, total_amount = 0;
 		boolean newOrderRowInserted;
 
-		new Warehouse();
-		new Customer();
-		new District();
-		new NewOrder();
-		new Oorder();
-		new OrderLine();
-		new Stock();
-		new Item();
+		// FIXME Why instantiating objects and not using them.
+//		new Warehouse();
+//		new District();
+//		new NewOrder();
+//		new Oorder();
+//		new OrderLine();
+//		new Stock();
+//		new Item();
 
 		try {
 
@@ -1305,10 +1301,11 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 		float c_credit_lim, c_discount, c_balance = 0;
 		java.sql.Date c_since;
 
-		new Warehouse();
-		new Customer();
-		new District();
-		new History();
+		// FIXME Why instantiating objects and not using them.
+//		new Warehouse();
+//		new Customer();
+//		new District();
+//		new History();
 
 		try {
 

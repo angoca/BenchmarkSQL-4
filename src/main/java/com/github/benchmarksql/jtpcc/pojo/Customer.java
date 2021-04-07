@@ -14,34 +14,41 @@ public class Customer implements Serializable {
 	 * Generated Id.
 	 */
 	private static final long serialVersionUID = -8122701038727177452L;
-	public float c_balance;
-	public String c_city;
-	public String c_credit;
-	public float c_credit_lim;
-	public int c_d_id;
-	public String c_data;
-	public int c_delivery_cnt;
-	public float c_discount;
-	public String c_first;
-	public int c_id;
-	public String c_last;
-	public String c_middle;
-	public int c_payment_cnt;
-	public String c_phone;
-	public long c_since;
-	public String c_state;
-	public String c_street_1;
-	public String c_street_2;
-	public int c_w_id;
-	public float c_ytd_payment;
-	public String c_zip;
+	private float c_balance;
+	private String c_city;
+	private String c_credit;
+	private float c_credit_lim;
+	private int c_d_id;
+	private String c_data;
+	private int c_delivery_cnt;
+	private float c_discount;
+	private String c_first;
+	private int c_id;
+	private String c_last;
+	private String c_middle;
+	private int c_payment_cnt;
+	private String c_phone;
+	private long c_since;
+	private String c_state;
+	private String c_street_1;
+	private String c_street_2;
+	private int c_w_id;
+	private float c_ytd_payment;
+	private String c_zip;
+
+	/**
+	 * Default constructor.
+	 */
+	public Customer() {
+		// Empty
+	}
 
 	/**
 	 * Gets the balance of the customer.
 	 * 
 	 * @return Balance of the customer.
 	 */
-	public float getC_balance() {
+	public final float getC_balance() {
 		return c_balance;
 	}
 
@@ -50,7 +57,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @return Name of the city.
 	 */
-	public String getC_city() {
+	public final String getC_city() {
 		return c_city;
 	}
 
@@ -63,7 +70,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @return Status of the client.
 	 */
-	public String getC_credit() {
+	public final String getC_credit() {
 		return c_credit;
 	}
 
@@ -72,7 +79,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @return Credit limit of the client.
 	 */
-	public float getC_credit_lim() {
+	public final float getC_credit_lim() {
 		return c_credit_lim;
 	}
 
@@ -81,7 +88,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @return District of the customer.
 	 */
-	public int getC_d_id() {
+	public final int getC_d_id() {
 		return c_d_id;
 	}
 
@@ -90,7 +97,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @return Miscellaneous information.
 	 */
-	public String getC_data() {
+	public final String getC_data() {
 		return c_data;
 	}
 
@@ -99,7 +106,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @return Quantity of deliveries.
 	 */
-	public int getC_delivery_cnt() {
+	public final int getC_delivery_cnt() {
 		return c_delivery_cnt;
 	}
 
@@ -108,7 +115,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @return Discount rate.
 	 */
-	public float getC_discount() {
+	public final float getC_discount() {
 		return c_discount;
 	}
 
@@ -117,7 +124,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @return Customer's first name.
 	 */
-	public String getC_first() {
+	public final String getC_first() {
 		return c_first;
 	}
 
@@ -126,7 +133,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @return Id of the customer.
 	 */
-	public int getC_id() {
+	public final int getC_id() {
 		return c_id;
 	}
 
@@ -135,7 +142,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @return Customer's last name.
 	 */
-	public String getC_last() {
+	public final String getC_last() {
 		return c_last;
 	}
 
@@ -144,7 +151,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @return Middle name.
 	 */
-	public String getC_middle() {
+	public final String getC_middle() {
 		return c_middle;
 	}
 
@@ -153,7 +160,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @return quantity of payments.
 	 */
-	public int getC_payment_cnt() {
+	public final int getC_payment_cnt() {
 		return c_payment_cnt;
 	}
 
@@ -162,7 +169,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @return Phone number.
 	 */
-	public String getC_phone() {
+	public final String getC_phone() {
 		return c_phone;
 	}
 
@@ -171,7 +178,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @return Date/time when the customer was populated.
 	 */
-	public long getC_since() {
+	public final long getC_since() {
 		return c_since;
 	}
 
@@ -180,7 +187,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @return Name of the state.
 	 */
-	public String getC_state() {
+	public final String getC_state() {
 		return c_state;
 	}
 
@@ -189,7 +196,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @return Customer's address.
 	 */
-	public String getC_street_1() {
+	public final String getC_street_1() {
 		return c_street_1;
 	}
 
@@ -199,7 +206,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @return Complement of the address.
 	 */
-	public String getC_street_2() {
+	public final String getC_street_2() {
 		return c_street_2;
 	}
 
@@ -208,16 +215,16 @@ public class Customer implements Serializable {
 	 * 
 	 * @return Id of associated warehouse.
 	 */
-	public int getC_w_id() {
+	public final int getC_w_id() {
 		return c_w_id;
 	}
 
 	/**
-	 * Gest the year to date payment of the customer.
+	 * Gets the year to date payment of the customer.
 	 * 
 	 * @return Year to date payment of the customer.
 	 */
-	public float getC_ytd_payment() {
+	public final float getC_ytd_payment() {
 		return c_ytd_payment;
 	}
 
@@ -226,7 +233,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @return Zip code.
 	 */
-	public String getC_zip() {
+	public final String getC_zip() {
 		return c_zip;
 	}
 
@@ -235,7 +242,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @param c_balance Balance of the customer.
 	 */
-	public void setC_balance(float c_balance) {
+	public final void setC_balance(final float c_balance) {
 		this.c_balance = c_balance;
 	}
 
@@ -244,7 +251,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @param c_city Name of the city.
 	 */
-	public void setC_city(String c_city) {
+	public final void setC_city(final String c_city) {
 		this.c_city = c_city;
 	}
 
@@ -257,7 +264,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @param c_credit Status of the client.
 	 */
-	public void setC_credit(String c_credit) {
+	public final void setC_credit(final String c_credit) {
 		this.c_credit = c_credit;
 	}
 
@@ -266,7 +273,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @param c_credit_lim Credit limit of the client.
 	 */
-	public void setC_credit_lim(float c_credit_lim) {
+	public final void setC_credit_lim(final float c_credit_lim) {
 		this.c_credit_lim = c_credit_lim;
 	}
 
@@ -275,7 +282,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @param c_d_id District of the customer.
 	 */
-	public void setC_d_id(int c_d_id) {
+	public final void setC_d_id(final int c_d_id) {
 		this.c_d_id = c_d_id;
 	}
 
@@ -284,7 +291,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @param c_data Miscellaneous information.
 	 */
-	public void setC_data(String c_data) {
+	public final void setC_data(final String c_data) {
 		this.c_data = c_data;
 	}
 
@@ -293,7 +300,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @param c_delivery_cnt Quantity of deliveries.
 	 */
-	public void setC_delivery_cnt(int c_delivery_cnt) {
+	public final void setC_delivery_cnt(final int c_delivery_cnt) {
 		this.c_delivery_cnt = c_delivery_cnt;
 	}
 
@@ -302,7 +309,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @param c_discount Discount rate.
 	 */
-	public void setC_discount(float c_discount) {
+	public final void setC_discount(final float c_discount) {
 		this.c_discount = c_discount;
 	}
 
@@ -311,7 +318,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @param c_first Customer's first name
 	 */
-	public void setC_first(String c_first) {
+	public final void setC_first(final String c_first) {
 		this.c_first = c_first;
 	}
 
@@ -320,7 +327,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @param c_id Id of the customer.
 	 */
-	public void setC_id(int c_id) {
+	public final void setC_id(final int c_id) {
 		this.c_id = c_id;
 	}
 
@@ -329,7 +336,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @param c_last Customer's last name.
 	 */
-	public void setC_last(String c_last) {
+	public final void setC_last(final String c_last) {
 		this.c_last = c_last;
 	}
 
@@ -338,7 +345,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @param c_middle Middle name.
 	 */
-	public void setC_middle(String c_middle) {
+	public final void setC_middle(final String c_middle) {
 		this.c_middle = c_middle;
 	}
 
@@ -347,7 +354,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @param c_payment_cnt Quantity of payments.
 	 */
-	public void setC_payment_cnt(int c_payment_cnt) {
+	public final void setC_payment_cnt(final int c_payment_cnt) {
 		this.c_payment_cnt = c_payment_cnt;
 	}
 
@@ -356,7 +363,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @param c_phone Phone number.
 	 */
-	public void setC_phone(String c_phone) {
+	public final void setC_phone(final String c_phone) {
 		this.c_phone = c_phone;
 	}
 
@@ -365,7 +372,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @param c_since Timestamp when the customer was populated.
 	 */
-	public void setC_since(long c_since) {
+	public final void setC_since(final long c_since) {
 		this.c_since = c_since;
 	}
 
@@ -374,7 +381,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @param c_state Name of the state.
 	 */
-	public void setC_state(String c_state) {
+	public final void setC_state(final String c_state) {
 		this.c_state = c_state;
 	}
 
@@ -383,7 +390,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @param c_street_1 Customer's address.
 	 */
-	public void setC_street_1(String c_street_1) {
+	public final void setC_street_1(final String c_street_1) {
 		this.c_street_1 = c_street_1;
 	}
 
@@ -392,7 +399,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @param c_street_2 Complement of the address.
 	 */
-	public void setC_street_2(String c_street_2) {
+	public final void setC_street_2(final String c_street_2) {
 		this.c_street_2 = c_street_2;
 	}
 
@@ -401,7 +408,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @param c_w_id Id of associated warehouse.
 	 */
-	public void setC_w_id(int c_w_id) {
+	public final void setC_w_id(final int c_w_id) {
 		this.c_w_id = c_w_id;
 	}
 
@@ -410,7 +417,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @param c_ytd_payment Year to date payment of the customer.
 	 */
-	public void setC_ytd_payment(float c_ytd_payment) {
+	public final void setC_ytd_payment(final float c_ytd_payment) {
 		this.c_ytd_payment = c_ytd_payment;
 	}
 
@@ -419,7 +426,7 @@ public class Customer implements Serializable {
 	 * 
 	 * @param c_zip Zip code.
 	 */
-	public void setC_zip(String c_zip) {
+	public final void setC_zip(final String c_zip) {
 		this.c_zip = c_zip;
 	}
 
@@ -427,10 +434,10 @@ public class Customer implements Serializable {
 	 * Describes the customer.
 	 */
 	@Override
-	public String toString() {
+	public final String toString() {
 		final Timestamp since = new Timestamp(getC_since());
 
-		StringBuffer ret = new StringBuffer("");
+		final StringBuffer ret = new StringBuffer("");
 		ret.append("\n***************** Customer ********************");
 		ret.append("\n*           c_id = " + this.getC_id());
 		ret.append("\n*         c_d_id = " + this.getC_d_id());

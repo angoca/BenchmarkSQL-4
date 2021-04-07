@@ -8,9 +8,16 @@ public class NewOrder implements Serializable {
 	 * Generated Id.
 	 */
 	private static final long serialVersionUID = -5735456083947093098L;
-	public int no_d_id;
-	public int no_o_id;
-	public int no_w_id;
+	private int no_d_id;
+	private int no_o_id;
+	private int no_w_id;
+
+	/**
+	 * Default constructor.
+	 */
+	public NewOrder() {
+		// Empty
+	}
 
 	/**
 	 * Gets the district id.

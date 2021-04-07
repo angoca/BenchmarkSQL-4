@@ -9,17 +9,24 @@ public class District implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 2576074839582492020L;
-	public String d_city;
-	public int d_id;
-	public String d_name;
-	public int d_next_o_id;
-	public String d_state;
-	public String d_street_1;
-	public String d_street_2;
-	public float d_tax;
-	public int d_w_id;
-	public float d_ytd;
-	public String d_zip;
+	private String d_city;
+	private int d_id;
+	private String d_name;
+	private int d_next_o_id;
+	private String d_state;
+	private String d_street_1;
+	private String d_street_2;
+	private float d_tax;
+	private int d_w_id;
+	private float d_ytd;
+	private String d_zip;
+
+	/**
+	 * Default constructor.
+	 */
+	public District() {
+		// Empty
+	}
 
 	/**
 	 * Gets the city.

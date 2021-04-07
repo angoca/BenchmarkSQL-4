@@ -8,11 +8,18 @@ public class Item implements Serializable {
 	 * Generated Id.
 	 */
 	private static final long serialVersionUID = 3640594164299091999L;
-	public String i_data;
-	public int i_id; // PRIMARY KEY
-	public int i_im_id;
-	public String i_name;
-	public float i_price;
+	private String i_data;
+	private int i_id; // PRIMARY KEY
+	private int i_im_id;
+	private String i_name;
+	private float i_price;
+
+	/**
+	 * Default constructor.
+	 */
+	public Item() {
+		// Empty
+	}
 
 	/**
 	 * Gets the brand information.

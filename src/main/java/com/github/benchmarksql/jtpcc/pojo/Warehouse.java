@@ -9,26 +9,33 @@ public class Warehouse implements Serializable {
 	 */
 	private static final long serialVersionUID = 933859184143183210L;
 
-	public String w_city;
+	private String w_city;
 
 	/**
 	 * Id of the warehouse. Primary key.
 	 */
-	public int w_id;
+	private int w_id;
 
-	public String w_name;
+	private String w_name;
 
-	public String w_state;
+	private String w_state;
 
-	public String w_street_1;
+	private String w_street_1;
 
-	public String w_street_2;
+	private String w_street_2;
 
-	public float w_tax;
+	private float w_tax;
 
-	public float w_ytd;
+	private float w_ytd;
 
-	public String w_zip;
+	private String w_zip;
+
+	/**
+	 * Default constructor.
+	 */
+	public Warehouse() {
+		// Empty
+	}
 
 	/**
 	 * Gets the city of the warehouse. Random string between 10 and 20 characters.

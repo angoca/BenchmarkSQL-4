@@ -9,14 +9,21 @@ public class Oorder implements Serializable {
 	 * Generated Id.
 	 */
 	private static final long serialVersionUID = -4630864674295770034L;
-	public int o_all_local;
-	public int o_c_id;
-	public int o_carrier_id;
-	public int o_d_id;
-	public long o_entry_d;
-	public int o_id;
-	public int o_ol_cnt;
-	public int o_w_id;
+	private int o_all_local;
+	private int o_c_id;
+	private int o_carrier_id;
+	private int o_d_id;
+	private long o_entry_d;
+	private int o_id;
+	private int o_ol_cnt;
+	private int o_w_id;
+
+	/**
+	 * Default constructor.
+	 */
+	public Oorder() {
+		// Empty
+	}
 
 	/**
 	 * Returns 1 if all order lines are local. 0 otherwise.
@@ -170,7 +177,7 @@ public class Oorder implements Serializable {
 		Timestamp entry_d = new Timestamp(o_entry_d);
 
 		StringBuffer ret = new StringBuffer("");
-		ret.append( "\n***************** Oorder ********************");
+		ret.append("\n***************** Oorder ********************");
 		ret.append("\n*         o_id = " + o_id);
 		ret.append("\n*       o_w_id = " + o_w_id);
 		ret.append("\n*       o_d_id = " + o_d_id);

@@ -8,15 +8,22 @@ public class History implements Serializable {
 	 * Generated Id.
 	 */
 	private static final long serialVersionUID = 7605103867655461879L;
-	public float h_amount;
-	public int h_c_d_id;
-	public int h_c_id;
-	public int h_c_w_id;
-	public int h_d_id;
-	public String h_data;
-	public long h_date;
-	public int h_w_id;
-	public int hist_id;
+	private float h_amount;
+	private int h_c_d_id;
+	private int h_c_id;
+	private int h_c_w_id;
+	private int h_d_id;
+	private String h_data;
+	private long h_date;
+	private int h_w_id;
+	private int hist_id;
+
+	/**
+	 * Default constructor.
+	 */
+	public History() {
+		// Empty
+	}
 
 	/**
 	 * Gets the payment amount.

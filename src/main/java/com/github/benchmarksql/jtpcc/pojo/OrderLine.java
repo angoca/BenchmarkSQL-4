@@ -8,16 +8,23 @@ public class OrderLine implements Serializable {
 	 * Generated Id.
 	 */
 	private static final long serialVersionUID = -7555840082316032135L;
-	public float ol_amount;
-	public int ol_d_id;
-	public long ol_delivery_d;
-	public String ol_dist_info;
-	public int ol_i_id;
-	public int ol_number;
-	public int ol_o_id;
-	public int ol_quantity;
-	public int ol_supply_w_id;
-	public int ol_w_id;
+	private float ol_amount;
+	private int ol_d_id;
+	private long ol_delivery_d;
+	private String ol_dist_info;
+	private int ol_i_id;
+	private int ol_number;
+	private int ol_o_id;
+	private int ol_quantity;
+	private int ol_supply_w_id;
+	private int ol_w_id;
+
+	/**
+	 * Default constructor.
+	 */
+	public OrderLine() {
+		// Empty
+	}
 
 	/**
 	 * Gets the amount of items.
