@@ -43,11 +43,17 @@
 		</dependency>
 
 		<!-- Db2 driver -->
-		<!-- https://mvnrepository.com/artifact/com.ibm.db2/jcc -->
 		<dependency>
 			<groupId>com.ibm.db2</groupId>
 			<artifactId>jcc</artifactId>
 			<version>11.5.5.0</version>
+		</dependency>
+
+		<!-- Informix driver -->
+		<dependency>
+			<groupId>com.ibm.informix</groupId>
+			<artifactId>jdbc</artifactId>
+			<version>4.50.4.1</version>
 		</dependency>
 	</dependencies>
 
