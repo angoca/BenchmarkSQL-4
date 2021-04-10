@@ -1,4 +1,5 @@
 -- Loads the data into the tables. This prevents data regeneration.
+
 Insert into benchmarksql.warehouse
   (w_id, w_ytd, w_tax, w_name, w_street_1, w_street_2, w_city, w_state, w_zip)  
   from '/tmp/csv/warehouse.csv';

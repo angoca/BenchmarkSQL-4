@@ -1,4 +1,5 @@
 -- Loads the data into the tables. This prevents data regeneration.
+
 LOAD DATA LOCAL INFILE '/tmp/csv/warehouse.csv'
     INTO TABLE `benchmarksql`.`warehouse`
     FIELDS ESCAPED BY    '\\'
