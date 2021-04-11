@@ -412,12 +412,13 @@ public class jTPCC implements jTPCCConfig {
 	 * the output with the most recent values.
 	 */
 	private void updateStatusLine() {
+		// TODO Convert into log4j
 		StringBuilder informativeText = new StringBuilder("");
 		long currTimeMillis = System.currentTimeMillis();
 
 		if (fastNewOrderCounter != 0) {
 			double tpmTotal = (6000000 * transactionCount / (currTimeMillis - sessionStartTimestamp)) / 100.0;
-			informativeText.append("Term-00, Running Average tpmTOTAL: {}" + tpmTotal + "    ");
+			informativeText.append("Term-00, Running Average tpmTOTAL: " + tpmTotal + "    ");
 		}
 
 		if (currTimeMillis > sessionNextTimestamp) {

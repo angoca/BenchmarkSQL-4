@@ -714,7 +714,7 @@ public class LoadData implements jTPCCConfig {
 
 						sysdate = new java.sql.Timestamp(System.currentTimeMillis());
 
-						customer.setC_d_id(c);
+						customer.setC_id(c);
 						customer.setC_d_id(d);
 						customer.setC_w_id(w);
 
