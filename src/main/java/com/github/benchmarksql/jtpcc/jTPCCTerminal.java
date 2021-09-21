@@ -15,15 +15,11 @@ import java.util.Vector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.github.benchmarksql.jtpcc.pojo.Customer;
 import com.github.benchmarksql.jtpcc.pojo.District;
-import com.github.benchmarksql.jtpcc.pojo.History;
-import com.github.benchmarksql.jtpcc.pojo.Item;
 import com.github.benchmarksql.jtpcc.pojo.NewOrder;
 import com.github.benchmarksql.jtpcc.pojo.Oorder;
 import com.github.benchmarksql.jtpcc.pojo.OrderLine;
 import com.github.benchmarksql.jtpcc.pojo.Stock;
-import com.github.benchmarksql.jtpcc.pojo.Warehouse;
 
 /**
  * Terminal emulator code for jTPCC (transactions).
@@ -39,12 +35,21 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 	private Statement stmt = null;
 	private Statement stmt1 = null;
 	private ResultSet rs = null;
-	private int terminalWarehouseID, terminalDistrictID;
-	private int paymentWeight, orderStatusWeight, deliveryWeight, stockLevelWeight, limPerMin_Terminal;
+	private int terminalWarehouseID;
+	private int terminalDistrictID;
+	private int paymentWeight;
+	private int orderStatusWeight;
+	private int deliveryWeight;
+	private int stockLevelWeight;
+	private int limPerMin_Terminal;
 	private jTPCC parent;
+	private String schema;
 	private Random gen;
 
-	private int transactionCount = 1, numTransactions, numWarehouses, newOrderCounter;
+	private int transactionCount = 1;
+	private int numTransactions;
+	private int numWarehouses;
+	private int newOrderCounter;
 	private int result = 0;
 	private boolean stopRunningSignal = false;
 
@@ -98,7 +103,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 
 	public jTPCCTerminal(String terminalName, int terminalWarehouseID, int terminalDistrictID, Connection conn,
 			int numTransactions, int paymentWeight, int orderStatusWeight, int deliveryWeight, int stockLevelWeight,
-			int numWarehouses, int limPerMin_Terminal, jTPCC parent) throws SQLException {
+			int numWarehouses, int limPerMin_Terminal, jTPCC parent, String schema) throws SQLException {
 		this.terminalName = terminalName;
 		this.conn = conn;
 		this.stmt = conn.createStatement();
@@ -111,6 +116,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 		this.terminalWarehouseID = terminalWarehouseID;
 		this.terminalDistrictID = terminalDistrictID;
 		this.parent = parent;
+		this.schema = schema;
 		this.numTransactions = numTransactions;
 		this.paymentWeight = paymentWeight;
 		this.orderStatusWeight = orderStatusWeight;
@@ -207,7 +213,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 				if (elapse < timePerTx) {
 					try {
 						int sleepTime = (int) (timePerTx - elapse);
-						Thread.sleep((sleepTime));
+						Thread.sleep(sleepTime);
 					} catch (Exception e) {
 					}
 				}
@@ -297,7 +303,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 			break;
 
 		case STOCK_LEVEL:
-			int threshold = jTPCCUtil.randomNumber(10, 20, gen);
+			final int threshold = jTPCCUtil.randomNumber(10, 20, gen);
 
 			terminalMessage("");
 			terminalMessage("Starting transaction #" + transactionCount + " (Stock-Level)...");
@@ -347,12 +353,12 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 		new Oorder();
 		new OrderLine();
 		NewOrder new_order = new NewOrder();
-		new_order.no_w_id = w_id;
+		new_order.setNo_w_id(w_id);
 
 		try {
 			orderIDs = new int[10];
 			for (d_id = 1; d_id <= 10; d_id++) {
-				new_order.no_d_id = d_id;
+				new_order.setNo_d_id(d_id);
 
 				do {
 					no_o_id = -1;
@@ -361,7 +367,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 						String stmt = "";
 						stmt += "SELECT ";
 						stmt += " no_o_id ";
-						stmt += "FROM benchmarksql.new_order ";
+						stmt += "FROM " + schema + "new_order ";
 						stmt += "WHERE no_d_id = ? ";
 						stmt += " AND no_w_id = ? ";
 						stmt += " ORDER BY no_o_id ASC ";
@@ -382,11 +388,11 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 
 					newOrderRemoved = false;
 					if (no_o_id != -1) {
-						new_order.no_o_id = no_o_id;
+						new_order.setNo_o_id(no_o_id);
 
 						if (delivDeleteNewOrder == null) {
 							String stmt = "";
-							stmt += "DELETE FROM benchmarksql.new_order ";
+							stmt += "DELETE FROM " + schema + "new_order ";
 							stmt += "WHERE no_d_id = ? ";
 							stmt += " AND no_w_id = ? ";
 							stmt += " AND no_o_id = ? ";
@@ -410,7 +416,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 						String stmt = "";
 						stmt += "SELECT ";
 						stmt += " o_c_id ";
-						stmt += "FROM benchmarksql.oorder ";
+						stmt += "FROM " + schema + "oorder ";
 						stmt += "WHERE o_id = ? ";
 						stmt += " AND o_d_id = ? ";
 						stmt += " AND o_w_id = ? ";
@@ -423,8 +429,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 
 					rs = delivGetCustId.executeQuery();
 					if (!rs.next()) {
-						log.error("delivGetCustId() not found! " + "O_ID=" + no_o_id + " O_D_ID=" + d_id + " O_W_ID="
-								+ w_id);
+						log.error("delivGetCustId() not found! O_ID={} O_D_ID={} O_W_ID={}", no_o_id, d_id, w_id);
 					}
 
 					c_id = rs.getInt("o_c_id");
@@ -433,7 +438,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 
 					if (delivUpdateCarrierId == null) {
 						String stmt = "";
-						stmt += "UPDATE benchmarksql.oorder ";
+						stmt += "UPDATE " + schema + "oorder ";
 						stmt += "SET ";
 						stmt += " o_carrier_id = ? ";
 						stmt += "WHERE o_id = ? ";
@@ -449,13 +454,12 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 
 					result = delivUpdateCarrierId.executeUpdate();
 					if (result != 1) {
-						log.error("delivUpdateCarrierId() not found! " + "O_ID=" + no_o_id + " O_D_ID=" + d_id
-								+ " O_W_ID=" + w_id);
+						log.error("delivUpdateCarrierId() not found! O_ID={} O_D_ID={} O_W_ID={}", no_o_id, d_id, w_id);
 					}
 
 					if (delivUpdateDeliveryDate == null) {
 						String stmt = "";
-						stmt += "UPDATE benchmarksql.order_line ";
+						stmt += "UPDATE " + schema + "order_line ";
 						stmt += "SET ";
 						stmt += " ol_delivery_d = ? ";
 						stmt += "WHERE ol_o_id = ? ";
@@ -471,15 +475,15 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 
 					result = delivUpdateDeliveryDate.executeUpdate();
 					if (result == 0) {
-						log.error("delivUpdateDeliveryDate() not found! " + "OL_O_ID=" + no_o_id + " OL_D_ID=" + d_id
-								+ " OL_W_ID=" + w_id);
+						log.error("delivUpdateDeliveryDate() not found! OL_O_ID={} OL_D_ID={} OL_W_ID={}", no_o_id,
+								d_id, w_id);
 					}
 
 					if (delivSumOrderAmount == null) {
 						String stmt = "";
 						stmt += "SELECT ";
 						stmt += " SUM(ol_amount) AS ol_total ";
-						stmt += "FROM benchmarksql.order_line ";
+						stmt += "FROM " + schema + "order_line ";
 						stmt += "WHERE ol_o_id = ? ";
 						stmt += " AND ol_d_id = ? ";
 						stmt += " AND ol_w_id = ? ";
@@ -492,8 +496,8 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 
 					rs = delivSumOrderAmount.executeQuery();
 					if (!rs.next()) {
-						log.error("delivSumOrderAmount() not found! " + "OL_O_ID=" + no_o_id + " OL_D_ID=" + d_id
-								+ " OL_W_ID=" + w_id);
+						log.error("delivSumOrderAmount() not found! OL_O_ID={} OL_D_ID={} OL_W_ID={}", no_o_id, d_id,
+								w_id);
 					}
 
 					ol_total = rs.getFloat("ol_total");
@@ -502,7 +506,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 
 					if (delivUpdateCustBalDelivCnt == null) {
 						String stmt = "";
-						stmt += "UPDATE benchmarksql.customer ";
+						stmt += "UPDATE " + schema + "customer ";
 						stmt += "SET ";
 						stmt += " c_balance = c_balance + ?, ";
 						stmt += " c_delivery_cnt = c_delivery_cnt + 1 ";
@@ -519,8 +523,8 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 
 					result = delivUpdateCustBalDelivCnt.executeUpdate();
 					if (result == 0) {
-						log.error("delivUpdateCustBalDelivCnt() not found! " + "C_ID=" + c_id + " C_W_ID=" + w_id
-								+ " C_D_ID=" + d_id);
+						log.error("delivUpdateCustBalDelivCnt() not found! C_ID={} C_W_ID={} C_D_ID={}", c_id, w_id,
+								d_id);
 					}
 				}
 			}
@@ -577,7 +581,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 					String stmt = "";
 					stmt += "SELECT ";
 					stmt += " count(*) AS namecnt ";
-					stmt += "FROM benchmarksql.customer ";
+					stmt += "FROM " + schema + "customer ";
 					stmt += "WHERE c_last = ? ";
 					stmt += " AND c_d_id = ? ";
 					stmt += " AND c_w_id = ? ";
@@ -590,7 +594,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 
 				rs = ordStatCountCust.executeQuery();
 				if (!rs.next()) {
-					log.error("ordStatCountCust() C_LAST=" + c_last + " C_D_ID=" + d_id + " C_W_ID=" + w_id);
+					log.error("ordStatCountCust() C_LAST={} C_D_ID={} C_W_ID={}", c_last, d_id, w_id);
 				}
 
 				namecnt = rs.getInt("namecnt");
@@ -606,7 +610,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 					stmt += " c_first, ";
 					stmt += " c_middle, ";
 					stmt += " c_id ";
-					stmt += "FROM benchmarksql.customer ";
+					stmt += "FROM " + schema + "customer ";
 					stmt += " WHERE c_last = ? ";
 					stmt += " AND c_d_id = ? ";
 					stmt += " AND c_w_id = ? ";
@@ -635,7 +639,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 				c_first = rs.getString("c_first");
 				c_middle = rs.getString("c_middle");
 				c_balance = rs.getFloat("c_balance");
-				ordStatCountCust = null;//////
+				ordStatCountCust = null;
 				rs.close();
 				rs = null;
 			} else {
@@ -647,7 +651,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 					stmt += " c_first, ";
 					stmt += " c_middle, ";
 					stmt += " c_last ";
-					stmt += "FROM benchmarksql.customer ";
+					stmt += "FROM " + schema + "customer ";
 					stmt += " WHERE c_id = ? ";
 					stmt += " AND c_d_id = ? ";
 					stmt += " AND c_w_id = ? ";
@@ -660,7 +664,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 
 				rs = ordStatGetCustBal.executeQuery();
 				if (!rs.next()) {
-					log.error("ordStatGetCustBal() not found! C_ID=" + c_id + " C_D_ID=" + d_id + " C_W_ID=" + w_id);
+					log.error("ordStatGetCustBal() not found! C_ID={} C_D_ID={} C_W_ID={}", c_id, d_id, w_id);
 				}
 
 				c_last = rs.getString("c_last");
@@ -678,7 +682,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 				String stmt = "";
 				stmt += "SELECT ";
 				stmt += " MAX(o_id) AS maxorderid ";
-				stmt += "FROM benchmarksql.oorder ";
+				stmt += "FROM " + schema + "oorder ";
 				stmt += "WHERE o_w_id = ? ";
 				stmt += " AND o_d_id = ? ";
 				stmt += " AND o_c_id = ? ";
@@ -701,7 +705,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 					stmt += "SELECT ";
 					stmt += " o_carrier_id, ";
 					stmt += " o_entry_d ";
-					stmt += "FROM benchmarksql.oorder ";
+					stmt += "FROM " + schema + "oorder ";
 					stmt += "WHERE o_w_id = ? ";
 					stmt += " AND o_d_id = ? ";
 					stmt += " AND o_c_id = ? ";
@@ -732,7 +736,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 				stmt += " ol_quantity, ";
 				stmt += " ol_amount, ";
 				stmt += " ol_delivery_d ";
-				stmt += "FROM benchmarksql.order_line ";
+				stmt += "FROM " + schema + "order_line ";
 				stmt += "WHERE ol_o_id = ? ";
 				stmt += " AND ol_d_id =? ";
 				stmt += " AND ol_w_id = ? ";
@@ -745,7 +749,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 
 			while (rs.next()) {
 				StringBuffer orderLine = new StringBuffer();
-				orderLine.append("[");
+				orderLine.append('[');
 				orderLine.append(rs.getLong("ol_supply_w_id"));
 				orderLine.append(" - ");
 				orderLine.append(rs.getLong("ol_i_id"));
@@ -758,7 +762,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 					orderLine.append(rs.getDate("ol_delivery_d"));
 				else
 					orderLine.append("99-99-9999");
-				orderLine.append("]");
+				orderLine.append(']');
 				orderLines.add(orderLine.toString());
 			}
 			rs.close();
@@ -819,14 +823,14 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 		float ol_amount, total_amount = 0;
 		boolean newOrderRowInserted;
 
-		new Warehouse();
-		new Customer();
-		new District();
-		new NewOrder();
-		new Oorder();
-		new OrderLine();
-		new Stock();
-		new Item();
+		// FIXME Why instantiating objects and not using them.
+//		new Warehouse();
+//		new District();
+//		new NewOrder();
+//		new Oorder();
+//		new OrderLine();
+//		new Stock();
+//		new Item();
 
 		try {
 
@@ -838,8 +842,8 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 				stmt += " c_credit, ";
 				stmt += " w_tax ";
 				stmt += "FROM ";
-				stmt += " benchmarksql.customer, ";
-				stmt += " benchmarksql.warehouse ";
+				stmt += " " + schema + "customer, ";
+				stmt += " " + schema + "warehouse ";
 				stmt += "WHERE w_id = ? ";
 				stmt += " AND w_id = c_w_id ";
 				stmt += " AND c_d_id = ? ";
@@ -871,7 +875,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 					stmt += "SELECT ";
 					stmt += " d_next_o_id, ";
 					stmt += " d_tax ";
-					stmt += "FROM benchmarksql.district ";
+					stmt += "FROM " + schema + "district ";
 					stmt += "WHERE d_id = ? ";
 					stmt += " AND d_w_id = ? ";
 					stmt += "FOR UPDATE ";
@@ -895,7 +899,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 				try {
 					if (stmtInsertNewOrder == null) {
 						String stmt = "";
-						stmt += "INSERT INTO benchmarksql.NEW_ORDER ";
+						stmt += "INSERT INTO " + schema + "NEW_ORDER ";
 						stmt += " (no_o_id, no_d_id, no_w_id) ";
 						stmt += " VALUES ";
 						stmt += " (?, ?, ?) ";
@@ -914,7 +918,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 
 			if (stmtUpdateDist == null) {
 				String stmt = "";
-				stmt += "UPDATE benchmarksql.district ";
+				stmt += "UPDATE " + schema + "district ";
 				stmt += "SET ";
 				stmt += " d_next_o_id = d_next_o_id + 1 ";
 				stmt += "WHERE d_id = ? ";
@@ -933,7 +937,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 
 			if (stmtInsertOOrder == null) {
 				String stmt = "";
-				stmt += "INSERT INTO benchmarksql.OORDER ";
+				stmt += "INSERT INTO " + schema + "OORDER ";
 				stmt += " (o_id, o_d_id, o_w_id, o_c_id, o_entry_d, o_ol_cnt, o_all_local) ";
 				stmt += " VALUES ";
 				stmt += " (?, ?, ?, ?, ?, ?, ?)";
@@ -969,7 +973,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 					stmt += " i_price, ";
 					stmt += " i_name, ";
 					stmt += " i_data ";
-					stmt += "FROM benchmarksql.item ";
+					stmt += "FROM " + schema + "item ";
 					stmt += "WHERE i_id = ? ";
 					stmtGetItem = conn.prepareStatement(stmt);
 				}
@@ -1004,7 +1008,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 					stmt += " s_dist_08, ";
 					stmt += " s_dist_09, ";
 					stmt += " s_dist_10 ";
-					stmt += "FROM benchmarksql.stock ";
+					stmt += "FROM " + schema + "stock ";
 					stmt += "WHERE s_i_id = ? ";
 					stmt += " AND s_w_id = ? ";
 					stmt += "FOR UPDATE ";
@@ -1050,7 +1054,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 
 				if (stmtUpdateStock == null) {
 					String stmt = "";
-					stmt += "UPDATE benchmarksql.stock ";
+					stmt += "UPDATE " + schema + "stock ";
 					stmt += "SET ";
 					stmt += " s_quantity = ?, ";
 					stmt += " s_ytd = s_ytd + ?, ";
@@ -1111,7 +1115,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 
 				if (stmtInsertOrderLine == null) {
 					String stmt = "";
-					stmt += "INSERT INTO benchmarksql.order_line ";
+					stmt += "INSERT INTO " + schema + "order_line ";
 					stmt += " (ol_o_id, ol_d_id, ol_w_id, ol_number, ol_i_id, ol_supply_w_id, ";
 					stmt += "  ol_quantity, ol_amount, ol_dist_info) ";
 					stmt += " VALUES ";
@@ -1169,10 +1173,8 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 
 			transactionEnd = System.currentTimeMillis();
 
-		} //// ugh :-), this is the end of the try block at the beginning of this method
-			//// /////////
-
-		catch (SQLException ex) {
+		} catch (SQLException ex) {
+			// ugh :-), this is the end of the try block at the beginning of this method
 			log.error("--- Unexpected SQLException caught in NEW-ORDER Txn ---");
 			while (ex != null) {
 				log.error(ex.getMessage());
@@ -1220,7 +1222,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 				String stmt = "";
 				stmt += "SELECT ";
 				stmt += " d_next_o_id ";
-				stmt += "FROM benchmarksql.district ";
+				stmt += "FROM " + schema + "district ";
 				stmt += "WHERE d_w_id = ? ";
 				stmt += " AND d_id = ? ";
 				stockGetDistOrderId = conn.prepareStatement(stmt);
@@ -1245,8 +1247,8 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 				stmt += "SELECT ";
 				stmt += " COUNT(DISTINCT (s_i_id)) AS stock_count ";
 				stmt += "FROM ";
-				stmt += " benchmarksql.order_line, ";
-				stmt += " benchmarksql.stock ";
+				stmt += " " + schema + "order_line, ";
+				stmt += " " + schema + "stock ";
 				stmt += "WHERE ol_w_id = ? ";
 				stmt += " AND ol_d_id = ? ";
 				stmt += " AND ol_o_id < ? ";
@@ -1299,16 +1301,17 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 		float c_credit_lim, c_discount, c_balance = 0;
 		java.sql.Date c_since;
 
-		new Warehouse();
-		new Customer();
-		new District();
-		new History();
+		// FIXME Why instantiating objects and not using them.
+//		new Warehouse();
+//		new Customer();
+//		new District();
+//		new History();
 
 		try {
 
 			if (payUpdateWhse == null) {
 				String stmt = "";
-				stmt += "UPDATE benchmarksql.warehouse ";
+				stmt += "UPDATE " + schema + "warehouse ";
 				stmt += "SET ";
 				stmt += " w_ytd = w_ytd + ? ";
 				stmt += "WHERE w_id = ? ";
@@ -1332,7 +1335,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 				stmt += " w_state, ";
 				stmt += " w_zip, ";
 				stmt += " w_name ";
-				stmt += "FROM benchmarksql.warehouse ";
+				stmt += "FROM " + schema + "warehouse ";
 				stmt += "WHERE w_id = ? ";
 				payGetWhse = conn.prepareStatement(stmt);
 			}
@@ -1355,7 +1358,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 
 			if (payUpdateDist == null) {
 				String stmt = "";
-				stmt += "UPDATE benchmarksql.district ";
+				stmt += "UPDATE " + schema + "district ";
 				stmt += "SET d_ytd = d_ytd + ? ";
 				stmt += "WHERE d_w_id = ? ";
 				stmt += " AND d_id = ? ";
@@ -1378,7 +1381,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 				stmt += " d_state, ";
 				stmt += " d_zip, ";
 				stmt += " d_name ";
-				stmt += "FROM benchmarksql.district ";
+				stmt += "FROM " + schema + "district ";
 				stmt += "WHERE d_w_id = ? ";
 				stmt += " AND d_id = ? ";
 				payGetDist = conn.prepareStatement(stmt);
@@ -1407,7 +1410,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 					String stmt = "";
 					stmt += "SELECT ";
 					stmt += " count(*) AS namecnt ";
-					stmt += "FROM benchmarksql.customer ";
+					stmt += "FROM " + schema + "customer ";
 					stmt += "WHERE c_last = ? ";
 					stmt += " AND c_d_id = ? ";
 					stmt += " AND c_w_id = ? ";
@@ -1448,7 +1451,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 					stmt += " c_discount, ";
 					stmt += " c_balance, ";
 					stmt += " c_since ";
-					stmt += "FROM benchmarksql.customer ";
+					stmt += "FROM " + schema + "customer ";
 					stmt += "WHERE c_w_id = ? ";
 					stmt += " AND c_d_id = ? ";
 					stmt += " AND c_last = ? ";
@@ -1510,7 +1513,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 					stmt += " c_discount, ";
 					stmt += " c_balance, ";
 					stmt += " c_since ";
-					stmt += "FROM benchmarksql.customer ";
+					stmt += "FROM " + schema + "customer ";
 					stmt += "WHERE c_w_id = ? ";
 					stmt += " AND c_d_id = ? ";
 					stmt += " AND c_id = ? ";
@@ -1552,7 +1555,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 					String stmt = "";
 					stmt += "SELECT ";
 					stmt += " c_data ";
-					stmt += "FROM benchmarksql.customer ";
+					stmt += "FROM " + schema + "customer ";
 					stmt += "WHERE c_w_id = ? ";
 					stmt += " AND c_d_id = ? ";
 					stmt += " AND c_id = ? ";
@@ -1583,7 +1586,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 
 				if (payUpdateCustBalCdata == null) {
 					String stmt = "";
-					stmt += "UPDATE benchmarksql.customer ";
+					stmt += "UPDATE " + schema + "customer ";
 					stmt += "SET ";
 					stmt += " c_balance = ?, ";
 					stmt += " c_data = ? ";
@@ -1608,7 +1611,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 
 				if (payUpdateCustBal == null) {
 					String stmt = "";
-					stmt += "UPDATE benchmarksql.customer ";
+					stmt += "UPDATE " + schema + "customer ";
 					stmt += "SET ";
 					stmt += " c_balance = ? ";
 					stmt += "WHERE c_w_id = ? ";
@@ -1637,7 +1640,7 @@ public class jTPCCTerminal implements jTPCCConfig, Runnable {
 
 			if (payInsertHist == null) {
 				String stmt = "";
-				stmt += "INSERT INTO benchmarksql.history ";
+				stmt += "INSERT INTO " + schema + "history ";
 				stmt += " (h_c_d_id, h_c_w_id, h_c_id, h_d_id, h_w_id, h_date, h_amount, h_data) ";
 				stmt += " VALUES ";
 				stmt += " (?,?,?,?,?,?,?,?)";

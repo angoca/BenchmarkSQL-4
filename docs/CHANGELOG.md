@@ -7,12 +7,14 @@
   + Code formatted, and imports organized.
   + New package structure and directories.
   + Correction of comments for javadoc.
-  + FIXMEs in the code to include any other RDBMS.
   + Resources directory to include everything that is not java.
   + Scripts to execute a benchmark in Windows.
   + Directory per RDBMS, under resources
-  + Shell scripts for each RDBMS.
+  + SQL scripts for each RDBMS.
   + Updated to log4j 2.
+  + Possibility to use of different statement terminator, different from ;.
+  + Schema name can be changed, or ignored. Useful for RDBMS that do not use
+    schemas.
 
 ## Version 4.1.2 (jannicash)
 

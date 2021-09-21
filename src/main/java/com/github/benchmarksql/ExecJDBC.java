@@ -11,6 +11,8 @@ import java.sql.Statement;
 import java.util.Properties;
 
 import com.github.benchmarksql.jtpcc.jTPCCUtil;
+import com.github.benchmarksql.jtpcc.exceptions.BenchmarkInitException;
+import com.github.benchmarksql.jtpcc.exceptions.ExecutionException;
 
 /**
  * Command line program to process SQL DDL statements, from a text input file,
@@ -37,7 +39,7 @@ public class ExecJDBC {
 
 			Properties ini = new Properties();
 			if (System.getProperty("prop") == null) {
-				throw new Exception("ERROR: Properties file is invalid.");
+				throw new BenchmarkInitException("ERROR: Properties file is invalid.");
 			}
 			ini.load(new FileInputStream(System.getProperty("prop")));
 
@@ -52,9 +54,18 @@ public class ExecJDBC {
 			// Create Statement
 			stmt = conn.createStatement();
 
+			// Statement terminator.
+			final String termValue = ini.getProperty("terminator");
+			char term;
+			if (termValue == null) {
+				term = ';';
+			} else {
+				term = termValue.charAt(0);
+			}
+
 			// Open inputFile
 			if (jTPCCUtil.getSysProp("commandFile", null) == null) {
-				throw new Exception("ERROR: Invalid SQL script.");
+				throw new ExecutionException("ERROR: Invalid SQL script.");
 			}
 			BufferedReader in = new BufferedReader(new FileReader(jTPCCUtil.getSysProp("commandFile", null)));
 
@@ -68,8 +79,8 @@ public class ExecJDBC {
 						System.out.println(line); // print comment line
 					} else {
 						sql.append(line);
-						if (line.endsWith(";")) {
-							execJDBC(stmt, sql);
+						if (line.endsWith(Character.toString(term))) {
+							execJDBC(stmt, sql, term);
 							sql = new StringBuffer();
 						} else {
 							sql.append("\n");
@@ -104,13 +115,13 @@ public class ExecJDBC {
 
 	} // end main
 
-	static void execJDBC(Statement stmt, StringBuffer sql) {
+	static void execJDBC(Statement stmt, StringBuffer sql, char term) {
 
 		System.out.println(sql);
 
 		try {
 
-			stmt.execute(sql.toString().replace(';', ' '));
+			stmt.execute(sql.toString().replace(term, ' '));
 
 		} catch (SQLException se) {
 			System.out.println(se.getMessage());

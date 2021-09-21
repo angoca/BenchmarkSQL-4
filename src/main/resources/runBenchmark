@@ -6,7 +6,7 @@
 # Author: Denis Lussier.
 # Author: Andres Gomez.
 
-if [ "${1}" == "" ] ; then
+if [ "${1}" == "" ]; then
  echo "ERROR: Please indicate the properties file."
  exit 1
 fi
@@ -16,4 +16,5 @@ MY_CLASSPATH=".:${BASEDIR}/../BenchmarkSQL.jar:${BASEDIR}/../lib/*"
 
 MY_PROPERTIES="-Dprop=${1}"
 
-java -cp ${MY_CLASSPATH} ${MY_PROPERTIES} com.github.benchmarksql.jtpcc.jTPCC
+java -Xmx2g -Xms1g -cp "${MY_CLASSPATH}" "${MY_PROPERTIES}" \
+ com.github.benchmarksql.jtpcc.jTPCC

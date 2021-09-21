@@ -1,4 +1,5 @@
 -- Drops all tables and schema.
+
 drop table benchmarksql.warehouse;
 
 drop table benchmarksql.item;

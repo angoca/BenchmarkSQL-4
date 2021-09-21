@@ -1,3 +1,5 @@
+-- Loads the data into the tables. This prevents data regeneration.
+
 --LOAD messages will be placed in files, 1 per LOAD,  in <db2_instance_home>/sqllib/tmp
 --fully qualified path to the load files required; change paths below as needed.
 
