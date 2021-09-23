@@ -1,5 +1,5 @@
 driver=org.firebirdsql.jdbc.FBDriver
-conn=jdbc:firebirdsql:localhost:/home/roman/tmp/tpcc.fdb
+conn=jdbc:firebirdsql:localhost:/mnt/ssd/jtpcc.fdb
 user=sysdba
 password=masterkey
 schema=

@@ -206,10 +206,10 @@ static void initJDBC() {
 
     histPrepStmt = conn.prepareStatement
       ("INSERT INTO " + ini.getProperty("schema") + "history " +
-       " (hist_id, h_c_id, h_c_d_id, h_c_w_id, " +
+       " (h_c_id, h_c_d_id, h_c_w_id, " +
          "h_d_id, h_w_id, " +
          "h_date, h_amount, h_data) " +
-       "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+       "VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 
     ordrPrepStmt = conn.prepareStatement
       ("INSERT INTO " + ini.getProperty("schema") + "oorder " +
@@ -802,17 +802,16 @@ static void initJDBC() {
 
                 custPrepStmt.addBatch();
 
-                histPrepStmt.setInt(1, history.hist_id);
-                histPrepStmt.setInt(2, history.h_c_id);
-                histPrepStmt.setInt(3, history.h_c_d_id);
-                histPrepStmt.setInt(4, history.h_c_w_id);
+                histPrepStmt.setInt(1, history.h_c_id);
+                histPrepStmt.setInt(2, history.h_c_d_id);
+                histPrepStmt.setInt(3, history.h_c_w_id);
 
-                histPrepStmt.setInt(5, history.h_d_id);
-                histPrepStmt.setInt(6, history.h_w_id);
+                histPrepStmt.setInt(4, history.h_d_id);
+                histPrepStmt.setInt(5, history.h_w_id);
                 Timestamp hdate = new Timestamp(history.h_date);
-                histPrepStmt.setTimestamp(7, hdate);
-                histPrepStmt.setDouble(8, history.h_amount);
-                histPrepStmt.setString(9, history.h_data);
+                histPrepStmt.setTimestamp(6, hdate);
+                histPrepStmt.setDouble(7, history.h_amount);
+                histPrepStmt.setString(8, history.h_data);
 
                 histPrepStmt.addBatch();
 

@@ -313,22 +313,22 @@ public class jTPCC implements jTPCCConfig
                     //^Create Terminals, Start Transactions v //
                     
                     if(dummvar==true){
-                    sessionStart = getCurrentTime();
-                    sessionStartTimestamp = System.currentTimeMillis();
-                    sessionNextTimestamp = sessionStartTimestamp;
-                    if(sessionEndTargetTime != -1)
-                        sessionEndTargetTime += sessionStartTimestamp;
-                    
-                    synchronized(terminals)
-                    {
-                        printMessage("Starting all terminals...");
-                        transactionCount = 1;
-                        for(int i = 0; i < terminals.length; i++)
-                            (new Thread(terminals[i])).start();
+                        sessionStart = getCurrentTime();
+                        sessionStartTimestamp = System.currentTimeMillis();
+                        sessionNextTimestamp = sessionStartTimestamp;
+                        if(sessionEndTargetTime != -1)
+                            sessionEndTargetTime += sessionStartTimestamp;
                         
-                    }
-                    
-                    printMessage("All terminals started executing " + sessionStart);
+                        synchronized(terminals)
+                        {
+                            printMessage("Starting all terminals...");
+                            transactionCount = 1;
+                            for(int i = 0; i < terminals.length; i++)
+                                (new Thread(terminals[i])).start();
+                            
+                        }
+                        
+                        printMessage("All terminals started executing " + sessionStart);
                     }
                 }
                 
